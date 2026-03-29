@@ -1,3 +1,5 @@
+**Czytaj po polsku:** [README.pl.md](README.pl.md)
+
 # Send Emails Without Hassle. For Free.
 
 Free SMTP Account with @msgwing.com domain
