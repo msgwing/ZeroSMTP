@@ -1,3 +1,5 @@
+**Czytaj po angielsku:** [README.md](README.md)
+
 # Wysyłaj maile bez problemów. Za darmo.
 
 Darmowe konto SMTP w domenie @msgwing.com
