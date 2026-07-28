@@ -11,7 +11,7 @@ let package = Package(
         // Pinned to an exact version (rather than a floating `from:`
         // range) because 2.17.0+ bumps swift-tools-version to 6.3, which
         // swift-actions/setup-swift@v2 cannot install yet (max is 6.2).
-        .package(url: "https://github.com/sersoft-gmbh/swift-smtp", .exact("2.16.0"))
+        .package(url: "https://github.com/sersoft-gmbh/swift-smtp", .exact("2.18.0"))
     ],
     targets: [
         .executableTarget(
