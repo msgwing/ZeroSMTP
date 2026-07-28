@@ -138,7 +138,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
         with:
           # Kotlin 2.4.x needs a current Gradle; 8.10 is too old and fails
           # with a Kotlin/Gradle compatibility error.
