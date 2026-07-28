@@ -11,7 +11,7 @@
       "installMaven": true,
       "installGradle": true
     },
-    "ghcr.io/devcontainers/features/dotnet:1": {},
+    "ghcr.io/devcontainers/features/dotnet:2": {},
     "ghcr.io/devcontainers/features/rust:1": {}
   },
   "postCreateCommand": "cp -n .env.example .env || true"
