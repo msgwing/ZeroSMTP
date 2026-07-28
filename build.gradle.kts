@@ -10,7 +10,7 @@ repositories {
 dependencies {
     // Jakarta Mail API + the Eclipse Angus reference implementation
     // (successor to the old com.sun.mail:javax.mail coordinates).
-    implementation("jakarta.mail:jakarta.mail-api:2.1.3")
+    implementation("jakarta.mail:jakarta.mail-api:2.1.5")
     implementation("org.eclipse.angus:angus-mail:2.0.3")
 }
 
