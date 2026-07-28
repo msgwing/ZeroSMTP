@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <!-- 4.16.0+ required: fixes CVE-2026-41319 (STARTTLS response injection / SASL downgrade) -->
-    <PackageReference Include="MailKit" Version="4.16.0" />
+    <PackageReference Include="MailKit" Version="4.17.0" />
   </ItemGroup>
 
 </Project>
