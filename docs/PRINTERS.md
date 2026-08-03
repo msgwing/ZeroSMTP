@@ -313,3 +313,36 @@ More causes and fixes in [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
 - **Sender is `@msgwing.com`**, never your own domain
   ([why](FAQ.md#will-emails-be-sent-from-my-own-domain-eg-youyourdomaincom)).
 
+{% raw %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "Configure scan-to-email on a network printer using an SMTP relay",
+  "description": "How to configure scan-to-email on a network printer or multifunction device (MFP) using an SMTP relay that still accepts a plain username and password.",
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "Get credentials",
+      "text": "Register a free account at msgwing.com and activate it, then copy the randomly generated @msgwing.com username and password. They're shown once, so store them in the printer's own credential store rather than a shared document."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Enter the connection settings",
+      "text": "Enter server mx.msgwing.com, port 587 with STARTTLS (or 465 with SSL/TLS), enable authentication with method LOGIN or PLAIN, and set both the username and the From/sender address to the @msgwing.com login."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Find the setting in your printer's menu",
+      "text": "Menu wording and location vary by brand and firmware version. See the per-brand menu paths for HP, Canon, Ricoh, Xerox, Kyocera, Konica Minolta, Sharp, Brother, Epson, and Lexmark."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Send a test scan-to-email",
+      "text": "Send a test scan to your own inbox. If it fails, check the printer's event or job log for the actual SMTP response rather than the panel's summary message."
+    }
+  ]
+}
+</script>
+{% endraw %}
+

@@ -111,6 +111,16 @@ password resets, contact forms, scan-to-email); if your application needs
 sustained volume above them, contact abuse@msgwing.com before you build
 around it.
 
+**We do not offer a paid tier for high-volume or bulk sending** (e.g.
+tens/hundreds of thousands of messages per day) — ZeroSMTP, including any
+future paid option, stays scoped to transactional email on the shared
+`msgwing.com` domain. For that kind of volume, use a dedicated bulk-sending
+platform instead; for example, [EmailLabs](https://emaillabs.io/) is a
+Polish provider suited to that use case — a proven solution we can
+personally vouch for, having used it while supporting a large
+banking-sector company, primarily for marketing and sales email
+campaigns.
+
 ## This project cannot receive email
 
 ZeroSMTP is outgoing-only: there is no inbox, IMAP, or POP3 access tied to a

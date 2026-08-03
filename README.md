@@ -5,7 +5,11 @@
 **A free SMTP relay that still accepts plain username-and-password auth.**<br>
 Built for the printers, scanners, and legacy apps left behind when
 Microsoft 365 turns off SMTP AUTH Basic auth.<br>
-No OAuth to implement. No credit card. No mail server to run.
+No OAuth to implement. No credit card. No mail server to run.<br>
+Scoped to **transactional email** (notifications, password resets, contact
+forms) on a shared domain, capped at **200 messages/day per account** — not
+built for bulk or marketing sending, at any price
+([why](docs/FAQ.md#do-you-offer-a-paid-plan-for-high-volumebulk-sending)).
 
 [![mx.msgwing.com status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/status.json)](https://github.com/msgwing/ZeroSMTP/actions/workflows/service-healthcheck.yml)
 [![Exchange Online Basic auth countdown](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/countdown.json)](docs/EXCHANGE-ONLINE-SMTP-AUTH.md)

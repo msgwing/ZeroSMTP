@@ -5,7 +5,12 @@
 **Darmowy relay SMTP, który nadal przyjmuje zwykłe logowanie loginem i hasłem.**<br>
 Stworzony dla drukarek, skanerów i starszych aplikacji porzuconych, gdy
 Microsoft 365 wyłącza SMTP AUTH z uwierzytelnianiem Basic.<br>
-Bez wdrażania OAuth. Bez karty kredytowej. Bez własnego serwera pocztowego.
+Bez wdrażania OAuth. Bez karty kredytowej. Bez własnego serwera pocztowego.<br>
+Ograniczony do poczty **transakcyjnej** (powiadomienia, resetowanie haseł,
+formularze kontaktowe) w domenie współdzielonej, z limitem **200
+wiadomości/dzień na konto** — nie jest przeznaczony do wysyłki masowej ani
+marketingowej, niezależnie od ceny
+([dlaczego](docs/FAQ.md#do-you-offer-a-paid-plan-for-high-volumebulk-sending)).
 
 [![mx.msgwing.com status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/status.json)](https://github.com/msgwing/ZeroSMTP/actions/workflows/service-healthcheck.yml)
 [![Odliczanie do wyłączenia Basic auth w Exchange Online](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/countdown.json)](docs/EXCHANGE-ONLINE-SMTP-AUTH.md)
