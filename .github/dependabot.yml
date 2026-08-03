@@ -39,3 +39,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      # v3's Swiftly-based install fails GPG verification on GitHub-hosted
+      # runners ("gpg: Can't check signature: No public key") — a confirmed,
+      # still-open upstream bug: github.com/swift-actions/setup-swift/issues/798.
+      # Remove this once that's fixed upstream.
+      - dependency-name: "swift-actions/setup-swift"
+        versions: ["3.x"]
