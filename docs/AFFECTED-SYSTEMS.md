@@ -47,18 +47,20 @@ forgotten device nobody remembers configuring.
 These aren't predictions; the vendor or a support channel has documented the
 breakage publicly.
 
-| System | Evidence |
-| --- | --- |
-| **Ricoh multifunction printers** | [Official advisory](https://www.ricoh.com/info/2025/0526_1) listing affected products and firmware status |
-| **Microsoft Dynamics NAV / Business Central** | [Vendor guidance](https://www.innovia.com/blog/microsoft-to-retire-basic-auth-smtp-for-exchange-online-what-bc-nav-users-need-to-know) for affected installs |
-| **Laserfiche workflows** | [Community thread](https://answers.laserfiche.com/questions/200557/Disabling-basic-authentication-causing-Workflow-emails-to-fail) — workflow emails failing |
-| **ManageEngine OpManager** | [Vendor fix guide](https://www.manageengine.com/network-monitoring/how-to/fix-smtpclientauth-disabled-error.html) for the SMTPClientAuth error |
-| **Cerberus FTP Server** | [Support article](https://support.cerberusftp.com/hc/en-us/articles/24103821642643-Troubleshooting-SMTP-Setup-Error-on-Office365-com-Resolving-EHLO-Message-Failure-535-5-7-139-Authentication-Unsuccessful-Basic-Authentication-Disabled) on the exact 535 5.7.139 error |
-| **Fax servers (e.g. Faxination)** | [Vendor timeline notice](https://faxination.com/microsoft-timeline-for-basic-authentication-deprecation-in-exchange-online-smtp-auth/) |
-| **Cisco Unity Connection** | Named in [Microsoft's own deprecation docs](https://learn.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/deprecation-of-basic-authentication-exchange-online) |
-| **Microsoft Teams Rooms** | Named in Microsoft's docs as needing modern auth enabled |
-| **QNAP NAS** | [Community confirmation](https://forum.qnap.com/viewtopic.php?t=164027) that QNAP does not support OAuth for notifications |
-| **Veeam (older versions)** | [Veeam docs](https://helpcenter.veeam.com/docs/vbo365/guide/smtp_server.html) — some versions support only SMTP basic auth; newer ones added OAuth |
+| System | Evidence | Quick fix notes |
+| --- | --- | --- |
+| **Ricoh multifunction printers** | [Official advisory](https://www.ricoh.com/info/2025/0526_1) listing affected products and firmware status | [Gist](https://gist.github.com/msgwing/90db4abd056e013aceb126c4d67f6012) |
+| **Microsoft Dynamics NAV / Business Central** | [Vendor guidance](https://www.innovia.com/blog/microsoft-to-retire-basic-auth-smtp-for-exchange-online-what-bc-nav-users-need-to-know) for affected installs | |
+| **Laserfiche workflows** | [Community thread](https://answers.laserfiche.com/questions/200557/Disabling-basic-authentication-causing-Workflow-emails-to-fail) — workflow emails failing | [Gist](https://gist.github.com/msgwing/ce9c7d2de9b3c1c942e459f372772866) |
+| **ManageEngine OpManager** | [Vendor fix guide](https://www.manageengine.com/network-monitoring/how-to/fix-smtpclientauth-disabled-error.html) for the SMTPClientAuth error | [Gist](https://gist.github.com/msgwing/899fd2ce0da733770bedf4942987ce47) |
+| **Cerberus FTP Server** | [Support article](https://support.cerberusftp.com/hc/en-us/articles/24103821642643-Troubleshooting-SMTP-Setup-Error-on-Office365-com-Resolving-EHLO-Message-Failure-535-5-7-139-Authentication-Unsuccessful-Basic-Authentication-Disabled) on the exact 535 5.7.139 error | [Gist](https://gist.github.com/msgwing/f9b201aeddd34c8a156cf35fca85f6c5) |
+| **Fax servers (e.g. Faxination)** | [Vendor timeline notice](https://faxination.com/microsoft-timeline-for-basic-authentication-deprecation-in-exchange-online-smtp-auth/) | |
+| **Cisco Unity Connection** | Named in [Microsoft's own deprecation docs](https://learn.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/deprecation-of-basic-authentication-exchange-online) | |
+| **Microsoft Teams Rooms** | Named in Microsoft's docs as needing modern auth enabled | |
+| **QNAP NAS** | [Community confirmation](https://forum.qnap.com/viewtopic.php?t=164027) that QNAP does not support OAuth for notifications | [Gist](https://gist.github.com/msgwing/39958d909e085ae9cc0e6b3584d930bf) |
+| **Veeam (older versions)** | [Veeam docs](https://helpcenter.veeam.com/docs/vbo365/guide/smtp_server.html) — some versions support only SMTP basic auth; newer ones added OAuth | [Gist](https://gist.github.com/msgwing/ac5e126b0389c38cd7c13517eeec44a4) |
+| **Kyocera "Send Error 1102"** | Kyocera's device-side code for an SMTP auth failure | [Gist](https://gist.github.com/msgwing/882d045c3dfa9750e1cb3f020a5f4304) |
+| **Generic `535 5.7.3` from `smtp.office365.com`** | Same root cause, different wording | [Gist](https://gist.github.com/msgwing/66c97a2c9a399861bac89fcefc00ea67) |
 
 ## Categories to audit
 
