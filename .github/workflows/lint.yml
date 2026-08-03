@@ -158,7 +158,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: swift-actions/setup-swift@v2
+      - uses: swift-actions/setup-swift@v3
         with:
           # swift-actions/setup-swift@v2.4.0's newest installable toolchain is
           # 6.2 (6.3 errors with "Version 6.3 is not available"); Package.swift
