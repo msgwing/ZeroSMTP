@@ -127,7 +127,7 @@ jobs:
           fi
 
       - name: Manage alert issue
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           CHECK_STATUS: ${{ steps.check.outputs.status }}
           CHECK_SUMMARY: ${{ steps.check.outputs.summary }}
