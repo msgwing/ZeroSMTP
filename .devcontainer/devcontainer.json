@@ -14,5 +14,5 @@
     "ghcr.io/devcontainers/features/dotnet:2": {},
     "ghcr.io/devcontainers/features/rust:1": {}
   },
-  "postCreateCommand": "cp -n .env.example .env || true"
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y lua5.4 lua-socket lua-sec && cp -n .env.example .env || true"
 }

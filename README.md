@@ -14,7 +14,7 @@ built for bulk or marketing sending, at any price
 [![mx.msgwing.com status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/status.json)](https://github.com/msgwing/ZeroSMTP/actions/workflows/service-healthcheck.yml)
 [![Exchange Online Basic auth countdown](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/countdown.json)](docs/EXCHANGE-ONLINE-SMTP-AUTH.md)
 [![Lint examples](https://github.com/msgwing/ZeroSMTP/actions/workflows/lint.yml/badge.svg)](https://github.com/msgwing/ZeroSMTP/actions/workflows/lint.yml)
-[![15 languages](https://img.shields.io/badge/examples-15%20languages-blue)](#code-examples)
+[![16 languages](https://img.shields.io/badge/examples-16%20languages-blue)](#code-examples)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 [![Exchange Online Basic auth (SMTP AUTH) countdown](https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/countdown-card.svg)](docs/EXCHANGE-ONLINE-SMTP-AUTH.md)
@@ -157,6 +157,7 @@ Ready-to-run, production-ready examples for `mx.msgwing.com:465` (SSL/TLS) or
 | Ruby | [ruby-zerosmtp.rb](ruby-zerosmtp.rb) |
 | Rust | [rust-zerosmtp.rs](rust-zerosmtp.rs) |
 | Kotlin | [kotlin-zerosmtp.kt](kotlin-zerosmtp.kt) |
+| Lua | [lua-zerosmtp.lua](lua-zerosmtp.lua) |
 | Swift | [swift-zerosmtp.swift](swift-zerosmtp.swift) |
 | PowerShell | [pwsh-zerosmtp.ps1](pwsh-zerosmtp.ps1) |
 
