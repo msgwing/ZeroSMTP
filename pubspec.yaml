@@ -1,0 +1,10 @@
+name: zerosmtp_dart_example
+description: Dart example for ZeroSMTP.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  mailer: ^6.0.0
