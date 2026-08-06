@@ -108,6 +108,19 @@ jobs:
       - name: Syntax-check Ruby script
         run: ruby -c ruby-zerosmtp.rb
 
+  elixir:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.17.3'
+          otp-version: '26.2.5'
+      - name: Syntax-check Elixir example
+        run: elixir -e 'Code.string_to_quoted!(File.read!("elixir-zerosmtp.exs"))'
+
   php:
     needs: changes
     if: needs.changes.outputs.code == 'true'
