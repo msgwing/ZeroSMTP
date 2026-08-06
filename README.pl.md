@@ -161,6 +161,7 @@ Gotowe do użycia przykłady dla `mx.msgwing.com:465` (SSL/TLS) lub `:587`
 | Ruby | [ruby-zerosmtp.rb](ruby-zerosmtp.rb) |
 | Rust | [rust-zerosmtp.rs](rust-zerosmtp.rs) |
 | Kotlin | [kotlin-zerosmtp.kt](kotlin-zerosmtp.kt) |
+| Elixir | [elixir-zerosmtp.exs](elixir-zerosmtp.exs) |
 | Swift | [swift-zerosmtp.swift](swift-zerosmtp.swift) |
 | PowerShell | [pwsh-zerosmtp.ps1](pwsh-zerosmtp.ps1) |
 
