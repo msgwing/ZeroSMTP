@@ -33,7 +33,7 @@ Microsoft 365 tenants at the end of December 2026.
 | Have a printer or MFP to reconfigure | [Printer scan-to-email setup by brand](PRINTERS.md) |
 | Manage Windows Server / IIS / Exchange | [Windows Server guide](WINDOWS-SERVER.md) |
 | Manage Linux servers | [Linux](LINUX.md) · [system-wide relay](SYSTEM-MTA.md) |
-| Are sending from an app or script | [Code examples in 15 languages](CODE-EXAMPLES.md) |
+| Are sending from an app or script | [17 code examples across 15 languages](CODE-EXAMPLES.md) |
 | Have it failing or timing out | [Troubleshooting](TROUBLESHOOTING.md) |
 | Have monitoring/alerting tools that need to send mail | [Monitoring alerts](MONITORING.md) |
 | Want to see confirmed fixes for specific hardware | [Device case studies](DEVICE-CASE-STUDIES.md) |

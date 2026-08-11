@@ -14,7 +14,7 @@ built for bulk or marketing sending, at any price
 [![mx.msgwing.com status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/status.json)](https://github.com/msgwing/ZeroSMTP/actions/workflows/service-healthcheck.yml)
 [![Exchange Online Basic auth countdown](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/countdown.json)](docs/EXCHANGE-ONLINE-SMTP-AUTH.md)
 [![Lint examples](https://github.com/msgwing/ZeroSMTP/actions/workflows/lint.yml/badge.svg)](https://github.com/msgwing/ZeroSMTP/actions/workflows/lint.yml)
-[![16 languages](https://img.shields.io/badge/examples-16%20languages-blue)](#code-examples)
+[![17 ready-to-run examples](https://img.shields.io/badge/examples-17%20ready--to--run-blue)](#code-examples)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 [![Exchange Online Basic auth (SMTP AUTH) countdown](https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/countdown-card.svg)](docs/EXCHANGE-ONLINE-SMTP-AUTH.md)
@@ -72,8 +72,9 @@ with anything that already speaks SMTP.
   the whole point for old devices that will never get a firmware update.
 - **Managed reputation.** Accounts are randomly generated on a domain that's
   actively monitored for abuse, so you're not warming up an IP yourself.
-- **15 copy-paste examples**, all reading the same environment variables, plus
-  setup guides for Windows Server, Linux, and printers by brand.
+- **17 copy-paste examples** across 15 languages, all reading the same
+  environment variables, plus setup guides for Windows Server, Linux, and
+  printers by brand.
 - **Verifiably up** — the status badge above is a real check that runs against
   `mx.msgwing.com` every 6 hours, not a static image.
 
