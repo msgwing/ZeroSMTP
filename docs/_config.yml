@@ -163,7 +163,7 @@ defaults:
       # The model number belongs in the title: someone whose scan-to-email
       # just broke searches the model, not the words "case study". As more
       # devices are reported, name them here too.
-      title: "Canon Maxify MB2755 SMTP fix — printer and MFP case studies"
+      title: "Canon Maxify MB2755 and other device fixes"
       description: >-
         Confirmed, hardware-tested SMTP fixes for specific printer and MFP
         models, including the Canon Maxify MB2755 certificate-verification
