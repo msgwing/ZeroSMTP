@@ -15,9 +15,12 @@ Future<void> main() async {
   final subject =
       Platform.environment['ZEROSMTP_SUBJECT'] ?? 'Test Email from ZeroSMTP';
 
-  final smtpServer = smtpServerSSL(
+  // Port 465 with ssl: true is implicit TLS. The package defaults to 587
+  // with STARTTLS, which this relay also accepts.
+  final smtpServer = SmtpServer(
     'mx.msgwing.com',
-    465,
+    port: 465,
+    ssl: true,
     username: username,
     password: password,
   );
@@ -34,7 +37,7 @@ Future<void> main() async {
   try {
     final report = await send(message, smtpServer);
     stdout.writeln('Email sent: ${report.toString()}');
-  } on SmtpException catch (error) {
+  } on MailerException catch (error) {
     stderr.writeln('SMTP error: ${error.message}');
     exitCode = 1;
   } catch (error) {
