@@ -121,8 +121,10 @@ outbound 587/465 to a new host is often firewalled.
 
 ## Quick decision guide
 
-Answer two or three questions for a straight recommendation, or read the
-same logic as a flowchart below.
+Answer up to four questions for a straight recommendation, or read the same
+logic as a flowchart below. **Each recommendation has its own link** — the
+address bar updates, so you can send someone straight to the answer for their
+case instead of describing it.
 
 <div id="zc-quiz"></div>
 
@@ -137,8 +139,11 @@ Does the mail have to come FROM your own domain?
 │                       ├── Yes ──► Direct Send / relay connector  (option 2)
 │                       └── No  ──► On-prem relay (option 3) or paid SMTP (option 4)
 └── No  ──► Low volume, non-critical (scans, device alerts)?
-            ├── Yes ──► ZeroSMTP                          (option 5)
-            └── No  ──► Paid SMTP service                 (option 4)
+            ├── No  ──► Paid SMTP service                 (option 4)
+            └── Yes ──► Has the vendor shipped OAuth firmware for your model?
+                        ├── Yes ──► Apply the firmware. Nothing else needed.
+                        ├── No  ──► ZeroSMTP                          (option 5)
+                        └── Don't know ──► Check the compatibility list first
 ```
 
 </details>

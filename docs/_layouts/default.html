@@ -413,8 +413,16 @@
         volume: {
           q: "Is this low volume and non-critical (scans, device alerts, notifications)?",
           options: [
-            { label: "Yes", next: "result_zerosmtp" },
+            { label: "Yes", next: "firmware" },
             { label: "No", next: "result_paid" }
+          ]
+        },
+        firmware: {
+          q: "Has the device's vendor shipped OAuth firmware for your exact model?",
+          options: [
+            { label: "Yes, an update exists", next: "result_firmware" },
+            { label: "No, or the vendor ruled it out", next: "result_zerosmtp" },
+            { label: "I don't know", next: "result_checklist" }
           ]
         }
       };
@@ -430,15 +438,23 @@
         },
         result_relay_or_paid: {
           title: "Options 3 or 4 — on-prem relay or a paid SMTP service",
-          body: "Without a static IP, you need either your own relay (Postfix/IIS &mdash; see SYSTEM-MTA.md) or a paid provider (SendGrid, Mailgun, SES...) that supports your own domain."
+          body: "Without a static IP, you need either your own relay (Postfix or IIS &mdash; see <a href=\"SYSTEM-MTA.html\">the system relay guide</a>) or a paid provider that supports your own domain. <a href=\"ALTERNATIVES.html\">What domain verification involves</a>."
+        },
+        result_firmware: {
+          title: "Update the firmware — nothing else needed",
+          body: "If the vendor shipped OAuth for your model, that is the cleanest fix: the device keeps sending from your own domain and no third party is involved. Apply it and stop here."
+        },
+        result_checklist: {
+          title: "Check your model first",
+          body: "Worth two minutes before changing anything. The <a href=\"DEVICE-COMPATIBILITY.html\">compatibility list</a> records what each vendor has published, and <a href=\"NO-OAUTH-FIRMWARE.html\">the ruled-out list</a> covers models whose vendor has stated no update is coming &mdash; including Konica Minolta ineo models marked N/A in their own advisory. If yours is ruled out, come back and answer \"No\"."
         },
         result_zerosmtp: {
           title: "Option 5 — ZeroSMTP fits this case",
-          body: "Free, three settings changed, done &mdash; as long as sending from <code>@msgwing.com</code> instead of your own domain is acceptable here. See the Quickstart."
+          body: "Free, three settings changed, done &mdash; as long as sending from <code>@msgwing.com</code> instead of your own domain is acceptable here, and you are under 200 messages a day. <a href=\"https://github.com/msgwing/ZeroSMTP#quickstart\">Quickstart</a> and <a href=\"PRINTERS.html\">per-brand settings</a>."
         },
         result_paid: {
           title: "Option 4 — a paid SMTP service",
-          body: "Higher volume or anything customer-facing needs a provider built for that (SendGrid, Mailgun, Brevo, SES...)."
+          body: "Higher volume or anything customer-facing needs a provider built for that &mdash; SendGrid, Mailgun, Brevo, SMTP2GO, Amazon SES. This project is the wrong tool for it and will not pretend otherwise. <a href=\"ALTERNATIVES.html\">What choosing one involves</a>."
         }
       };
 
@@ -457,19 +473,37 @@
         });
       }
 
-      function renderResult(key){
+      function renderResult(key, skipHash){
         var r = results[key];
+        // Every outcome gets its own address. Without this, somebody
+        // answering a question elsewhere cannot link to the answer, and a
+        // decision tool that cannot be cited is just a toy.
+        if (!skipHash) {
+          try { history.replaceState(null, '', '#' + key.replace(/_/g, '-')); }
+          catch (e) { location.hash = key.replace(/_/g, '-'); }
+        }
         el.innerHTML =
           '<div style="font-weight:600;margin-bottom:8px;">Recommendation</div>' +
           '<div style="background:#dafbe1;border:1px solid #2ea043;border-radius:6px;padding:12px 14px;"><strong>' + r.title + '</strong><p style="margin:8px 0 0;">' + r.body + '</p></div>' +
-          '<a href="#" id="zc-restart" style="display:inline-block;margin-top:10px;font-size:13px;">&larr; start over</a>';
+          '<div style="margin-top:10px;font-size:13px;">' +
+          '<a href="#" id="zc-restart">&larr; start over</a>' +
+          '<span style="color:#57606a;"> · this recommendation has its own link &mdash; copy the address bar to share it</span>' +
+          '</div>';
         document.getElementById('zc-restart').addEventListener('click', function(e){
           e.preventDefault();
+          try { history.replaceState(null, '', location.pathname + location.search); } catch (err) {}
           renderQuestion("start");
         });
       }
 
-      renderQuestion("start");
+      // A shared link opens straight at the recommendation rather than
+      // making the reader answer the questions again.
+      var zadany = (location.hash || '').replace(/^#/, '').replace(/-/g, '_');
+      if (zadany && results[zadany]) {
+        renderResult(zadany, true);
+      } else {
+        renderQuestion("start");
+      }
     })();
     </script>
     {% elsif page.widget == "printers" %}
