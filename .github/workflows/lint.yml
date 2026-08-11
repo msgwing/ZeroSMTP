@@ -69,7 +69,7 @@ jobs:
       - name: Syntax-check PowerShell scripts
         shell: pwsh
         run: |
-          $files = @('pwsh-zerosmtp.ps1', 'SendEmailTest_mail-tester.com.ps1', 'check-connection.ps1')
+          $files = @('pwsh-zerosmtp.ps1', 'SendEmailTest_mail-tester.com.ps1', 'check-connection.ps1', 'Find-SmtpAuthExposure.ps1')
           $failed = $false
           foreach ($f in $files) {
             Write-Host "Checking $f"

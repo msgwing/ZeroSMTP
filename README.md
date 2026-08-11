@@ -91,7 +91,11 @@ scan-to-email · IoT and device notifications · homelabs.
 > **[Migration guide →](docs/EXCHANGE-ONLINE-SMTP-AUTH.md)** covers every
 > option (Graph API, Direct Send, on-prem relay, paid services), not just
 > this one. **[What breaks →](docs/AFFECTED-SYSTEMS.md)** is the audit list,
-> with PowerShell to find your exposure.
+> including models whose vendor has said no OAuth firmware is coming.
+>
+> **Run [`Find-SmtpAuthExposure.ps1`](Find-SmtpAuthExposure.ps1)** to get the
+> answer for your own tenant. Read-only, and it counts the mailboxes that
+> inherit the tenant setting — the ones the usual one-liner misses.
 
 Setup guides: [Network printers](docs/PRINTERS.md) · [Popular applications](docs/APPS.md) · [Linux (Debian/Ubuntu/Rocky/Fedora/openSUSE)](docs/LINUX.md) · [System-wide mail relay (Postfix/msmtp/Exim4)](docs/SYSTEM-MTA.md) · [Windows Server](docs/WINDOWS-SERVER.md) · [Exchange Online SMTP AUTH migration](docs/EXCHANGE-ONLINE-SMTP-AUTH.md) · [Monitoring alerts](docs/MONITORING.md) · [Device case studies](docs/DEVICE-CASE-STUDIES.md) · [Troubleshooting](docs/TROUBLESHOOTING.md) · [Reliability (retries)](docs/RELIABILITY.md) · [vs. other free relays](docs/ALTERNATIVES.md) · [FAQ](docs/FAQ.md)
 

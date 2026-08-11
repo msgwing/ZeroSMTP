@@ -37,6 +37,14 @@ Get-CASMailbox -ResultSize Unlimited |
 Get-TransportConfig | Select-Object SmtpClientAuthenticationDisabled
 ```
 
+The snippet above misses one case on purpose kept simple: a mailbox whose
+`SmtpClientAuthenticationDisabled` is `$null` inherits the tenant setting, so
+it is fully exposed whenever the tenant allows SMTP AUTH — and filtering on
+`-eq $false` never shows it.
+[`Find-SmtpAuthExposure.ps1`](https://github.com/msgwing/ZeroSMTP/blob/main/Find-SmtpAuthExposure.ps1)
+handles all three states, counts them separately and can export a CSV to hand
+to whoever owns the devices. It is read-only.
+
 Microsoft also exposes a **SMTP AUTH client submission report** in the
 Exchange admin center (Reports → Mail flow) showing which clients and IPs
 have authenticated recently — that's usually the fastest way to find the
