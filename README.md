@@ -14,7 +14,7 @@ built for bulk or marketing sending, at any price
 [![mx.msgwing.com status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/status.json)](https://github.com/msgwing/ZeroSMTP/actions/workflows/service-healthcheck.yml)
 [![Exchange Online Basic auth countdown](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/countdown.json)](docs/EXCHANGE-ONLINE-SMTP-AUTH.md)
 [![Lint examples](https://github.com/msgwing/ZeroSMTP/actions/workflows/lint.yml/badge.svg)](https://github.com/msgwing/ZeroSMTP/actions/workflows/lint.yml)
-[![17 ready-to-run examples](https://img.shields.io/badge/examples-17%20ready--to--run-blue)](#code-examples)
+[![19 ready-to-run examples](https://img.shields.io/badge/examples-19%20ready--to--run-blue)](#code-examples)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 [![Exchange Online Basic auth (SMTP AUTH) countdown](https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/countdown-card.svg)](docs/EXCHANGE-ONLINE-SMTP-AUTH.md)
@@ -72,7 +72,7 @@ with anything that already speaks SMTP.
   the whole point for old devices that will never get a firmware update.
 - **Managed reputation.** Accounts are randomly generated on a domain that's
   actively monitored for abuse, so you're not warming up an IP yourself.
-- **17 copy-paste examples** across 15 languages, all reading the same
+- **19 copy-paste examples** across 17 languages, all reading the same
   environment variables, plus setup guides for Windows Server, Linux, and
   printers by brand.
 - **Verifiably up** — the status badge above is a real check that runs against
@@ -160,6 +160,8 @@ Ready-to-run, production-ready examples for `mx.msgwing.com:465` (SSL/TLS) or
 | Kotlin | [kotlin-zerosmtp.kt](kotlin-zerosmtp.kt) |
 | Elixir | [elixir-zerosmtp.exs](elixir-zerosmtp.exs) |
 | Lua | [lua-zerosmtp.lua](lua-zerosmtp.lua) |
+| Perl | [perl-zerosmtp.pl](perl-zerosmtp.pl) |
+| C (libcurl) | [c-zerosmtp.c](c-zerosmtp.c) |
 | Swift | [swift-zerosmtp.swift](swift-zerosmtp.swift) |
 | PowerShell | [pwsh-zerosmtp.ps1](pwsh-zerosmtp.ps1) |
 

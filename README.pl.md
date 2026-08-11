@@ -15,7 +15,7 @@ marketingowej, niezależnie od ceny
 [![mx.msgwing.com status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/status.json)](https://github.com/msgwing/ZeroSMTP/actions/workflows/service-healthcheck.yml)
 [![Odliczanie do wyłączenia Basic auth w Exchange Online](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/countdown.json)](docs/EXCHANGE-ONLINE-SMTP-AUTH.md)
 [![Lint examples](https://github.com/msgwing/ZeroSMTP/actions/workflows/lint.yml/badge.svg)](https://github.com/msgwing/ZeroSMTP/actions/workflows/lint.yml)
-[![17 gotowych przykładów](https://img.shields.io/badge/przyk%C5%82ady-17%20gotowych-blue)](#przykłady-kodu)
+[![19 gotowych przykładów](https://img.shields.io/badge/przyk%C5%82ady-19%20gotowych-blue)](#przykłady-kodu)
 [![Licencja: MIT](https://img.shields.io/badge/licencja-MIT-green.svg)](LICENSE)
 
 [![Odliczanie do wyłączenia Basic auth w Exchange Online (SMTP AUTH)](https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/countdown-card.svg)](docs/EXCHANGE-ONLINE-SMTP-AUTH.md)
@@ -80,7 +80,7 @@ działają z czymkolwiek, co już obsługuje SMTP.
   właśnie sedno problemu dla starych urządzeń bez aktualizacji firmware'u.
 - **Zarządzana reputacja.** Konta są generowane losowo w domenie aktywnie
   monitorowanej pod kątem nadużyć, więc nie rozgrzewasz własnego IP.
-- **17 gotowych przykładów** w 15 językach, korzystających z tych samych zmiennych
+- **19 gotowych przykładów** w 17 językach, korzystających z tych samych zmiennych
   środowiskowych, plus przewodniki dla Windows Server, Linuksa i drukarek.
 - **Sprawdzalnie działa** — odznaka statusu powyżej to realny test wykonywany
   na `mx.msgwing.com` co 6 godzin, a nie statyczny obrazek.
@@ -163,6 +163,8 @@ Gotowe do użycia przykłady dla `mx.msgwing.com:465` (SSL/TLS) lub `:587`
 | Kotlin | [kotlin-zerosmtp.kt](kotlin-zerosmtp.kt) |
 | Elixir | [elixir-zerosmtp.exs](elixir-zerosmtp.exs) |
 | Lua | [lua-zerosmtp.lua](lua-zerosmtp.lua) |
+| Perl | [perl-zerosmtp.pl](perl-zerosmtp.pl) |
+| C (libcurl) | [c-zerosmtp.c](c-zerosmtp.c) |
 | Swift | [swift-zerosmtp.swift](swift-zerosmtp.swift) |
 | PowerShell | [pwsh-zerosmtp.ps1](pwsh-zerosmtp.ps1) |
 
