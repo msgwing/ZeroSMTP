@@ -1,0 +1,54 @@
+# Adds a "Cite this repository" button to the GitHub sidebar.
+#
+# Worth having because the useful parts of this repository are reference
+# material - the device compatibility list, the vendor advisories, the error
+# strings, the deprecation timeline. Somebody writing about the Microsoft 365
+# SMTP AUTH shutdown should have an obvious, stable way to cite it rather than
+# pasting a bare URL.
+
+cff-version: 1.2.0
+title: >-
+  ZeroSMTP: tools and reference material for the Microsoft 365 SMTP AUTH
+  Basic authentication shutdown
+message: >-
+  If you reference the compatibility data, the audit script or the migration
+  guidance in this repository, please cite it using these metadata.
+type: software
+authors:
+  - name: msgwing.com
+    website: https://msgwing.com
+    email: abuse@msgwing.com
+repository-code: https://github.com/msgwing/ZeroSMTP
+url: https://docs.msgwing.com
+license: MIT
+keywords:
+  - smtp
+  - smtp-auth
+  - basic-authentication
+  - exchange-online
+  - microsoft-365
+  - scan-to-email
+  - oauth2
+  - email-relay
+abstract: >-
+  Microsoft disables Basic authentication for SMTP AUTH in Exchange Online by
+  default at the end of December 2026, and announces the final removal date in
+  the second half of 2027. A large installed base of printers, scanners, NAS
+  units, monitoring tools and line-of-business applications cannot perform the
+  OAuth 2.0 flow that replaces it, and several hardware vendors have published
+  lists of models for which no firmware update is planned.
+
+  This repository collects what is needed to work through that: a read-only
+  PowerShell script reporting which mailboxes in a tenant can still use SMTP
+  AUTH, a machine-readable compatibility list in which every entry links to
+  the vendor's own statement, a reference for the error messages the failure
+  produces across clients, per-brand printer setup guidance, twenty
+  ready-to-run code examples across eighteen languages, and a decision guide
+  covering every migration option including the ones that involve no third
+  party.
+
+  It also operates a free SMTP relay that continues to accept plain
+  username-and-password authentication, for the devices that have no other
+  path. That relay sends from a shared domain and is capped at 200 messages
+  per day, which makes it appropriate for notifications and scan-to-email and
+  inappropriate for mail that must carry an organisation's own identity.
