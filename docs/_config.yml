@@ -158,6 +158,18 @@ defaults:
         How to handle temporary SMTP failures correctly with backoff and
         retries instead of tight retry loops.
   - scope:
+      path: "NO-OAUTH-FIRMWARE.md"
+    values:
+      # Highest-intent page on the site: whoever lands here has been told by
+      # their own vendor that no firmware is coming, so a relay is one of
+      # only three remaining options rather than one of many.
+      title: "Printers that will never get OAuth firmware"
+      description: >-
+        Printer and MFP models whose vendor has confirmed no OAuth 2.0
+        firmware is planned for the Microsoft 365 SMTP AUTH shutdown,
+        including the Konica Minolta ineo models marked N/A, and what is
+        actually left once firmware is ruled out.
+  - scope:
       path: "DEVICE-CASE-STUDIES.md"
     values:
       # The model number belongs in the title: someone whose scan-to-email
