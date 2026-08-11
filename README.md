@@ -157,6 +157,7 @@ Ready-to-run, production-ready examples for `mx.msgwing.com:465` (SSL/TLS) or
 | Ruby | [ruby-zerosmtp.rb](ruby-zerosmtp.rb) |
 | Rust | [rust-zerosmtp.rs](rust-zerosmtp.rs) |
 | Kotlin | [kotlin-zerosmtp.kt](kotlin-zerosmtp.kt) |
+| Elixir | [elixir-zerosmtp.exs](elixir-zerosmtp.exs) |
 | Lua | [lua-zerosmtp.lua](lua-zerosmtp.lua) |
 | Swift | [swift-zerosmtp.swift](swift-zerosmtp.swift) |
 | PowerShell | [pwsh-zerosmtp.ps1](pwsh-zerosmtp.ps1) |
