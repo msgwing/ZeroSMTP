@@ -20,6 +20,38 @@ covered, a platform/tool not documented, a confusing section). For anything
 beyond a small fix, opening the issue first avoids a PR that doesn't match
 what maintainers had in mind.
 
+## Publishing Find-SmtpAuthExposure.ps1 to the PowerShell Gallery
+
+The script carries a `<#PSScriptInfo#>` block so `Publish-Script` accepts it.
+Sysadmins search the Gallery; a script they can install in one command is a
+different proposition from a file they have to find and download.
+
+Validate first — this catches missing metadata before the upload rather than
+after:
+
+```powershell
+Test-ScriptFileInfo -Path .\Find-SmtpAuthExposure.ps1
+```
+
+Then publish, with an API key from your https://www.powershellgallery.com
+account:
+
+```powershell
+Publish-Script -Path .\Find-SmtpAuthExposure.ps1 -NuGetApiKey <key>
+```
+
+**A version can never be replaced or deleted**, only superseded, so bump
+`.VERSION` in the PSScriptInfo block for every publish. Keep `.GUID`
+unchanged — it identifies the script across versions, and a new GUID creates
+a second, competing listing.
+
+Once it is live, users install it with:
+
+```powershell
+Install-Script Find-SmtpAuthExposure
+```
+
+
 ## Adding a new language example
 
 This is the highest-value kind of contribution. Each example is a single,

@@ -1,3 +1,32 @@
+<#PSScriptInfo
+
+.VERSION 1.0.0
+
+.GUID 699c5654-5dd9-4914-b032-fb8744cdb6ec
+
+.AUTHOR msgwing.com
+
+.COMPANYNAME msgwing.com
+
+.COPYRIGHT MIT
+
+.TAGS SMTP SMTPAUTH BasicAuthentication ExchangeOnline Microsoft365 Office365 Audit ReadOnly Deprecation
+
+.LICENSEURI https://github.com/msgwing/ZeroSMTP/blob/main/LICENSE
+
+.PROJECTURI https://github.com/msgwing/ZeroSMTP
+
+.RELEASENOTES
+Initial release. Reports which Exchange Online mailboxes can still authenticate
+with SMTP AUTH before Microsoft disables Basic authentication for it by default
+at the end of December 2026. Read-only.
+
+Handles all three states of SmtpClientAuthenticationDisabled, including $null
+which inherits the tenant setting - the state that the commonly repeated
+`-eq $false` filter misses entirely.
+
+#>
+
 #Requires -Version 5.1
 
 <#
