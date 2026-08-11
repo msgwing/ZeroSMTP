@@ -160,10 +160,14 @@ defaults:
   - scope:
       path: "DEVICE-CASE-STUDIES.md"
     values:
-      title: "Device case studies: real printer fixes"
+      # The model number belongs in the title: someone whose scan-to-email
+      # just broke searches the model, not the words "case study". As more
+      # devices are reported, name them here too.
+      title: "Canon Maxify MB2755 SMTP fix — printer and MFP case studies"
       description: >-
-        Confirmed, hardware-tested fixes for specific printer and MFP models:
-        certificate quirks and firmware issues manuals don't mention.
+        Confirmed, hardware-tested SMTP fixes for specific printer and MFP
+        models, including the Canon Maxify MB2755 certificate-verification
+        issue: quirks and firmware limits the manuals don't mention.
   - scope:
       path: "MONITORING.md"
     values:
