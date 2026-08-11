@@ -47,6 +47,10 @@ Only install what you need for the example(s) you're using — see the
 | PHP + Composer | `php-cli composer` | `php-cli composer` | `php composer` |
 | Node.js / TypeScript | `nodejs npm` | `nodejs npm` | `nodejs npm` |
 | Ruby | `ruby` | `ruby` | `ruby` |
+| Lua | `lua5.4 lua-socket lua-sec` | `lua lua-socket lua-sec` | `lua54 lua-socket lua-sec` |
+| Perl | `libio-socket-ssl-perl libauthen-sasl-perl` | `perl-IO-Socket-SSL perl-Authen-SASL` | `perl-IO-Socket-SSL perl-Authen-SASL` |
+| C (libcurl) | `gcc libcurl4-openssl-dev` | `gcc libcurl-devel` | `gcc libcurl-devel` |
+| Dart | see [Dart's install docs](https://dart.dev/get-dart) — package names vary by distro | same | same |
 | Go | `golang-go` | `golang` | `go` |
 | Java | `default-jdk` | `java-21-openjdk-devel` | `java-21-openjdk-devel` |
 | Kotlin | install [Gradle](https://gradle.org/install/) manually (no build needed — `gradle build` fetches Kotlin itself) | same | same |

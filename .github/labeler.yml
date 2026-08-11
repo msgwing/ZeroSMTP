@@ -42,6 +42,9 @@ go:
 ruby:
   - changed-files:
       - any-glob-to-any-file: 'ruby-zerosmtp.rb'
+lua:
+  - changed-files:
+      - any-glob-to-any-file: 'lua-zerosmtp.lua'
 rust:
   - changed-files:
       - any-glob-to-any-file:

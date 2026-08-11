@@ -145,11 +145,11 @@ defaults:
   - scope:
       path: "CODE-EXAMPLES.md"
     values:
-      title: "SMTP send-email code examples, 15 languages"
+      title: "SMTP send-email code examples, 18 languages"
       description: >-
         Ready-to-run SMTP send-email examples for mx.msgwing.com in Python,
-        PHP, Node.js, TypeScript, Java, C#, Go, Ruby, Rust, Kotlin, Swift,
-        PowerShell and Bash.
+        PHP, Node.js, TypeScript, Java, C#, C, Go, Ruby, Perl, Rust, Kotlin, Dart,
+        Elixir, Lua, Swift, PowerShell and Bash.
   - scope:
       path: "RELIABILITY.md"
     values:
@@ -160,10 +160,14 @@ defaults:
   - scope:
       path: "DEVICE-CASE-STUDIES.md"
     values:
-      title: "Device case studies: real printer fixes"
+      # The model number belongs in the title: someone whose scan-to-email
+      # just broke searches the model, not the words "case study". As more
+      # devices are reported, name them here too.
+      title: "Canon Maxify MB2755 and other device fixes"
       description: >-
-        Confirmed, hardware-tested fixes for specific printer and MFP models:
-        certificate quirks and firmware issues manuals don't mention.
+        Confirmed, hardware-tested SMTP fixes for specific printer and MFP
+        models, including the Canon Maxify MB2755 certificate-verification
+        issue: quirks and firmware limits the manuals don't mention.
   - scope:
       path: "MONITORING.md"
     values:

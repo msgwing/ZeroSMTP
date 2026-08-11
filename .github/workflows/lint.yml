@@ -90,7 +90,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.13'
       - name: Syntax-check Python script
@@ -107,6 +107,59 @@ jobs:
           ruby-version: '3.4'
       - name: Syntax-check Ruby script
         run: ruby -c ruby-zerosmtp.rb
+
+  elixir:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.17.3'
+          otp-version: '26.2.5'
+      - name: Syntax-check Elixir example
+        run: elixir -e 'Code.string_to_quoted!(File.read!("elixir-zerosmtp.exs"))'
+
+  lua:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: leafo/gh-actions-lua@v11
+      - name: Syntax-check Lua script
+        run: luac -p lua-zerosmtp.lua
+
+  perl:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # perl -c loads every `use`d module, so the two non-core ones have to
+      # be present or the syntax check fails for the wrong reason.
+      - name: Install Perl SMTP/TLS modules
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libio-socket-ssl-perl libauthen-sasl-perl
+      - name: Syntax-check Perl script
+        run: perl -c perl-zerosmtp.pl
+
+  c:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install libcurl development headers
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev
+      # -Werror on purpose: an example that compiles with warnings is an
+      # example somebody copies into firmware with warnings.
+      - name: Build C example
+        run: cc -std=c99 -Wall -Wextra -Werror -o /tmp/c-zerosmtp c-zerosmtp.c -lcurl
 
   dart:
     needs: changes
@@ -168,7 +221,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '8.0.x'
       - name: Build C# example
