@@ -2,15 +2,13 @@
 
 ![ZeroSMTP](docs/assets/banner.png)
 
-**Darmowy relay SMTP, który nadal przyjmuje zwykłe logowanie loginem i hasłem.**<br>
-Stworzony dla drukarek, skanerów i starszych aplikacji porzuconych, gdy
-Microsoft 365 wyłącza SMTP AUTH z uwierzytelnianiem Basic.<br>
-Bez wdrażania OAuth. Bez karty kredytowej. Bez własnego serwera pocztowego.<br>
-Ograniczony do poczty **transakcyjnej** (powiadomienia, resetowanie haseł,
-formularze kontaktowe) w domenie współdzielonej, z limitem **200
-wiadomości/dzień na konto** — nie jest przeznaczony do wysyłki masowej ani
-marketingowej, niezależnie od ceny
-([dlaczego](docs/FAQ.md#do-you-offer-a-paid-plan-for-high-volumebulk-sending)).
+**Wszystko, co potrzebne przy wyłączeniu SMTP AUTH w Microsoft 365.**<br>
+Sprawdź, co się zepsuje w Twoim tenancie, ustal czy Twój sprzęt ma jakieś
+wyjście, i utrzymaj wysyłkę — razem z darmowym relayem dla urządzeń, które
+nigdy nie będą mówić OAuth.<br>
+Relay jest darmowy bez planu płatnego, z limitem **200 wiadomości/dzień**, i
+wysyła ze współdzielonego adresu `@msgwing.com`, nie z Twojej domeny
+([dlaczego](docs/FAQ.md#will-emails-be-sent-from-my-own-domain-eg-youyourdomaincom)).
 
 [![mx.msgwing.com status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/status.json)](https://github.com/msgwing/ZeroSMTP/actions/workflows/service-healthcheck.yml)
 [![Odliczanie do wyłączenia Basic auth w Exchange Online](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/countdown.json)](docs/EXCHANGE-ONLINE-SMTP-AUTH.md)
@@ -23,6 +21,18 @@ marketingowej, niezależnie od ceny
 [**Załóż darmowe konto →**](https://msgwing.com) · [**Migracja z Exchange Online →**](docs/EXCHANGE-ONLINE-SMTP-AUTH.md) · [Strona dokumentacji](https://docs.msgwing.com/) · [Szybki start](#szybki-start) · [Przykłady kodu](#przykłady-kodu) · [FAQ](docs/FAQ.md) · [English](README.md)
 
 </div>
+
+## Co tu jest
+
+| | |
+| --- | --- |
+| **1. Audyt tenanta** | [`Find-SmtpAuthExposure.ps1`](Find-SmtpAuthExposure.ps1) — tylko czyta. Raportuje każdą skrzynkę, która nadal może użyć SMTP AUTH, licząc osobno te, które **dziedziczą** ustawienie tenanta — bo typowy jednolinijkowiec `-eq $false` pomija je zupełnie i potrafi pokazać zero na w pełni narażonym tenancie. |
+| **2. Sprawdzenie sprzętu** | [Lista zgodności](docs/DEVICE-COMPATIBILITY.md) — maszynowo czytalna, oparta na [`data/devices.json`](data/devices.json). Które modele mają firmware z OAuth, a [które producent skreślił](docs/NO-OAUTH-FIRMWARE.md), z odnośnikiem do każdego oświadczenia. |
+| **3. Utrzymanie wysyłki** | Darmowy relay SMTP przyjmujący login i hasło, z [20 przykładami w 18 językach](#przykłady-kodu) i [konfiguracją drukarek per marka](docs/PRINTERS.md). |
+
+Plus [co dokładnie znaczy każdy komunikat błędu](docs/ERROR-MESSAGES.md) i
+[przewodnik migracji](docs/EXCHANGE-ONLINE-SMTP-AUTH.md), który omawia Graph
+API, Direct Send i płatne relaye — nie tylko ten jeden.
 
 > **Dostajesz `535 5.7.139 Authentication unsuccessful, basic authentication is disabled`?**
 > Microsoft domyślnie wyłącza uwierzytelnianie Basic dla SMTP AUTH z

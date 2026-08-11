@@ -2,14 +2,13 @@
 
 ![ZeroSMTP](docs/assets/banner.png)
 
-**A free SMTP relay that still accepts plain username-and-password auth.**<br>
-Built for the printers, scanners, and legacy apps left behind when
-Microsoft 365 turns off SMTP AUTH Basic auth.<br>
-No OAuth to implement. No credit card. No mail server to run.<br>
-Scoped to **transactional email** (notifications, password resets, contact
-forms) on a shared domain, capped at **200 messages/day per account** — not
-built for bulk or marketing sending, at any price
-([why](docs/FAQ.md#do-you-offer-a-paid-plan-for-high-volumebulk-sending)).
+**Everything you need for the Microsoft 365 SMTP AUTH shutdown.**<br>
+Find out what breaks in your tenant, check whether your hardware has a way
+out, and keep it sending — including a free relay for the devices that will
+never speak OAuth.<br>
+The relay is free with no paid tier, capped at **200 messages/day**, and sends
+from a shared `@msgwing.com` address rather than your own
+([why](docs/FAQ.md#will-emails-be-sent-from-my-own-domain-eg-youyourdomaincom)).
 
 [![mx.msgwing.com status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/status.json)](https://github.com/msgwing/ZeroSMTP/actions/workflows/service-healthcheck.yml)
 [![Exchange Online Basic auth countdown](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/countdown.json)](docs/EXCHANGE-ONLINE-SMTP-AUTH.md)
@@ -23,10 +22,22 @@ built for bulk or marketing sending, at any price
 
 </div>
 
+## What's in here
+
+| | |
+| --- | --- |
+| **1. Audit your tenant** | [`Find-SmtpAuthExposure.ps1`](Find-SmtpAuthExposure.ps1) — read-only. Reports every mailbox that can still use SMTP AUTH, counting the ones that *inherit* the tenant setting separately, because the usual `-eq $false` one-liner misses those entirely and can report zero on a fully exposed tenant. |
+| **2. Check your hardware** | [Compatibility list](docs/DEVICE-COMPATIBILITY.md) — machine-readable, backed by [`data/devices.json`](data/devices.json). Which models have OAuth firmware, and [which ones the vendor has ruled out](docs/NO-OAUTH-FIRMWARE.md) with a link to every vendor statement. |
+| **3. Keep it sending** | A free SMTP relay that still accepts a username and password, with [20 code examples across 18 languages](#code-examples) and [printer setup by brand](docs/PRINTERS.md). |
+
+Plus [what every error message actually means](docs/ERROR-MESSAGES.md), and a
+[migration guide](docs/EXCHANGE-ONLINE-SMTP-AUTH.md) that covers Graph API,
+Direct Send and paid relays — not just this one.
+
 > **Getting `535 5.7.139 Authentication unsuccessful, basic authentication is disabled`?**
-> That's Microsoft switching off Basic auth for SMTP AUTH — [here's what to do
-> about it](docs/EXCHANGE-ONLINE-SMTP-AUTH.md), including the options that
-> aren't this project.
+> That's Microsoft switching off Basic auth for SMTP AUTH — [start
+> here](docs/ERROR-MESSAGES.md). Three of the four causes are still reversible
+> until the end of December 2026.
 
 ---
 
