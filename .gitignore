@@ -6,6 +6,14 @@
 # Local Claude Code tool config — machine-specific, not project source
 .claude/
 
+# Continue IDE extension config — machine-specific, not project source
+.continue/
+
+# Internal working documents. The repository is public, so anything
+# describing the production host, its addresses or its weak points must
+# stay out of it.
+STRATEGIA-*.md
+
 # Jekyll build output and Bundler cache for docs/
 docs/_site/
 docs/.jekyll-cache/
