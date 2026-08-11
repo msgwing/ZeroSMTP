@@ -9,6 +9,11 @@
 # Continue IDE extension config — machine-specific, not project source
 .continue/
 
+# Scratch files from ad-hoc API calls. One of these reached main because
+# `git add -A` swept it in during a merge resolution.
+*.tmp.json
+*.tmp
+
 # Internal working documents. The repository is public, so anything
 # describing the production host, its addresses or its weak points must
 # stay out of it.
