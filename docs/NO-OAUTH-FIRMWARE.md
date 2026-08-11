@@ -96,6 +96,9 @@ minutes of checking saves an afternoon:
 These lists come from vendor advisories, and vendors keep publishing. If your
 model is confirmed dead-end and is not named above — or if a vendor has since
 shipped firmware for one that is —
-[open an issue](https://github.com/msgwing/ZeroSMTP/issues/new/choose). A
+[open an issue](https://github.com/msgwing/ZeroSMTP/issues/new/choose), or
+edit [`data/devices.json`](https://github.com/msgwing/ZeroSMTP/blob/main/data/devices.json)
+directly — it backs the [machine-readable compatibility
+list](DEVICE-COMPATIBILITY.md). A
 report from someone holding the hardware is worth more than anything read off
 a datasheet, and gets credited by username.

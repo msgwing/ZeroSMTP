@@ -1,0 +1,145 @@
+{
+  "$comment": [
+    "Machine-readable OAuth 2.0 / SMTP AUTH status for systems affected by the",
+    "Microsoft 365 Basic auth shutdown. Source of truth for the table in",
+    "docs/DEVICE-COMPATIBILITY.md, which is generated from this file by",
+    "tools/build-device-table.py and checked in CI, so the two cannot drift.",
+    "",
+    "Every entry must carry an `evidence` URL. If nobody has published",
+    "anything, the entry does not belong here - a compatibility list is only",
+    "worth citing if each row can be checked.",
+    "",
+    "status values:",
+    "  none-planned    vendor has stated no OAuth firmware is coming",
+    "  available       OAuth support exists for the listed models or versions",
+    "  partial         some models or versions only; the list decides",
+    "  check-advisory  vendor publishes a per-model list we do not reproduce",
+    "  unsupported     the product has no OAuth capability for this purpose"
+  ],
+  "updated": "2026-08-11",
+  "entries": [
+    {
+      "vendor": "Konica Minolta / DEVELOP",
+      "product": "ineo and ineo+ MFPs",
+      "status": "none-planned",
+      "models": [
+        "ineo 306", "ineo 7228", "ineo 266",
+        "ineo+ 266", "ineo+ 256", "ineo+ 226",
+        "ineo 4750", "ineo 4050",
+        "ineo 4700P", "ineo 3301P", "ineo 4000P",
+        "ineo 165 variants", "ineo 185 variants"
+      ],
+      "evidence": "https://www.develop.eu/en/support/discontinuation-of-basic-authentication-for-smtp.html",
+      "notes": "Marked \"N/A\" in the vendor's own OAuth column. The advisory points these owners at a different mail service rather than at an update. Other ineo product groups in the same advisory do have OAuth firmware - check the exact model."
+    },
+    {
+      "vendor": "Xerox",
+      "product": "ConnectKey printers and MFPs",
+      "status": "partial",
+      "models": [
+        "VersaLink B415", "VersaLink C415",
+        "VersaLink B620", "VersaLink C620",
+        "VersaLink B625", "VersaLink C625",
+        "AltaLink", "PrimeLink"
+      ],
+      "evidence": "https://www.xerox.com/en-us/office/insights/exchange-online-authentication",
+      "notes": "Device Code Flow is supported broadly; Client Credentials Flow only on the ConnectKey models listed. Devices not on Xerox's supported-firmware list are the problem cases and are not promised an update. Affects Scan to Email, Internet Fax (Send), Fax Forward to Email and Auto Email Notifications."
+    },
+    {
+      "vendor": "Ricoh",
+      "product": "multifunction printers",
+      "status": "check-advisory",
+      "models": [],
+      "evidence": "https://www.ricoh.com/info/2025/0526_1",
+      "notes": "Ricoh publishes affected products with per-product firmware status. Not reproduced here because the list is long and revised; check the model against the advisory."
+    },
+    {
+      "vendor": "Canon",
+      "product": "Maxify MB2755",
+      "status": "unsupported",
+      "models": ["Maxify MB2755"],
+      "evidence": "https://github.com/msgwing/ZeroSMTP/blob/main/docs/DEVICE-CASE-STUDIES.md",
+      "notes": "Separate failure mode from OAuth: the firmware ships a fixed root CA store predating current Let's Encrypt roots, so certificate validation fails regardless of authentication. Hardware-confirmed, unchanged after a firmware update. Verification has to be disabled on the device."
+    },
+    {
+      "vendor": "Kyocera",
+      "product": "MFPs reporting send error 1102",
+      "status": "check-advisory",
+      "models": [],
+      "evidence": "https://github.com/msgwing/ZeroSMTP/blob/main/docs/ERROR-MESSAGES.md",
+      "notes": "1102 / 0x1102 is Kyocera's device-side code for an SMTP authentication failure, not a model list. No public per-model OAuth statement located; check with the vendor for a specific model."
+    },
+    {
+      "vendor": "QNAP",
+      "product": "NAS notification settings",
+      "status": "unsupported",
+      "models": [],
+      "evidence": "https://gist.github.com/msgwing/39958d909e085ae9cc0e6b3584d930bf",
+      "notes": "The notification settings accept username and password only; there is no OAuth option for Microsoft 365 SMTP."
+    },
+    {
+      "vendor": "Veeam",
+      "product": "Backup for Microsoft 365 and related products",
+      "status": "partial",
+      "models": [],
+      "evidence": "https://helpcenter.veeam.com/docs/vbo365/guide/smtp_server.html",
+      "notes": "Older versions support SMTP basic auth only; newer versions added OAuth. Upgrading is the fix where the version supports it."
+    },
+    {
+      "vendor": "Cisco",
+      "product": "Unity Connection",
+      "status": "check-advisory",
+      "models": [],
+      "evidence": "https://learn.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/deprecation-of-basic-authentication-exchange-online",
+      "notes": "Named in Microsoft's own deprecation documentation. OAuth support depends on the release; check yours before assuming either way."
+    },
+    {
+      "vendor": "Microsoft",
+      "product": "Teams Rooms",
+      "status": "available",
+      "models": [],
+      "evidence": "https://learn.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/deprecation-of-basic-authentication-exchange-online",
+      "notes": "Microsoft's own product. Enable modern auth on the resource account - no relay needed."
+    },
+    {
+      "vendor": "Microsoft",
+      "product": "Dynamics NAV / Business Central",
+      "status": "partial",
+      "models": [],
+      "evidence": "https://www.innovia.com/blog/microsoft-to-retire-basic-auth-smtp-for-exchange-online-what-bc-nav-users-need-to-know",
+      "notes": "Newer Business Central handles modern auth. Older on-prem NAV installs generally need the SMTP account repointed."
+    },
+    {
+      "vendor": "Laserfiche",
+      "product": "Workflow email",
+      "status": "check-advisory",
+      "models": [],
+      "evidence": "https://answers.laserfiche.com/questions/200557/Disabling-basic-authentication-causing-Workflow-emails-to-fail",
+      "notes": "Workflow emails failing on Basic auth removal, reported in the vendor's own community."
+    },
+    {
+      "vendor": "ManageEngine",
+      "product": "OpManager",
+      "status": "check-advisory",
+      "models": [],
+      "evidence": "https://www.manageengine.com/network-monitoring/how-to/fix-smtpclientauth-disabled-error.html",
+      "notes": "Vendor publishes a fix guide for the SMTPClientAuth error."
+    },
+    {
+      "vendor": "Cerberus",
+      "product": "FTP Server",
+      "status": "check-advisory",
+      "models": [],
+      "evidence": "https://support.cerberusftp.com/hc/en-us/articles/24103821642643-Troubleshooting-SMTP-Setup-Error-on-Office365-com-Resolving-EHLO-Message-Failure-535-5-7-139-Authentication-Unsuccessful-Basic-Authentication-Disabled",
+      "notes": "Vendor support article covers the exact 535 5.7.139 failure."
+    },
+    {
+      "vendor": "Faxination",
+      "product": "fax server",
+      "status": "check-advisory",
+      "models": [],
+      "evidence": "https://faxination.com/microsoft-timeline-for-basic-authentication-deprecation-in-exchange-online-smtp-auth/",
+      "notes": "Vendor published a timeline notice. Apply their update if one exists for the version in use; otherwise the outbound SMTP account has to be repointed."
+    }
+  ]
+}

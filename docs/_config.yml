@@ -158,6 +158,14 @@ defaults:
         How to handle temporary SMTP failures correctly with backoff and
         retries instead of tight retry loops.
   - scope:
+      path: "DEVICE-COMPATIBILITY.md"
+    values:
+      title: "OAuth compatibility by device and product"
+      description: >-
+        Which printers, MFPs, NAS units and applications have an OAuth 2.0
+        path for the Microsoft 365 SMTP AUTH shutdown and which the vendor
+        has ruled out, with a link to every vendor statement.
+  - scope:
       path: "ERROR-MESSAGES.md"
     values:
       # People paste the error string verbatim, so this page exists to be

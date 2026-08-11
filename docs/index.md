@@ -33,6 +33,7 @@ Microsoft 365 tenants at the end of December 2026.
 | Have a printer or MFP to reconfigure | [Printer scan-to-email setup by brand](PRINTERS.md) |
 | Manage Windows Server / IIS / Exchange | [Windows Server guide](WINDOWS-SERVER.md) |
 | Manage Linux servers | [Linux](LINUX.md) · [system-wide relay](SYSTEM-MTA.md) |
+| Want to look up one device or product | [OAuth compatibility list](DEVICE-COMPATIBILITY.md) |
 | Have a printer whose vendor says no OAuth firmware is coming | [Devices that will never get OAuth firmware](NO-OAUTH-FIRMWARE.md) |
 | Are sending from an app or script | [20 code examples across 18 languages](CODE-EXAMPLES.md) |
 | Have an error message to look up | [535 5.7.139 and other SMTP AUTH errors](ERROR-MESSAGES.md) |

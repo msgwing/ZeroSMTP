@@ -97,7 +97,7 @@ scan-to-email · IoT and device notifications · homelabs.
 > answer for your own tenant. Read-only, and it counts the mailboxes that
 > inherit the tenant setting — the ones the usual one-liner misses.
 
-Setup guides: [Network printers](docs/PRINTERS.md) · [Popular applications](docs/APPS.md) · [Linux (Debian/Ubuntu/Rocky/Fedora/openSUSE)](docs/LINUX.md) · [System-wide mail relay (Postfix/msmtp/Exim4)](docs/SYSTEM-MTA.md) · [Windows Server](docs/WINDOWS-SERVER.md) · [Exchange Online SMTP AUTH migration](docs/EXCHANGE-ONLINE-SMTP-AUTH.md) · [Monitoring alerts](docs/MONITORING.md) · [No OAuth firmware coming](docs/NO-OAUTH-FIRMWARE.md) · [Device case studies](docs/DEVICE-CASE-STUDIES.md) · [Troubleshooting](docs/TROUBLESHOOTING.md) · [Reliability (retries)](docs/RELIABILITY.md) · [vs. other free relays](docs/ALTERNATIVES.md) · [FAQ](docs/FAQ.md)
+Setup guides: [Network printers](docs/PRINTERS.md) · [Popular applications](docs/APPS.md) · [Linux (Debian/Ubuntu/Rocky/Fedora/openSUSE)](docs/LINUX.md) · [System-wide mail relay (Postfix/msmtp/Exim4)](docs/SYSTEM-MTA.md) · [Windows Server](docs/WINDOWS-SERVER.md) · [Exchange Online SMTP AUTH migration](docs/EXCHANGE-ONLINE-SMTP-AUTH.md) · [Monitoring alerts](docs/MONITORING.md) · [OAuth compatibility list](docs/DEVICE-COMPATIBILITY.md) · [No OAuth firmware coming](docs/NO-OAUTH-FIRMWARE.md) · [Device case studies](docs/DEVICE-CASE-STUDIES.md) · [Troubleshooting](docs/TROUBLESHOOTING.md) · [Reliability (retries)](docs/RELIABILITY.md) · [vs. other free relays](docs/ALTERNATIVES.md) · [FAQ](docs/FAQ.md)
 
 ## How does this compare to other options?
 

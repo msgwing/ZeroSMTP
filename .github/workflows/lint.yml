@@ -46,6 +46,16 @@ jobs:
             echo "code=false" >> "$GITHUB_OUTPUT"
           fi
 
+  device-table:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: Device table matches data/devices.json
+        run: python tools/build-device-table.py --check
+
   bash:
     needs: changes
     if: needs.changes.outputs.code == 'true'
