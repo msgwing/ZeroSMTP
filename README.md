@@ -53,7 +53,7 @@ with anything that already speaks SMTP.
 1. Register and activate a free account at [msgwing.com](https://msgwing.com), then copy your randomly generated `@msgwing.com` login and password.
 2. Copy [`.env.example`](.env.example) to `.env` and fill in your credentials.
 3. Run the curl snippet above (`export $(grep -v '^#' .env | xargs)` first), or pick your language from the [Code Examples](#code-examples) table — every example reads the same `.env` variables.
-4. Having trouble? See [Troubleshooting](docs/TROUBLESHOOTING.md) — most first-run failures are a cloud provider blocking outbound SMTP ports, not a misconfiguration.
+4. Having trouble? See [Error messages](docs/ERROR-MESSAGES.md) · [Troubleshooting](docs/TROUBLESHOOTING.md) — most first-run failures are a cloud provider blocking outbound SMTP ports, not a misconfiguration.
 
 > Prefer not to install anything locally? Every runtime used below (Python, PHP,
 > Node, Ruby, Go, Java, Kotlin/Gradle, .NET, Rust) is preinstalled in the

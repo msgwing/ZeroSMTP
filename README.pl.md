@@ -61,7 +61,7 @@ działają z czymkolwiek, co już obsługuje SMTP.
 1. Zarejestruj i aktywuj darmowe konto na [msgwing.com](https://msgwing.com), a następnie skopiuj wygenerowany losowo login `@msgwing.com` i hasło.
 2. Skopiuj [`.env.example`](.env.example) do `.env` i uzupełnij swoimi danymi.
 3. Uruchom powyższy snippet curl (najpierw `export $(grep -v '^#' .env | xargs)`), albo wybierz swój język z tabeli [Przykłady kodu](#przykłady-kodu) — każdy przykład korzysta z tych samych zmiennych w `.env`.
-4. Coś nie działa? Zobacz [Rozwiązywanie problemów](docs/TROUBLESHOOTING.md) — najczęstszą przyczyną nieudanego pierwszego uruchomienia jest blokowanie wychodzących portów SMTP przez dostawcę chmury, a nie błąd w konfiguracji.
+4. Coś nie działa? Zobacz [Komunikaty błędów](docs/ERROR-MESSAGES.md) · [Rozwiązywanie problemów](docs/TROUBLESHOOTING.md) — najczęstszą przyczyną nieudanego pierwszego uruchomienia jest blokowanie wychodzących portów SMTP przez dostawcę chmury, a nie błąd w konfiguracji.
 
 > Wolisz nie instalować niczego lokalnie? Każde środowisko używane poniżej
 > (Python, PHP, Node, Ruby, Go, Java, Kotlin/Gradle, .NET, Rust) jest już

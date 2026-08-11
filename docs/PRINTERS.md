@@ -79,21 +79,21 @@ and line-of-business apps, see [AFFECTED-SYSTEMS.md](AFFECTED-SYSTEMS.md).
 
 ## Error messages and what they mean
 
-If you searched an error and landed here, find it below. None of these are
-exclusive to the December 2026 default change — the identical error appears
-whenever Basic auth for SMTP AUTH is rejected, whether that's from an admin
-disabling it earlier, **Security Defaults** (on by default for newer
-tenants), a **Conditional Access** policy blocking legacy authentication, or
-the upcoming default flip. The client-side message is the same either way.
+What the panel shows, and what it actually means:
 
-| Error | What it means |
+| What you see | What it means |
 | --- | --- |
-| `535 5.7.139 Authentication unsuccessful, basic authentication is disabled` | Microsoft 365 rejected username/password auth. Your credentials are fine; the method is switched off — see above for which of the four causes it might be. |
-| `535 5.7.139 ... SmtpClientAuthentication is disabled for the Tenant` | Same cause, reported at tenant level. |
-| `535 5.7.3 Authentication unsuccessful` | Generic auth rejection — same set of possible causes as above. |
 | Kyocera **send error 1102** / `0x1102` | Kyocera's code for an SMTP authentication failure — same root cause when pointing at Microsoft 365. |
-| `Authentication failed` / `Login failed` on the panel | Vendor-specific wording for the above. |
+| `Authentication failed` / `Login failed` on the panel | Vendor wording for a refused username/password. Your credentials are fine; the method is switched off. |
+| `535` with any wording | The server refused Basic auth for SMTP AUTH. |
 | Connection times out, no auth error at all | Not authentication — the network is blocking outbound SMTP. See [TROUBLESHOOTING.md](TROUBLESHOOTING.md). |
+| `Certificate verify failed` on the panel | The device's trust store is too old for the server certificate, not an auth problem — see [the Canon Maxify MB2755 case](DEVICE-CASE-STUDIES.md). |
+
+The exact server-side strings, the four different reasons Basic auth gets
+refused, and the wording used by non-printer clients are all in
+[SMTP AUTH error messages](ERROR-MESSAGES.md). Worth reading if you can
+re-enable the setting, because three of those four causes are reversible until
+the end of December 2026.
 
 ## Your options
 

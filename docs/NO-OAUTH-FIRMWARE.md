@@ -85,7 +85,7 @@ minutes of checking saves an afternoon:
    use SMTP AUTH today, including the ones that inherit the tenant setting and
    are easy to miss.
 2. Check the exact error the device reports against
-   [the error list](PRINTERS.md#error-messages-and-what-they-mean). Several
+   [the error list](ERROR-MESSAGES.md). Several
    unrelated faults produce a similar-looking authentication failure.
 3. If your model is not on any list here, see
    [what breaks](AFFECTED-SYSTEMS.md) for the full inventory of affected

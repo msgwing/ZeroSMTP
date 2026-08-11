@@ -158,6 +158,16 @@ defaults:
         How to handle temporary SMTP failures correctly with backoff and
         retries instead of tight retry loops.
   - scope:
+      path: "ERROR-MESSAGES.md"
+    values:
+      # People paste the error string verbatim, so this page exists to be
+      # found by that paste - from any client, not only printers.
+      title: "535 5.7.139 and other SMTP AUTH errors"
+      description: >-
+        What 535 5.7.139, SmtpClientAuthentication is disabled for the Tenant
+        or Mailbox, 535 5.7.3 and Kyocera send error 1102 actually mean, the
+        four different causes behind them, and which are still reversible.
+  - scope:
       path: "NO-OAUTH-FIRMWARE.md"
     values:
       # Highest-intent page on the site: whoever lands here has been told by

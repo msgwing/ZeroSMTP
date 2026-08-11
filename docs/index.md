@@ -35,6 +35,7 @@ Microsoft 365 tenants at the end of December 2026.
 | Manage Linux servers | [Linux](LINUX.md) · [system-wide relay](SYSTEM-MTA.md) |
 | Have a printer whose vendor says no OAuth firmware is coming | [Devices that will never get OAuth firmware](NO-OAUTH-FIRMWARE.md) |
 | Are sending from an app or script | [20 code examples across 18 languages](CODE-EXAMPLES.md) |
+| Have an error message to look up | [535 5.7.139 and other SMTP AUTH errors](ERROR-MESSAGES.md) |
 | Have it failing or timing out | [Troubleshooting](TROUBLESHOOTING.md) |
 | Have monitoring/alerting tools that need to send mail | [Monitoring alerts](MONITORING.md) |
 | Want to see confirmed fixes for specific hardware | [Device case studies](DEVICE-CASE-STUDIES.md) |
