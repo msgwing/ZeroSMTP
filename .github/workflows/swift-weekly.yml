@@ -1,0 +1,43 @@
+name: Swift example (weekly)
+
+# Swift was pulled out of lint.yml because it was the merge bottleneck:
+# measured over five runs it took 2.8-3.3 minutes while every other job
+# finished in 0.2-0.8. Every push paid three minutes for one example.
+#
+# It runs here instead. The example is still built, so it cannot rot
+# unnoticed - which matters more than usual for this one, because
+# Package.swift is pinned to swift-smtp 2.16.0 only because
+# swift-actions/setup-swift cannot install the Swift 6.3 that 2.17+ needs.
+# That pin will break when something upstream moves, and a weekly build is
+# how we find out on a Monday rather than from a contributor.
+#
+# Deliberately not a required check on main. A slow build should tell us
+# something is wrong; it should not decide when a documentation fix merges.
+
+on:
+  schedule:
+    - cron: '0 5 * * 1'      # Mondays 05:00 UTC
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'swift-zerosmtp.swift'
+      - 'Package.swift'
+      - '.github/workflows/swift-weekly.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: swift-actions/setup-swift@v2
+        with:
+          # swift-actions/setup-swift@v2.4.0's newest installable toolchain is
+          # 6.2 (6.3 errors with "Version 6.3 is not available"); Package.swift
+          # pins swift-smtp to the last release built against tools-version 6.2.
+          swift-version: "6.2"
+      - name: Build Swift example
+        run: swift build

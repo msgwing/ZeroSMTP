@@ -380,17 +380,9 @@ jobs:
       - name: Build Rust example
         run: cargo build
 
-  swift:
-    needs: changes
-    if: needs.changes.outputs.code == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: swift-actions/setup-swift@v2
-        with:
-          # swift-actions/setup-swift@v2.4.0's newest installable toolchain is
-          # 6.2 (6.3 errors with "Version 6.3 is not available"); Package.swift
-          # pins swift-smtp to the last release built against tools-version 6.2.
-          swift-version: "6.2"
-      - name: Build Swift example
-        run: swift build
+  # Swift used to be here and is now in swift-weekly.yml. Measured over five
+  # runs it took 2.8-3.3 minutes while every other job finished in 0.2-0.8,
+  # so it alone decided how long a merge had to wait. It has also been
+  # removed from the required checks on main - deleting a job that branch
+  # protection still requires would leave every future PR waiting forever on
+  # a check that never reports.

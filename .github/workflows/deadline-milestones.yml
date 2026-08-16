@@ -66,6 +66,45 @@ jobs:
           EXAMPLES=$(awk '/^\| Language \| File \|/,/^$/' README.md \
             | grep -c '^| .* | \[' || echo '?')
 
+          # A countdown on its own is a reminder, and reminders are ignored.
+          # The measurement from data/blast-radius.json is the part somebody
+          # might actually quote: it says whether the world is fixing this or
+          # not, which nobody else publishes. Built with jq rather than
+          # written here so it cannot go stale, and skipped silently if the
+          # data is missing or the latest sample failed to count.
+          # jq emits raw fields and the shell formats them. Doing the
+          # thousands separators inside jq is possible and unreadable; printf
+          # "%'d" is the same trick blast-radius.yml already uses.
+          RADIUS=""
+          if [ -f data/blast-radius.json ]; then
+            fields=$(jq -r '
+              (.samples | sort_by(.date)) as $s
+              | ($s | last)  as $now
+              | ($s | first) as $then
+              | [ .queries[]
+                  | select($now.counts[.id] != null)
+                  | { label, n: $now.counts[.id], base: $then.counts[.id] } ]
+              | if length == 0 then "none 0 0 -"
+                else (max_by(.n))
+                     | "\(.label) \(.n) \(.base // 0) \($then.date)" end
+            ' data/blast-radius.json 2>/dev/null || echo "none 0 0 -")
+
+            set -- $fields
+            label="$1"; now="$2"; base="$3"; since="$4"
+
+            if [ "$label" != "none" ]; then
+              pretty=$(printf "%'d" "$now" | tr ',' ' ')
+              RADIUS="**${pretty} public files on GitHub** still name \`${label}\`"
+              if [ "$base" -gt 0 ] && [ "$now" != "$base" ]; then
+                # Integer percentage; awk because the shell has no floats.
+                move=$(awk -v n="$now" -v b="$base" \
+                  'BEGIN{d=(n-b)/b*100; printf "%s %d", (d>0?"up":"down"), (d<0?-d:d)}')
+                RADIUS="${RADIUS}, ${move}% since this was first measured on ${since}"
+              fi
+              RADIUS="${RADIUS}."
+            fi
+          fi
+
           TITLE="${DAYS} days until Microsoft 365 disables SMTP AUTH Basic auth"
 
           {
@@ -76,6 +115,18 @@ jobs:
             echo ""
             echo "Source: [Microsoft's updated timeline](https://techcommunity.microsoft.com/blog/exchange/updated-exchange-online-smtp-auth-basic-authentication-deprecation-timeline/4489835)."
             echo ""
+            if [ -n "$RADIUS" ]; then
+              echo "## Is anybody actually fixing it?"
+              echo ""
+              echo "${RADIUS}"
+              echo ""
+              echo "That is a count of public files containing a hostname, not of systems"
+              echo "that will break — some are templates, tutorials or forks, and it sees"
+              echo "nothing private. It is a floor, not a census. [The method and its"
+              echo "limits](https://docs.msgwing.com/BLAST-RADIUS.html) are written out in"
+              echo "full, the raw data is in the repository, and both are free to cite."
+              echo ""
+            fi
             echo "## If you have not checked yet"
             echo ""
             echo "[\`Find-SmtpAuthExposure.ps1\`](https://github.com/${{ github.repository }}/blob/main/Find-SmtpAuthExposure.ps1)"
