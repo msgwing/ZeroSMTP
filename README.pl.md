@@ -18,7 +18,7 @@ wysyła ze współdzielonego adresu `@msgwing.com`, nie z Twojej domeny
 
 [![Odliczanie do wyłączenia Basic auth w Exchange Online (SMTP AUTH)](https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/countdown-card.svg)](docs/EXCHANGE-ONLINE-SMTP-AUTH.md)
 
-[**Załóż darmowe konto →**](https://msgwing.com) · [**Migracja z Exchange Online →**](docs/EXCHANGE-ONLINE-SMTP-AUTH.md) · [Strona dokumentacji](https://docs.msgwing.com/) · [Szybki start](#szybki-start) · [Przykłady kodu](#przykłady-kodu) · [FAQ](docs/FAQ.md) · [English](README.md)
+[**Załóż darmowe konto →**](https://msgwing.com) · [**Migracja z Exchange Online →**](docs/EXCHANGE-ONLINE-SMTP-AUTH.md) · [Strona dokumentacji](https://docs.msgwing.com/) · [Szybki start](#szybki-start) · [Przykłady kodu](#przykłady-kodu) · [FAQ](docs/FAQ.md) · [English](README.md) · [Deutsch](README.de.md)
 
 </div>
 
