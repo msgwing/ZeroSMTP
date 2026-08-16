@@ -1,0 +1,118 @@
+---
+# ansible-zerosmtp.yml
+# Ansible + msmtp - route system mail through ZeroSMTP on a fleet
+#
+# Points a machine's system mailer (cron output, unattended-upgrades,
+# systemd OnFailure= alerts, anything calling /usr/sbin/sendmail) at
+# mx.msgwing.com, so those messages leave the host instead of piling up in
+# a local spool nobody reads.
+#
+# Run with:
+#   ansible-playbook -i inventory.ini ansible-zerosmtp.yml \
+#     -e zerosmtp_username=your-username \
+#     -e zerosmtp_password=your-password \
+#     -e zerosmtp_from=your-username@msgwing.com \
+#     -e zerosmtp_to=alerts@example.com
+#
+# Better, keep the password out of your shell history and out of the
+# playbook by putting it in an encrypted file:
+#   ansible-vault create group_vars/all/zerosmtp.yml
+#   ansible-playbook -i inventory.ini ansible-zerosmtp.yml --ask-vault-pass
+#
+# Idempotent: running it twice changes nothing the second time.
+
+- name: Route system mail through ZeroSMTP
+  hosts: all
+  become: true
+
+  vars:
+    zerosmtp_host: mx.msgwing.com
+    zerosmtp_port: 465          # implicit TLS; use 587 with tls_starttls on
+    # No defaults for the four below on purpose. A playbook that silently
+    # installs placeholder credentials leaves a mailer that fails at 3am
+    # rather than at deploy time.
+    # zerosmtp_username:
+    # zerosmtp_password:
+    # zerosmtp_from:
+    # zerosmtp_to:
+
+  pre_tasks:
+    - name: Require the credentials to be supplied
+      ansible.builtin.assert:
+        that:
+          - zerosmtp_username is defined and zerosmtp_username | length > 0
+          - zerosmtp_password is defined and zerosmtp_password | length > 0
+          - zerosmtp_from is defined and zerosmtp_from | length > 0
+          - zerosmtp_to is defined and zerosmtp_to | length > 0
+        fail_msg: >-
+          Set zerosmtp_username, zerosmtp_password, zerosmtp_from and
+          zerosmtp_to (with -e, or in an ansible-vault file).
+
+  tasks:
+    - name: Install msmtp and the sendmail shim
+      ansible.builtin.package:
+        name:
+          - msmtp
+          - msmtp-mta      # provides /usr/sbin/sendmail
+        state: present
+
+    - name: Configure msmtp
+      ansible.builtin.copy:
+        dest: /etc/msmtprc
+        # 0600 and root-owned: this file holds a password in cleartext,
+        # which is msmtp's design. World-readable here would hand the
+        # account to every local user.
+        owner: root
+        group: root
+        mode: '0600'
+        content: |
+          # Managed by Ansible (ansible-zerosmtp.yml). Local edits are
+          # overwritten on the next run.
+          defaults
+          auth           on
+          tls            on
+          tls_trust_file /etc/ssl/certs/ca-certificates.crt
+          logfile        /var/log/msmtp.log
+
+          account        zerosmtp
+          host           {{ zerosmtp_host }}
+          port           {{ zerosmtp_port }}
+          {% if zerosmtp_port | int == 587 %}
+          tls_starttls   on
+          {% else %}
+          tls_starttls   off
+          {% endif %}
+          from           {{ zerosmtp_from }}
+          user           {{ zerosmtp_username }}
+          password       {{ zerosmtp_password }}
+
+          account default : zerosmtp
+      no_log: true              # keep the password out of the Ansible output
+
+    - name: Send root's mail to a real address
+      ansible.builtin.lineinfile:
+        path: /etc/aliases
+        regexp: '^root:'
+        line: "root: {{ zerosmtp_to }}"
+        create: true
+        owner: root
+        group: root
+        mode: '0644'
+      register: aliases
+
+    - name: Rebuild the alias database
+      ansible.builtin.command: newaliases
+      when: aliases.changed
+      changed_when: true
+      failed_when: false        # newaliases is absent on some minimal images
+
+    - name: Verify the configuration parses
+      # msmtp --pretend resolves the account and reads the config without
+      # opening a connection, so this is a real check that does not send
+      # anything or depend on the network.
+      ansible.builtin.command: msmtp --pretend --account=zerosmtp {{ zerosmtp_to | quote }}
+      register: pretend
+      changed_when: false
+      failed_when: pretend.rc != 0
+
+  handlers: []

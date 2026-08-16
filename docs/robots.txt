@@ -1,0 +1,16 @@
+# robots.txt for https://docs.msgwing.com
+#
+# jekyll-sitemap generates /sitemap.xml on every build, but it only appends
+# the Sitemap: line to a robots.txt that already exists - it does not create
+# one. Without this file the site served no robots.txt at all, so crawlers
+# had no pointer to the sitemap and had to discover pages by following
+# links. Yandex Webmaster reported exactly that on 2026-08-05
+# ("No Sitemap files are currently used by the indexing bot").
+
+User-agent: *
+Allow: /
+
+# Everything here is public documentation meant to be indexed; there is
+# nothing to hide, so no Disallow rules.
+
+Sitemap: https://docs.msgwing.com/sitemap.xml

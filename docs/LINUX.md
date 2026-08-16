@@ -65,6 +65,21 @@ through ZeroSMTP instead of a specific script, see
 [SYSTEM-MTA.md](SYSTEM-MTA.md) for Postfix (satellite/smarthost mode),
 msmtp, and Exim4 configuration.
 
+### More than one machine
+
+Doing the msmtp setup by hand is fine once. For a fleet, use
+[`ansible-zerosmtp.yml`](https://github.com/msgwing/ZeroSMTP/blob/main/ansible-zerosmtp.yml),
+which does the same thing — installs msmtp and the sendmail shim, writes
+`/etc/msmtprc` at mode 0600, redirects root's mail to a real address, and
+verifies the result with `msmtp --pretend`:
+
+```bash
+ansible-playbook -i inventory.ini ansible-zerosmtp.yml -e zerosmtp_username=you@msgwing.com -e zerosmtp_password=... -e zerosmtp_from=you@msgwing.com -e zerosmtp_to=alerts@example.com
+```
+
+Keep the password out of your shell history by putting these variables in
+an `ansible-vault` file instead and running with `--ask-vault-pass`.
+
 ## Connectivity
 
 Everything else — firewall rules, ports, TLS — behaves the same across all

@@ -3,8 +3,7 @@ name: Lint examples
 # Builds/syntax-checks every example on push/PR, using the manifest files
 # at the repo root (package.json, composer.json, Cargo.toml, Package.swift,
 # cs-zerosmtp.csproj, pom.xml, build.gradle.kts) that point at the relevant
-# single-file example. All 12 jobs are confirmed green as of the commit that
-# added this line.
+# single-file example.
 
 on:
   push:
@@ -19,7 +18,7 @@ permissions:
   contents: read
 
 jobs:
-  # Branch protection requires each of the 12 jobs below by name, so the
+  # Branch protection requires each of the jobs below by name, so the
   # workflow itself can't use a top-level paths-ignore: a skipped *workflow*
   # never reports those check names at all, and GitHub then waits on them
   # forever, permanently blocking merge. A skipped *job* still reports (as
@@ -182,6 +181,57 @@ jobs:
         run: dart pub get
       - name: Analyze Dart example
         run: dart analyze dart-zerosmtp.dart
+
+  zig:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install libcurl development headers
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev
+      - uses: mlugg/setup-zig@v2
+        with:
+          # Pinned deliberately. Zig is pre-1.0 and breaks source
+          # compatibility between minor releases; "latest" would turn main
+          # red the day upstream renames something, with nothing wrong in
+          # the example. The file header names the same version.
+          version: 0.14.1
+      - name: Build Zig example
+        run: zig build-exe zig-zerosmtp.zig -lc -lcurl --cache-dir /tmp/zig-cache
+
+  ansible:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: Install ansible-core
+        run: pip install ansible-core
+      # --syntax-check parses the playbook and every module reference
+      # without contacting a host, so it catches a typo'd module name or a
+      # broken Jinja expression. The credential assert is not reached.
+      - name: Syntax-check Ansible playbook
+        run: ansible-playbook --syntax-check -i localhost, ansible-zerosmtp.yml
+
+  docker-compose:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # The compose file loads .env, which is gitignored for obvious
+      # reasons. .env.example carries the same variable names, so copying
+      # it is enough to let `config` resolve everything.
+      - name: Provide a .env for validation
+        run: cp .env.example .env
+      - name: Validate compose file
+        run: docker compose -f docker-compose-zerosmtp.yml config -q
 
   php:
     needs: changes

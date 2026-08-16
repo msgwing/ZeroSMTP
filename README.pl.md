@@ -13,7 +13,7 @@ wysyła ze współdzielonego adresu `@msgwing.com`, nie z Twojej domeny
 [![mx.msgwing.com status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/status.json)](https://github.com/msgwing/ZeroSMTP/actions/workflows/service-healthcheck.yml)
 [![Odliczanie do wyłączenia Basic auth w Exchange Online](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/countdown.json)](docs/EXCHANGE-ONLINE-SMTP-AUTH.md)
 [![Lint examples](https://github.com/msgwing/ZeroSMTP/actions/workflows/lint.yml/badge.svg)](https://github.com/msgwing/ZeroSMTP/actions/workflows/lint.yml)
-[![20 gotowych przykładów](https://img.shields.io/badge/przyk%C5%82ady-20%20gotowych-blue)](#przykłady-kodu)
+[![21 gotowych przykładów](https://img.shields.io/badge/przyk%C5%82ady-21%20gotowych-blue)](#przykłady-kodu)
 [![Licencja: MIT](https://img.shields.io/badge/licencja-MIT-green.svg)](LICENSE)
 
 [![Odliczanie do wyłączenia Basic auth w Exchange Online (SMTP AUTH)](https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/countdown-card.svg)](docs/EXCHANGE-ONLINE-SMTP-AUTH.md)
@@ -28,7 +28,7 @@ wysyła ze współdzielonego adresu `@msgwing.com`, nie z Twojej domeny
 | --- | --- |
 | **1. Audyt tenanta** | [`Find-SmtpAuthExposure.ps1`](Find-SmtpAuthExposure.ps1) — tylko czyta. Raportuje każdą skrzynkę, która nadal może użyć SMTP AUTH, licząc osobno te, które **dziedziczą** ustawienie tenanta — bo typowy jednolinijkowiec `-eq $false` pomija je zupełnie i potrafi pokazać zero na w pełni narażonym tenancie. |
 | **2. Sprawdzenie sprzętu** | [Lista zgodności](docs/DEVICE-COMPATIBILITY.md) — maszynowo czytalna, oparta na [`data/devices.json`](data/devices.json). Które modele mają firmware z OAuth, a [które producent skreślił](docs/NO-OAUTH-FIRMWARE.md), z odnośnikiem do każdego oświadczenia. |
-| **3. Utrzymanie wysyłki** | Darmowy relay SMTP przyjmujący login i hasło, z [20 przykładami w 18 językach](#przykłady-kodu) i [konfiguracją drukarek per marka](docs/PRINTERS.md). |
+| **3. Utrzymanie wysyłki** | Darmowy relay SMTP przyjmujący login i hasło, z [21 przykładami w 19 językach](#przykłady-kodu), [gotowcami dla Ansible i Docker Compose](#gotowce-wdrożeniowe) oraz [konfiguracją drukarek per marka](docs/PRINTERS.md). |
 
 Plus [co dokładnie znaczy każdy komunikat błędu](docs/ERROR-MESSAGES.md) i
 [przewodnik migracji](docs/EXCHANGE-ONLINE-SMTP-AUTH.md), który omawia Graph
@@ -90,8 +90,9 @@ działają z czymkolwiek, co już obsługuje SMTP.
   właśnie sedno problemu dla starych urządzeń bez aktualizacji firmware'u.
 - **Zarządzana reputacja.** Konta są generowane losowo w domenie aktywnie
   monitorowanej pod kątem nadużyć, więc nie rozgrzewasz własnego IP.
-- **20 gotowych przykładów** w 18 językach, korzystających z tych samych zmiennych
-  środowiskowych, plus przewodniki dla Windows Server, Linuksa i drukarek.
+- **21 gotowych przykładów** w 19 językach, korzystających z tych samych zmiennych
+  środowiskowych, plus gotowce dla Ansible i Docker Compose oraz przewodniki
+  dla Windows Server, Linuksa i drukarek.
 - **Sprawdzalnie działa** — odznaka statusu powyżej to realny test wykonywany
   na `mx.msgwing.com` co 6 godzin, a nie statyczny obrazek.
 
@@ -181,6 +182,7 @@ Gotowe do użycia przykłady dla `mx.msgwing.com:465` (SSL/TLS) lub `:587`
 | Perl | [perl-zerosmtp.pl](perl-zerosmtp.pl) |
 | C (libcurl) | [c-zerosmtp.c](c-zerosmtp.c) |
 | Dart | [dart-zerosmtp.dart](dart-zerosmtp.dart) |
+| Zig (libcurl) | [zig-zerosmtp.zig](zig-zerosmtp.zig) |
 | Swift | [swift-zerosmtp.swift](swift-zerosmtp.swift) |
 | PowerShell | [pwsh-zerosmtp.ps1](pwsh-zerosmtp.ps1) |
 
@@ -188,6 +190,16 @@ Każdy przykład pobiera dane logowania ze zmiennych środowiskowych
 `ZEROSMTP_*` (`ZEROSMTP_USERNAME`, `ZEROSMTP_PASSWORD`, `ZEROSMTP_FROM`,
 `ZEROSMTP_TO`, `ZEROSMTP_SUBJECT`) — nigdy nie wpisuj prawdziwych danych na
 sztywno w skrypcie.
+
+### Gotowce wdrożeniowe
+
+Nie każda migracja to zmiana w kodzie. Dwa miejsca, w których ustawienia
+SMTP faktycznie siedzą:
+
+| Gotowiec | Plik | Co robi |
+| --- | --- | --- |
+| Ansible | [ansible-zerosmtp.yml](ansible-zerosmtp.yml) | Przestawia systemową pocztę na flocie maszyn (cron, unattended-upgrades, `systemd OnFailure=`) na relay przez msmtp. Idempotentny; hasło podajesz przez `-e` albo ansible-vault, nigdy w pliku. |
+| Docker Compose | [docker-compose-zerosmtp.yml](docker-compose-zerosmtp.yml) | Wysyła jedną wiadomość z kontenera, czytając `.env`. Przydatne, żeby sprawdzić dane logowania z wnętrza tej samej sieci, w której działa właściwa aplikacja. |
 
 ### Instalacja zależności
 
@@ -204,6 +216,7 @@ ekosystemu, zamiast ręcznie szukać nazw i wersji bibliotek:
 | Java | `mvn compile` |
 | Kotlin | `gradle build` |
 | Swift | `swift build` |
+| Zig | `zig build-exe zig-zerosmtp.zig -lc -lcurl` (wymaga nagłówków libcurl) |
 | Python, Ruby, Go, Bash, PowerShell | brak — tylko biblioteka standardowa |
 
 Dane do konfiguracji:

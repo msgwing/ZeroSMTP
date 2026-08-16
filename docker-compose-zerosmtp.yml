@@ -1,0 +1,44 @@
+# docker-compose-zerosmtp.yml
+# Docker Compose - send one message through ZeroSMTP from a container
+#
+# Plenty of the applications that break in December 2026 run in containers,
+# where SMTP settings live in a compose file or an env file rather than in
+# a settings page. This is the shape of that.
+#
+# Run with:
+#   cp .env.example .env      # then fill in your credentials
+#   docker compose -f docker-compose-zerosmtp.yml run --rm send
+#
+# It runs the existing python-zerosmtp.py rather than carrying its own copy
+# of the sending code, so there is one implementation to keep correct.
+
+services:
+  send:
+    image: python:3.13-slim
+
+    # ZEROSMTP_USERNAME, ZEROSMTP_PASSWORD, ZEROSMTP_FROM, ZEROSMTP_TO and
+    # the optional ZEROSMTP_SUBJECT come from .env, which is gitignored.
+    # Never put credentials in this file - it is committed.
+    env_file:
+      - .env
+
+    # The example needs no third-party packages: python-zerosmtp.py uses
+    # smtplib from the standard library.
+    volumes:
+      - ./python-zerosmtp.py:/app/send.py:ro
+
+    working_dir: /app
+    command: ["python", "send.py"]
+
+    # Nothing here listens, stores state, or needs to talk to other
+    # services - it opens one outbound TLS connection and exits.
+    network_mode: bridge
+    restart: "no"
+
+    # Least privilege, because an example gets copied into places its
+    # author never sees.
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true

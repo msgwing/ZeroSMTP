@@ -35,7 +35,8 @@ Microsoft 365 tenants at the end of December 2026.
 | Manage Linux servers | [Linux](LINUX.md) · [system-wide relay](SYSTEM-MTA.md) |
 | Want to look up one device or product | [OAuth compatibility list](DEVICE-COMPATIBILITY.md) |
 | Have a printer whose vendor says no OAuth firmware is coming | [Devices that will never get OAuth firmware](NO-OAUTH-FIRMWARE.md) |
-| Are sending from an app or script | [20 code examples across 18 languages](CODE-EXAMPLES.md) |
+| Are sending from an app or script | [21 code examples across 19 languages](CODE-EXAMPLES.md) |
+| Deploy with Ansible or Docker Compose | [Deployment recipes](CODE-EXAMPLES.md#deployment-recipes) |
 | Have an error message to look up | [535 5.7.139 and other SMTP AUTH errors](ERROR-MESSAGES.md) |
 | Have it failing or timing out | [Troubleshooting](TROUBLESHOOTING.md) |
 | Have monitoring/alerting tools that need to send mail | [Monitoring alerts](MONITORING.md) |
