@@ -15,7 +15,7 @@ The vendor has stated that no OAuth firmware is coming for these models. This is
 
 ## What the vendor says
 
-Marked "N/A" in the vendor's own OAuth column. The advisory points these owners at a different mail service rather than at an update. Other ineo product groups in the same advisory do have OAuth firmware - check the exact model.
+Marked "N/A" in the vendor's own OAuth column. The advisory points these owners at a different mail service rather than at an update. Other ineo product groups in the same advisory do have OAuth firmware - check the exact model. A third category exists that is neither: several Product Group 10 models are listed as "Under planning" with no release date, so their owners have no answer yet in either direction.
 
 [Read the vendor's statement in full](https://www.develop.eu/en/support/discontinuation-of-basic-authentication-for-smtp.html)  
 Everything on this page comes from that document. If it and this page disagree, the vendor is right and this page is out of date — [say so](https://github.com/msgwing/ZeroSMTP/issues/new?template=device_report.yml).
@@ -28,8 +28,18 @@ Everything on this page comes from that document. If it and this page disagree, 
 - `ineo+ 266`
 - `ineo+ 256`
 - `ineo+ 226`
+- `ineo 4752`
+- `ineo 4052`
 - `ineo 4750`
 - `ineo 4050`
+- `ineo+ 3110`
+- `ineo+ 3100P`
+- `ineo+ 754e`
+- `ineo+ 654e`
+- `ineo 246`
+- `ineo 236`
+- `ineo 226`
+- `ineo 216`
 - `ineo 4700P`
 - `ineo 3301P`
 - `ineo 4000P`

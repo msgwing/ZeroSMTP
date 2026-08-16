@@ -31,7 +31,7 @@ answer.
 
 | System | OAuth status | Named models | Evidence |
 | --- | --- | --- | --- |
-| **[Konica Minolta / DEVELOP](devices/konica-minolta-develop-ineo-and-ineo-mfps.md)** ineo and ineo+ MFPs | **No OAuth firmware planned** | `ineo 306`, `ineo 7228`, `ineo 266`, `ineo+ 266`, `ineo+ 256`, `ineo+ 226`, `ineo 4750`, `ineo 4050`, `ineo 4700P`, `ineo 3301P`, `ineo 4000P`, `ineo 165 variants`, `ineo 185 variants` | [advisory](https://www.develop.eu/en/support/discontinuation-of-basic-authentication-for-smtp.html) |
+| **[Konica Minolta / DEVELOP](devices/konica-minolta-develop-ineo-and-ineo-mfps.md)** ineo and ineo+ MFPs | **No OAuth firmware planned** | `ineo 306`, `ineo 7228`, `ineo 266`, `ineo+ 266`, `ineo+ 256`, `ineo+ 226`, `ineo 4752`, `ineo 4052`, `ineo 4750`, `ineo 4050`, `ineo+ 3110`, `ineo+ 3100P`, `ineo+ 754e`, `ineo+ 654e`, `ineo 246`, `ineo 236`, `ineo 226`, `ineo 216`, `ineo 4700P`, `ineo 3301P`, `ineo 4000P`, `ineo 165 variants`, `ineo 185 variants` | [advisory](https://www.develop.eu/en/support/discontinuation-of-basic-authentication-for-smtp.html) |
 | **[Canon](devices/canon-maxify-mb2755.md)** Maxify MB2755 | No OAuth for this purpose | `Maxify MB2755` | [advisory](https://github.com/msgwing/ZeroSMTP/blob/main/docs/DEVICE-CASE-STUDIES.md) |
 | **[QNAP](devices/qnap-nas-notification-settings.md)** NAS notification settings | No OAuth for this purpose | — | [advisory](https://gist.github.com/msgwing/39958d909e085ae9cc0e6b3584d930bf) |
 | **[Microsoft](devices/microsoft-dynamics-nav-business-central.md)** Dynamics NAV / Business Central | Some models or versions | — | [advisory](https://www.innovia.com/blog/microsoft-to-retire-basic-auth-smtp-for-exchange-online-what-bc-nav-users-need-to-know) |
@@ -50,7 +50,7 @@ answer.
 ### Notes per entry
 
 **Konica Minolta / DEVELOP — ineo and ineo+ MFPs**  
-Marked "N/A" in the vendor's own OAuth column. The advisory points these owners at a different mail service rather than at an update. Other ineo product groups in the same advisory do have OAuth firmware - check the exact model.
+Marked "N/A" in the vendor's own OAuth column. The advisory points these owners at a different mail service rather than at an update. Other ineo product groups in the same advisory do have OAuth firmware - check the exact model. A third category exists that is neither: several Product Group 10 models are listed as "Under planning" with no release date, so their owners have no answer yet in either direction.
 
 **Canon — Maxify MB2755**  
 Separate failure mode from OAuth: the firmware ships a fixed root CA store predating current Let's Encrypt roots, so certificate validation fails regardless of authentication. Hardware-confirmed, unchanged after a firmware update. Verification has to be disabled on the device.
@@ -62,7 +62,7 @@ The notification settings accept username and password only; there is no OAuth o
 Newer Business Central handles modern auth. Older on-prem NAV installs generally need the SMTP account repointed.
 
 **Veeam — Backup for Microsoft 365 and related products**  
-Older versions support SMTP basic auth only; newer versions added OAuth. Upgrading is the fix where the version supports it.
+Corrected 2026-08-16 - the previous note claimed newer versions added OAuth for SMTP, which the linked page does not support. The v8 documentation offers "SMTP server (basic authentication)" and does not describe an OAuth option for SMTP notifications; modern app-only authentication appears elsewhere in the product, for Entra applications, not here. So the fix is not "upgrade and SMTP gets OAuth" - check whether your build offers a notification method that is not SMTP at all, and treat the SMTP path as basic-auth only.
 
 **Xerox — ConnectKey printers and MFPs**  
 Device Code Flow is supported broadly; Client Credentials Flow only on the ConnectKey models listed. Devices not on Xerox's supported-firmware list are the problem cases and are not promised an update. Affects Scan to Email, Internet Fax (Send), Fax Forward to Email and Auto Email Notifications.
@@ -86,10 +86,10 @@ Vendor published a timeline notice. Apply their update if one exists for the ver
 Workflow emails failing on Basic auth removal, reported in the vendor's own community.
 
 **ManageEngine — OpManager**  
-Vendor publishes a fix guide for the SMTPClientAuth error.
+OpManager supports OAuth 2.0 from build 126306, so for anyone on that build or later this is a settings change rather than a migration - the vendor's guide states it directly. The same page also documents re-enabling SMTP AUTH in the Exchange admin centre, which works until the end of December 2026 and not after; treat it as breathing room, not a fix.
 
 **Ricoh — multifunction printers**  
-Ricoh publishes affected products with per-product firmware status. Not reproduced here because the list is long and revised; check the model against the advisory.
+Ricoh publishes affected products with per-product firmware status, revised on 2026-01-30 into two tables - products with released OAuth firmware, and products newly added - plus a third group the Ricoh Firmware Update Tool cannot update, where the local representative has to do it. Not reproduced here because the list is long and still moving; check the model against the advisory. Ricoh does not say any product is permanently excluded, but for devices still waiting its own recommendation is to stop relying on email from the device or to use a mail service other than Exchange Online.
 
 **Microsoft — Teams Rooms**  
 Microsoft's own product. Enable modern auth on the resource account - no relay needed.

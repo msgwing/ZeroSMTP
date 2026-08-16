@@ -25,12 +25,16 @@
       "models": [
         "ineo 306", "ineo 7228", "ineo 266",
         "ineo+ 266", "ineo+ 256", "ineo+ 226",
+        "ineo 4752", "ineo 4052",
         "ineo 4750", "ineo 4050",
+        "ineo+ 3110", "ineo+ 3100P",
+        "ineo+ 754e", "ineo+ 654e",
+        "ineo 246", "ineo 236", "ineo 226", "ineo 216",
         "ineo 4700P", "ineo 3301P", "ineo 4000P",
         "ineo 165 variants", "ineo 185 variants"
       ],
       "evidence": "https://www.develop.eu/en/support/discontinuation-of-basic-authentication-for-smtp.html",
-      "notes": "Marked \"N/A\" in the vendor's own OAuth column. The advisory points these owners at a different mail service rather than at an update. Other ineo product groups in the same advisory do have OAuth firmware - check the exact model."
+      "notes": "Marked \"N/A\" in the vendor's own OAuth column. The advisory points these owners at a different mail service rather than at an update. Other ineo product groups in the same advisory do have OAuth firmware - check the exact model. A third category exists that is neither: several Product Group 10 models are listed as \"Under planning\" with no release date, so their owners have no answer yet in either direction."
     },
     {
       "vendor": "Xerox",
@@ -51,7 +55,7 @@
       "status": "check-advisory",
       "models": [],
       "evidence": "https://www.ricoh.com/info/2025/0526_1",
-      "notes": "Ricoh publishes affected products with per-product firmware status. Not reproduced here because the list is long and revised; check the model against the advisory."
+      "notes": "Ricoh publishes affected products with per-product firmware status, revised on 2026-01-30 into two tables - products with released OAuth firmware, and products newly added - plus a third group the Ricoh Firmware Update Tool cannot update, where the local representative has to do it. Not reproduced here because the list is long and still moving; check the model against the advisory. Ricoh does not say any product is permanently excluded, but for devices still waiting its own recommendation is to stop relying on email from the device or to use a mail service other than Exchange Online."
     },
     {
       "vendor": "Brother",
@@ -91,7 +95,7 @@
       "status": "partial",
       "models": [],
       "evidence": "https://helpcenter.veeam.com/docs/vbo365/guide/smtp_server.html",
-      "notes": "Older versions support SMTP basic auth only; newer versions added OAuth. Upgrading is the fix where the version supports it."
+      "notes": "Corrected 2026-08-16 - the previous note claimed newer versions added OAuth for SMTP, which the linked page does not support. The v8 documentation offers \"SMTP server (basic authentication)\" and does not describe an OAuth option for SMTP notifications; modern app-only authentication appears elsewhere in the product, for Entra applications, not here. So the fix is not \"upgrade and SMTP gets OAuth\" - check whether your build offers a notification method that is not SMTP at all, and treat the SMTP path as basic-auth only."
     },
     {
       "vendor": "Cisco",
@@ -131,7 +135,7 @@
       "status": "check-advisory",
       "models": [],
       "evidence": "https://www.manageengine.com/network-monitoring/how-to/fix-smtpclientauth-disabled-error.html",
-      "notes": "Vendor publishes a fix guide for the SMTPClientAuth error."
+      "notes": "OpManager supports OAuth 2.0 from build 126306, so for anyone on that build or later this is a settings change rather than a migration - the vendor's guide states it directly. The same page also documents re-enabling SMTP AUTH in the Exchange admin centre, which works until the end of December 2026 and not after; treat it as breathing room, not a fix."
     },
     {
       "vendor": "Cerberus",

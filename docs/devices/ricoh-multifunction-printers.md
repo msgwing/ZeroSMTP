@@ -15,7 +15,7 @@ The vendor publishes a per-model list and revises it over time, so it is not cop
 
 ## What the vendor says
 
-Ricoh publishes affected products with per-product firmware status. Not reproduced here because the list is long and revised; check the model against the advisory.
+Ricoh publishes affected products with per-product firmware status, revised on 2026-01-30 into two tables - products with released OAuth firmware, and products newly added - plus a third group the Ricoh Firmware Update Tool cannot update, where the local representative has to do it. Not reproduced here because the list is long and still moving; check the model against the advisory. Ricoh does not say any product is permanently excluded, but for devices still waiting its own recommendation is to stop relying on email from the device or to use a mail service other than Exchange Online.
 
 [Read the vendor's statement in full](https://www.ricoh.com/info/2025/0526_1)  
 Everything on this page comes from that document. If it and this page disagree, the vendor is right and this page is out of date — [say so](https://github.com/msgwing/ZeroSMTP/issues/new?template=device_report.yml).

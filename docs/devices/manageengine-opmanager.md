@@ -15,7 +15,7 @@ The vendor publishes a per-model list and revises it over time, so it is not cop
 
 ## What the vendor says
 
-Vendor publishes a fix guide for the SMTPClientAuth error.
+OpManager supports OAuth 2.0 from build 126306, so for anyone on that build or later this is a settings change rather than a migration - the vendor's guide states it directly. The same page also documents re-enabling SMTP AUTH in the Exchange admin centre, which works until the end of December 2026 and not after; treat it as breathing room, not a fix.
 
 [Read the vendor's statement in full](https://www.manageengine.com/network-monitoring/how-to/fix-smtpclientauth-disabled-error.html)  
 Everything on this page comes from that document. If it and this page disagree, the vendor is right and this page is out of date — [say so](https://github.com/msgwing/ZeroSMTP/issues/new?template=device_report.yml).

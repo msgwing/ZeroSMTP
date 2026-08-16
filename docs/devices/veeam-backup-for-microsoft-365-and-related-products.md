@@ -15,7 +15,7 @@ OAuth exists for part of the range. The model or version number decides, which m
 
 ## What the vendor says
 
-Older versions support SMTP basic auth only; newer versions added OAuth. Upgrading is the fix where the version supports it.
+Corrected 2026-08-16 - the previous note claimed newer versions added OAuth for SMTP, which the linked page does not support. The v8 documentation offers "SMTP server (basic authentication)" and does not describe an OAuth option for SMTP notifications; modern app-only authentication appears elsewhere in the product, for Entra applications, not here. So the fix is not "upgrade and SMTP gets OAuth" - check whether your build offers a notification method that is not SMTP at all, and treat the SMTP path as basic-auth only.
 
 [Read the vendor's statement in full](https://helpcenter.veeam.com/docs/vbo365/guide/smtp_server.html)  
 Everything on this page comes from that document. If it and this page disagree, the vendor is right and this page is out of date — [say so](https://github.com/msgwing/ZeroSMTP/issues/new?template=device_report.yml).
