@@ -1,0 +1,48 @@
+{
+  "$comment": [
+    "How much public code still points at Microsoft 365 SMTP, measured",
+    "weekly by .github/workflows/blast-radius.yml and rendered into",
+    "docs/BLAST-RADIUS.md by tools/build-blast-radius.py.",
+    "",
+    "This exists because nobody has the number. Every article about the",
+    "December 2026 Basic auth shutdown says 'many systems will be affected'.",
+    "That is not a fact, it is a shrug. GitHub code search can put a floor",
+    "under it, and a weekly series shows whether the world is actually",
+    "fixing it or not.",
+    "",
+    "WHAT THE NUMBER IS: public files, indexed by GitHub code search, that",
+    "contain a Microsoft 365 SMTP hostname.",
+    "",
+    "WHAT IT IS NOT: a count of systems that will break. The same file may",
+    "be a live deployment, a template, a tutorial, or a fork of one of",
+    "those. Overstating it would make the figure easy to dismiss, which",
+    "defeats the point of measuring it.",
+    "",
+    "Counts are what GitHub reports, and GitHub's totals are approximate.",
+    "A query that times out is recorded as null, never as zero - a failed",
+    "measurement that looks like a real drop would poison the series."
+  ],
+  "queries": [
+    {
+      "id": "o365-smtp-host",
+      "q": "\"smtp.office365.com\" NOT example",
+      "label": "smtp.office365.com",
+      "note": "The commercial Microsoft 365 SMTP endpoint. `NOT example` is doing two jobs: the bare phrase returns so many matches that GitHub's search API times out counting them, and excluding 'example' drops a large share of tutorials and placeholder templates. The remainder skews towards real configuration."
+    },
+    {
+      "id": "outlook-smtp-host",
+      "q": "\"smtp-mail.outlook.com\"",
+      "label": "smtp-mail.outlook.com",
+      "note": "The consumer Outlook.com endpoint, widely used by small deployments, hobby projects and devices set up with a personal account."
+    }
+  ],
+  "samples": [
+    {
+      "date": "2026-08-16",
+      "counts": {
+        "o365-smtp-host": 24960,
+        "outlook-smtp-host": 22080
+      }
+    }
+  ]
+}

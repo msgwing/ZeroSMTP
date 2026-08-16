@@ -1,0 +1,149 @@
+name: Blast radius
+
+# Measures how much public code still points at Microsoft 365 SMTP, once a
+# week, and commits the result so the series can be checked rather than
+# taken on trust.
+#
+# Why bother: nobody has published this number. Every article about the
+# December 2026 Basic auth shutdown says "many systems will be affected",
+# which is a shrug rather than a fact. GitHub code search can put a floor
+# under it, and the weekly series answers the question a single number
+# cannot - is anybody actually fixing this?
+#
+# The measurement is deliberately conservative. It counts public files
+# containing a hostname, not systems that will break, and docs/BLAST-RADIUS.md
+# says so at length. A figure that claims more than it can support is a figure
+# the first informed reader discards.
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'      # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write            # commits the sample and the rendered page
+
+concurrency:
+  group: blast-radius
+  cancel-in-progress: false
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+
+      - name: Measure
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          # Today's date comes from the runner rather than from Python, so
+          # that the sample date and the commit date cannot disagree.
+          today=$(date -u +%Y-%m-%d)
+          echo "date=$today" >> "$GITHUB_ENV"
+
+          counts='{}'
+          failures=0
+          total=0
+
+          # jq -c so each query object survives the loop intact; the query
+          # strings contain spaces and quotes.
+          while read -r row; do
+            id=$(echo "$row" | jq -r .id)
+            q=$(echo "$row" | jq -r .q)
+            total=$((total + 1))
+
+            n=""
+            # The broadest phrases make GitHub's search API time out. Retry
+            # a few times before giving up; a transient 408 is common.
+            for attempt in 1 2 3 4; do
+              n=$(gh api -X GET search/code -f q="$q" -f per_page=1 \
+                    --jq .total_count 2>/dev/null || true)
+              case "$n" in
+                ''|*message*|*[!0-9]*) n=""; sleep 15 ;;
+                *) break ;;
+              esac
+            done
+
+            if [ -z "$n" ]; then
+              echo "::warning::'$q' could not be counted - recording null"
+              failures=$((failures + 1))
+              counts=$(echo "$counts" | jq --arg k "$id" '.[$k] = null')
+            else
+              echo "$q -> $n"
+              counts=$(echo "$counts" | jq --arg k "$id" --argjson v "$n" '.[$k] = $v')
+            fi
+
+            # Code search allows 10 authenticated requests a minute.
+            sleep 10
+          done < <(jq -c '.queries[]' data/blast-radius.json)
+
+          # A run where nothing could be counted must not append a row of
+          # nulls: that is an outage, and a gap in the series is more honest
+          # than a fabricated low point.
+          if [ "$failures" = "$total" ]; then
+            echo "::error::All $total queries failed. Not recording a sample."
+            exit 1
+          fi
+
+          # Replace today's sample if one exists, so a re-run corrects rather
+          # than duplicates.
+          jq --arg d "$today" --argjson c "$counts" \
+            '.samples = ((.samples | map(select(.date != $d))) + [{date: $d, counts: $c}])
+             | .samples |= sort_by(.date)' \
+            data/blast-radius.json > tmp.json
+          mv tmp.json data/blast-radius.json
+
+      - name: Render the page
+        run: python tools/build-blast-radius.py
+
+      - name: Commit
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- data/blast-radius.json docs/BLAST-RADIUS.md; then
+            echo "Counts unchanged - nothing to commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/blast-radius.json docs/BLAST-RADIUS.md
+          git commit -m "data: blast radius measurement ${{ env.date }}"
+          git push
+
+      - name: Badge
+        run: |
+          set -euo pipefail
+          # Largest single measured count. Deliberately not a sum: one file
+          # can contain both hostnames, and a total would double-count.
+          read -r label value < <(
+            jq -r '
+              (.samples | last | .counts) as $c
+              | [.queries[] | select($c[.id] != null) | {label, n: $c[.id]}]
+              | if length == 0 then "none 0"
+                else (max_by(.n) | "\(.label) \(.n)") end' \
+              data/blast-radius.json)
+
+          [ "$label" = "none" ] && { echo "Nothing measured; badge unchanged."; exit 0; }
+
+          formatted=$(printf "%'d" "$value" | tr ',' ' ')
+
+          git fetch -q origin status
+          git checkout -q -B status origin/status
+          cat > blast-radius.json <<JSON
+          {"schemaVersion":1,"label":"$label in public code","message":"$formatted files","color":"critical"}
+          JSON
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add blast-radius.json
+          if git diff --cached --quiet; then
+            echo "Badge unchanged."
+          else
+            git commit -q -m "status: blast radius badge ${{ env.date }}"
+            git push -q origin status
+          fi

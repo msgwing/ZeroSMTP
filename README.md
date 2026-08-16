@@ -34,6 +34,13 @@ Plus [what every error message actually means](docs/ERROR-MESSAGES.md), and a
 [migration guide](docs/EXCHANGE-ONLINE-SMTP-AUTH.md) that covers Graph API,
 Direct Send and paid relays — not just this one.
 
+**How big is this actually?** Nobody had published a number, so we measure one
+every week: at least **24,960 public files on GitHub** still contain a
+Microsoft 365 SMTP hostname. That is a count of files, not of systems that
+will break, and [the page says exactly what it does and does not
+mean](docs/BLAST-RADIUS.md) — along with the raw data, so you can check it
+rather than trust it.
+
 > **Getting `535 5.7.139 Authentication unsuccessful, basic authentication is disabled`?**
 > That's Microsoft switching off Basic auth for SMTP AUTH — [start
 > here](docs/ERROR-MESSAGES.md). Three of the four causes are still reversible
@@ -108,7 +115,7 @@ scan-to-email · IoT and device notifications · homelabs.
 > answer for your own tenant. Read-only, and it counts the mailboxes that
 > inherit the tenant setting — the ones the usual one-liner misses.
 
-Setup guides: [Network printers](docs/PRINTERS.md) · [Popular applications](docs/APPS.md) · [Linux (Debian/Ubuntu/Rocky/Fedora/openSUSE)](docs/LINUX.md) · [System-wide mail relay (Postfix/msmtp/Exim4)](docs/SYSTEM-MTA.md) · [Windows Server](docs/WINDOWS-SERVER.md) · [Exchange Online SMTP AUTH migration](docs/EXCHANGE-ONLINE-SMTP-AUTH.md) · [Monitoring alerts](docs/MONITORING.md) · [OAuth compatibility list](docs/DEVICE-COMPATIBILITY.md) · [No OAuth firmware coming](docs/NO-OAUTH-FIRMWARE.md) · [Device case studies](docs/DEVICE-CASE-STUDIES.md) · [Troubleshooting](docs/TROUBLESHOOTING.md) · [Reliability (retries)](docs/RELIABILITY.md) · [vs. other free relays](docs/ALTERNATIVES.md) · [FAQ](docs/FAQ.md)
+Setup guides: [Network printers](docs/PRINTERS.md) · [Popular applications](docs/APPS.md) · [Linux (Debian/Ubuntu/Rocky/Fedora/openSUSE)](docs/LINUX.md) · [System-wide mail relay (Postfix/msmtp/Exim4)](docs/SYSTEM-MTA.md) · [Windows Server](docs/WINDOWS-SERVER.md) · [Exchange Online SMTP AUTH migration](docs/EXCHANGE-ONLINE-SMTP-AUTH.md) · [Monitoring alerts](docs/MONITORING.md) · [OAuth compatibility list](docs/DEVICE-COMPATIBILITY.md) · [No OAuth firmware coming](docs/NO-OAUTH-FIRMWARE.md) · [Device case studies](docs/DEVICE-CASE-STUDIES.md) · [Troubleshooting](docs/TROUBLESHOOTING.md) · [Reliability (retries)](docs/RELIABILITY.md) · [vs. other free relays](docs/ALTERNATIVES.md) · [How much public code breaks](docs/BLAST-RADIUS.md) · [FAQ](docs/FAQ.md)
 
 > **Did this get a specific device sending again?** Tell us which one — a
 > [device report](https://github.com/msgwing/ZeroSMTP/issues/new?template=device_report.yml)
