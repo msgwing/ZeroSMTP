@@ -240,12 +240,15 @@ def zbuduj_strone(wpis, aktualizacja):
             "[quiz on that page](../EXCHANGE-ONLINE-SMTP-AUTH.md#zc-quiz) gives "
             "a recommendation you can link to.",
             "",
-            "[ZeroSMTP](https://github.com/msgwing/ZeroSMTP#quickstart) is the "
-            "second option. It is free with no paid tier, accepts plain SMTP "
-            "AUTH, and is capped at 200 messages a day — and it sends from a "
-            "shared `@msgwing.com` address, not your own domain. If the "
-            "from-address has to be yours, it is the wrong answer and the "
-            "migration guide covers the others.",
+            "ZeroSMTP is the second option. It is free with no paid tier, "
+            "accepts plain SMTP AUTH, and is capped at 200 messages a day — "
+            "and it sends from a shared `@msgwing.com` address, not your own "
+            "domain. If the from-address has to be yours, it is the wrong "
+            "answer and the migration guide covers the others.",
+            "",
+            "[Create a free account](https://msgwing.com) · "
+            "[what to put in the device's SMTP fields](../PRINTERS.md) · "
+            "[the code examples](../CODE-EXAMPLES.md)",
             "",
         ]
 

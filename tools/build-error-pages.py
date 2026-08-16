@@ -186,12 +186,15 @@ def zbuduj(wpis, aktualizacja):
             "for any recipient, and is three fields on the device.",
             "",
             "[The migration guide](../EXCHANGE-ONLINE-SMTP-AUTH.md) covers all "
-            "of them, Graph API and paid relays included. "
-            "[ZeroSMTP](https://github.com/msgwing/ZeroSMTP#quickstart) is the "
+            "of them, Graph API and paid relays included. ZeroSMTP is the "
             "third: free, no paid tier, 200 messages a day, and it sends from a "
             "shared `@msgwing.com` address rather than your own domain. If the "
             "from-address has to be yours, it is the wrong answer — the guide "
             "covers the others honestly.",
+            "",
+            "[Create a free account](https://msgwing.com) · "
+            "[settings by printer brand](../PRINTERS.md) · "
+            "[code examples in 19 languages](../CODE-EXAMPLES.md)",
             "",
         ]
 
