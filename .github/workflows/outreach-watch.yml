@@ -40,8 +40,15 @@ jobs:
           script: |
             const LABEL = 'outreach';
             const MAX_NEW = 3;          // per run, so a noisy day cannot flood the queue
-            const LOOKBACK_DAYS = 14;
             const MARKER = 'outreach-id:';
+
+            // 90 days, not 14. Measured on the first run: the 14-day window
+            // returned zero from Stack Exchange across 15 queries, while the
+            // same queries with no date filter returned matches - the topic
+            // simply has not peaked yet. A Stack Exchange answer keeps
+            // earning long after it is posted, so an older question is still
+            // worth answering; a stale Reddit thread would not be.
+            const SE_LOOKBACK_DAYS = 90;
 
             // --- what to look for -------------------------------------------------
             // Stack Exchange search is bare-token AND matching, same as GitHub's.
@@ -55,10 +62,24 @@ jobs:
               'free smtp relay',
             ];
 
+            // `smtp auth disabled in:title` was here on the first run and
+            // produced two false positives out of three results - a Terraform
+            // provider feature request and an Angular boilerplate, neither of
+            // which is anybody looking for a relay. Bare "smtp" plus "disabled"
+            // is not a signal. What worked was the error code.
             const GH_QUERIES = [
+              '5.7.139 in:title is:issue',
+              '"basic authentication is disabled" in:title is:issue',
               'smtp free relay in:title is:issue is:open',
-              'smtp auth disabled in:title is:issue is:open',
-              '5.7.139 in:title is:issue is:open',
+            ];
+
+            // A candidate has to name the actual problem, not merely mention
+            // SMTP. Every false positive on the first run failed this gate.
+            const REQUIRED = [
+              '5.7.139', '5.7.30', 'smtpclientauth', 'basic auth',
+              'basic authentication', 'office 365', 'office365',
+              'microsoft 365', 'exchange online', 'oauth', 'm365',
+              'scan to email', 'smtp relay', 'relay',
             ];
 
             // Titles containing these are asking a different question - bulk
@@ -70,7 +91,7 @@ jobs:
               'mailbox migration', 'exchange 2013', 'exchange 2016 install',
             ];
 
-            const since = Math.floor(Date.now() / 1000) - LOOKBACK_DAYS * 86400;
+            const since = Math.floor(Date.now() / 1000) - SE_LOOKBACK_DAYS * 86400;
 
             // --- what has already been queued -------------------------------------
             const seen = new Set();
@@ -168,13 +189,16 @@ jobs:
             // --- filter and rank ---------------------------------------------------
             const fresh = [];
             const byId = new Set();
+            let rejected = 0;
             for (const c of candidates) {
               if (seen.has(c.id) || byId.has(c.id)) continue;
-              const lower = c.title.toLowerCase();
-              if (SKIP.some(w => lower.includes(w))) continue;
+              const lower = (c.title + ' ' + c.tags.join(' ')).toLowerCase();
+              if (SKIP.some(w => lower.includes(w))) { rejected++; continue; }
+              if (!REQUIRED.some(w => lower.includes(w))) { rejected++; continue; }
               byId.add(c.id);
               fresh.push(c);
             }
+            core.info(`${rejected} result(s) rejected as off-topic.`);
 
             // A question with no answer yet is where a good answer is worth
             // most - both to the asker and in the eventual search result.
