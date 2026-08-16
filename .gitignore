@@ -35,6 +35,11 @@ obj/
 *.class
 .build/
 Packages/
+# ...but packages/ (lowercase) is ours - the published npm CLI lives there.
+# On a case-insensitive filesystem the Swift rule above swallows it, so this
+# exception is load-bearing rather than tidy-up. Removing it silently drops
+# packages/zerosmtp-check from every commit.
+!packages/
 .gradle/
 build/
 free-for-dev/

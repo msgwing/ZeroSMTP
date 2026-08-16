@@ -277,6 +277,45 @@ jobs:
       - name: Type-check TypeScript example
         run: npm run typecheck
 
+  zerosmtp-check:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      # The package has no dependencies, so there is nothing to install and
+      # the tool can simply be run. This is a functional test, not a syntax
+      # check: a diagnostic that compiles and lies is worse than none.
+      - name: Help text
+        run: node packages/zerosmtp-check/index.js --help
+      - name: Unresolvable host exits 2
+        run: |
+          set +e
+          node packages/zerosmtp-check/index.js this-host-does-not-exist.invalid --timeout 3000
+          code=$?
+          set -e
+          [ "$code" = "2" ] || { echo "::error::expected exit 2, got $code"; exit 1; }
+      - name: Real check against mx.msgwing.com produces valid JSON
+        # Exit 0 (all good) and exit 1 (a port unreachable) are both correct
+        # behaviour and depend on the relay, so the assertion is on the
+        # output shape rather than on the relay being up. That keeps this
+        # job honest without making it flaky.
+        run: |
+          set +e
+          out=$(node packages/zerosmtp-check/index.js --json)
+          code=$?
+          set -e
+          echo "$out"
+          [ "$code" = "0" ] || [ "$code" = "1" ] \
+            || { echo "::error::unexpected exit $code"; exit 1; }
+          echo "$out" | jq -e '.host and (.addresses | length > 0) and (.ports | length == 2) and has("ok")' > /dev/null
+      - name: Package metadata is publishable
+        run: npm pack --dry-run
+        working-directory: packages/zerosmtp-check
+
   csharp:
     needs: changes
     if: needs.changes.outputs.code == 'true'

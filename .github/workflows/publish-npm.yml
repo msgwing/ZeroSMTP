@@ -1,0 +1,82 @@
+name: Publish zerosmtp-check to npm
+
+# Publishes packages/zerosmtp-check to the PUBLIC npm registry.
+#
+# Not GitHub Packages. npm.pkg.github.com requires the person installing to
+# authenticate with a GitHub token even for a public package, which makes it
+# useless as a way for anybody to find or run the tool - and being findable
+# and runnable with one `npx` is the entire reason this package exists.
+#
+# Manual only. A package version is permanent: npm allows unpublish for 72
+# hours and then never again, and the name is claimed forever. That is not a
+# thing to do on every push to main.
+#
+# Requires an NPM_TOKEN secret - an automation token from npmjs.com with
+# publish rights. Until that secret exists this workflow cannot run, which is
+# the intended state: publishing is the owner's decision.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Pack and validate without publishing'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  id-token: write        # npm provenance
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/zerosmtp-check
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+
+      # Publishing something that does not work is worse than not publishing.
+      # These are the same checks the lint workflow runs, repeated here so
+      # that a manual dispatch cannot skip them.
+      - name: It runs
+        run: node index.js --help
+      - name: It reports a real result
+        run: node index.js --json || [ $? = 1 ]
+
+      - name: Refuse to republish an existing version
+        run: |
+          name=$(node -p "require('./package.json').name")
+          version=$(node -p "require('./package.json').version")
+          if npm view "$name@$version" version >/dev/null 2>&1; then
+            echo "::error::$name@$version is already on npm. Bump the version."
+            exit 1
+          fi
+          echo "$name@$version is not published yet."
+
+      - name: Pack
+        run: npm pack --dry-run
+
+      - name: Publish
+        if: ${{ inputs.dry_run == false }}
+        # --provenance links the published tarball to this workflow run, so
+        # anyone can verify on npmjs.com that it was built from this commit
+        # in this repository rather than uploaded from somebody's laptop.
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Summary
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            echo "Dry run only - nothing was published." >> "$GITHUB_STEP_SUMMARY"
+          else
+            v=$(node -p "require('./package.json').version")
+            echo "Published zerosmtp-check@$v" >> "$GITHUB_STEP_SUMMARY"
+            echo "https://www.npmjs.com/package/zerosmtp-check" >> "$GITHUB_STEP_SUMMARY"
+          fi

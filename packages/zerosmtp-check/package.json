@@ -1,0 +1,46 @@
+{
+  "name": "zerosmtp-check",
+  "version": "1.0.0",
+  "description": "Check whether outbound SMTP actually works from this machine: TCP, STARTTLS/implicit TLS, certificate validation and AUTH mechanisms, against any host. No credentials, no mail sent, no dependencies.",
+  "type": "module",
+  "bin": {
+    "zerosmtp-check": "./index.js"
+  },
+  "main": "./index.js",
+  "files": [
+    "index.js",
+    "README.md"
+  ],
+  "keywords": [
+    "smtp",
+    "smtp-test",
+    "smtp-check",
+    "smtp-auth",
+    "starttls",
+    "email",
+    "email-troubleshooting",
+    "port-587",
+    "port-465",
+    "office365",
+    "exchange-online",
+    "microsoft365",
+    "basic-authentication",
+    "connectivity",
+    "diagnostics",
+    "cli",
+    "sysadmin"
+  ],
+  "homepage": "https://docs.msgwing.com/TROUBLESHOOTING.html",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/msgwing/ZeroSMTP.git",
+    "directory": "packages/zerosmtp-check"
+  },
+  "bugs": {
+    "url": "https://github.com/msgwing/ZeroSMTP/issues"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

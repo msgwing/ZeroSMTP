@@ -23,6 +23,27 @@ to check. Run the connectivity-only healthcheck (no credentials needed, no
 email sent):
 
 ```bash
+npx zerosmtp-check
+```
+
+Nothing to install and nothing to clone. It resolves the host, connects on
+587 and 465, does the STARTTLS or implicit-TLS handshake, checks whether
+*this machine's* trust store accepts the certificate, and lists the `AUTH`
+mechanisms the server offers. No credentials are sent and no mail is
+delivered — the conversation stops after `EHLO`.
+
+It works against any SMTP host, which is the point when you are trying to
+establish whether the problem is the server or your network:
+
+```bash
+npx zerosmtp-check smtp.office365.com
+npx zerosmtp-check mail.example.com --port 25
+npx zerosmtp-check --json          # exit 0 = fine, 1 = a problem, 2 = DNS
+```
+
+If Node is not available, the repository has the same checks as scripts:
+
+```bash
 ./check-connection.sh
 ```
 
