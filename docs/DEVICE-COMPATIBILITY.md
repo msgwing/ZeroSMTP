@@ -31,21 +31,21 @@ answer.
 
 | System | OAuth status | Named models | Evidence |
 | --- | --- | --- | --- |
-| **Konica Minolta / DEVELOP** ineo and ineo+ MFPs | **No OAuth firmware planned** | `ineo 306`, `ineo 7228`, `ineo 266`, `ineo+ 266`, `ineo+ 256`, `ineo+ 226`, `ineo 4750`, `ineo 4050`, `ineo 4700P`, `ineo 3301P`, `ineo 4000P`, `ineo 165 variants`, `ineo 185 variants` | [advisory](https://www.develop.eu/en/support/discontinuation-of-basic-authentication-for-smtp.html) |
-| **Canon** Maxify MB2755 | No OAuth for this purpose | `Maxify MB2755` | [advisory](https://github.com/msgwing/ZeroSMTP/blob/main/docs/DEVICE-CASE-STUDIES.md) |
-| **QNAP** NAS notification settings | No OAuth for this purpose | — | [advisory](https://gist.github.com/msgwing/39958d909e085ae9cc0e6b3584d930bf) |
-| **Microsoft** Dynamics NAV / Business Central | Some models or versions | — | [advisory](https://www.innovia.com/blog/microsoft-to-retire-basic-auth-smtp-for-exchange-online-what-bc-nav-users-need-to-know) |
-| **Veeam** Backup for Microsoft 365 and related products | Some models or versions | — | [advisory](https://helpcenter.veeam.com/docs/vbo365/guide/smtp_server.html) |
-| **Xerox** ConnectKey printers and MFPs | Some models or versions | `VersaLink B415`, `VersaLink C415`, `VersaLink B620`, `VersaLink C620`, `VersaLink B625`, `VersaLink C625`, `AltaLink`, `PrimeLink` | [advisory](https://www.xerox.com/en-us/office/insights/exchange-online-authentication) |
-| **Brother** printers, MFPs and document scanners | Check vendor advisory | — | [advisory](https://support.brother.com/g/b/oscontents.aspx?c=us&lang=en&ossid=42) |
-| **Cerberus** FTP Server | Check vendor advisory | — | [advisory](https://support.cerberusftp.com/hc/en-us/articles/24103821642643-Troubleshooting-SMTP-Setup-Error-on-Office365-com-Resolving-EHLO-Message-Failure-535-5-7-139-Authentication-Unsuccessful-Basic-Authentication-Disabled) |
-| **Cisco** Unity Connection | Check vendor advisory | — | [advisory](https://learn.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/deprecation-of-basic-authentication-exchange-online) |
-| **Faxination** fax server | Check vendor advisory | — | [advisory](https://faxination.com/microsoft-timeline-for-basic-authentication-deprecation-in-exchange-online-smtp-auth/) |
-| **Kyocera** MFPs reporting send error 1102 | Check vendor advisory | — | [advisory](https://github.com/msgwing/ZeroSMTP/blob/main/docs/ERROR-MESSAGES.md) |
-| **Laserfiche** Workflow email | Check vendor advisory | — | [advisory](https://answers.laserfiche.com/questions/200557/Disabling-basic-authentication-causing-Workflow-emails-to-fail) |
-| **ManageEngine** OpManager | Check vendor advisory | — | [advisory](https://www.manageengine.com/network-monitoring/how-to/fix-smtpclientauth-disabled-error.html) |
-| **Ricoh** multifunction printers | Check vendor advisory | — | [advisory](https://www.ricoh.com/info/2025/0526_1) |
-| **Microsoft** Teams Rooms | OAuth available | — | [advisory](https://learn.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/deprecation-of-basic-authentication-exchange-online) |
+| **[Konica Minolta / DEVELOP](devices/konica-minolta-develop-ineo-and-ineo-mfps.md)** ineo and ineo+ MFPs | **No OAuth firmware planned** | `ineo 306`, `ineo 7228`, `ineo 266`, `ineo+ 266`, `ineo+ 256`, `ineo+ 226`, `ineo 4750`, `ineo 4050`, `ineo 4700P`, `ineo 3301P`, `ineo 4000P`, `ineo 165 variants`, `ineo 185 variants` | [advisory](https://www.develop.eu/en/support/discontinuation-of-basic-authentication-for-smtp.html) |
+| **[Canon](devices/canon-maxify-mb2755.md)** Maxify MB2755 | No OAuth for this purpose | `Maxify MB2755` | [advisory](https://github.com/msgwing/ZeroSMTP/blob/main/docs/DEVICE-CASE-STUDIES.md) |
+| **[QNAP](devices/qnap-nas-notification-settings.md)** NAS notification settings | No OAuth for this purpose | — | [advisory](https://gist.github.com/msgwing/39958d909e085ae9cc0e6b3584d930bf) |
+| **[Microsoft](devices/microsoft-dynamics-nav-business-central.md)** Dynamics NAV / Business Central | Some models or versions | — | [advisory](https://www.innovia.com/blog/microsoft-to-retire-basic-auth-smtp-for-exchange-online-what-bc-nav-users-need-to-know) |
+| **[Veeam](devices/veeam-backup-for-microsoft-365-and-related-products.md)** Backup for Microsoft 365 and related products | Some models or versions | — | [advisory](https://helpcenter.veeam.com/docs/vbo365/guide/smtp_server.html) |
+| **[Xerox](devices/xerox-connectkey-printers-and-mfps.md)** ConnectKey printers and MFPs | Some models or versions | `VersaLink B415`, `VersaLink C415`, `VersaLink B620`, `VersaLink C620`, `VersaLink B625`, `VersaLink C625`, `AltaLink`, `PrimeLink` | [advisory](https://www.xerox.com/en-us/office/insights/exchange-online-authentication) |
+| **[Brother](devices/brother-printers-mfps-and-document-scanners.md)** printers, MFPs and document scanners | Check vendor advisory | — | [advisory](https://support.brother.com/g/b/oscontents.aspx?c=us&lang=en&ossid=42) |
+| **[Cerberus](devices/cerberus-ftp-server.md)** FTP Server | Check vendor advisory | — | [advisory](https://support.cerberusftp.com/hc/en-us/articles/24103821642643-Troubleshooting-SMTP-Setup-Error-on-Office365-com-Resolving-EHLO-Message-Failure-535-5-7-139-Authentication-Unsuccessful-Basic-Authentication-Disabled) |
+| **[Cisco](devices/cisco-unity-connection.md)** Unity Connection | Check vendor advisory | — | [advisory](https://learn.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/deprecation-of-basic-authentication-exchange-online) |
+| **[Faxination](devices/faxination-fax-server.md)** fax server | Check vendor advisory | — | [advisory](https://faxination.com/microsoft-timeline-for-basic-authentication-deprecation-in-exchange-online-smtp-auth/) |
+| **[Kyocera](devices/kyocera-mfps-reporting-send-error-1102.md)** MFPs reporting send error 1102 | Check vendor advisory | — | [advisory](https://github.com/msgwing/ZeroSMTP/blob/main/docs/ERROR-MESSAGES.md) |
+| **[Laserfiche](devices/laserfiche-workflow-email.md)** Workflow email | Check vendor advisory | — | [advisory](https://answers.laserfiche.com/questions/200557/Disabling-basic-authentication-causing-Workflow-emails-to-fail) |
+| **[ManageEngine](devices/manageengine-opmanager.md)** OpManager | Check vendor advisory | — | [advisory](https://www.manageengine.com/network-monitoring/how-to/fix-smtpclientauth-disabled-error.html) |
+| **[Ricoh](devices/ricoh-multifunction-printers.md)** multifunction printers | Check vendor advisory | — | [advisory](https://www.ricoh.com/info/2025/0526_1) |
+| **[Microsoft](devices/microsoft-teams-rooms.md)** Teams Rooms | OAuth available | — | [advisory](https://learn.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/deprecation-of-basic-authentication-exchange-online) |
 
 ### Notes per entry
 

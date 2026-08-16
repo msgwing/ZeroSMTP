@@ -51,14 +51,22 @@ jobs:
               | grep -oP '(?<=<loc>)[^<]+')
           else
             echo "Collecting docs pages changed in this push."
-            changed=$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" -- 'docs/*.md' || true)
+            # Diff the whole docs/ tree, not a glob: the per-device pages live
+            # in docs/devices/, and a `docs/*.md` pathspec is ambiguous about
+            # whether * crosses a slash. Filtering for .md here is explicit.
+            changed=$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" -- docs || true)
             urls=""
             for f in $changed; do
-              base=$(basename "$f" .md)
-              if [ "$base" = "index" ]; then
+              case "$f" in *.md) ;; *) continue ;; esac
+              # Keep the subdirectory: docs/devices/x.md is served at
+              # /devices/x.html, not /x.html. basename would drop it and we
+              # would ping URLs that 404.
+              rel="${f#docs/}"
+              page="${rel%.md}"
+              if [ "$page" = "index" ]; then
                 urls="${urls}https://${SITE_HOST}/"$'\n'
               else
-                urls="${urls}https://${SITE_HOST}/${base}.html"$'\n'
+                urls="${urls}https://${SITE_HOST}/${page}.html"$'\n'
               fi
             done
           fi
