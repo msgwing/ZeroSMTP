@@ -16,7 +16,7 @@
     "  check-advisory  vendor publishes a per-model list we do not reproduce",
     "  unsupported     the product has no OAuth capability for this purpose"
   ],
-  "updated": "2026-08-11",
+  "updated": "2026-08-16",
   "entries": [
     {
       "vendor": "Konica Minolta / DEVELOP",
@@ -52,6 +52,14 @@
       "models": [],
       "evidence": "https://www.ricoh.com/info/2025/0526_1",
       "notes": "Ricoh publishes affected products with per-product firmware status. Not reproduced here because the list is long and revised; check the model against the advisory."
+    },
+    {
+      "vendor": "Brother",
+      "product": "printers, MFPs and document scanners",
+      "status": "check-advisory",
+      "models": [],
+      "evidence": "https://support.brother.com/g/b/oscontents.aspx?c=us&lang=en&ossid=42",
+      "notes": "Brother publishes a per-model Product Support List and states plainly that a machine not on it does not support OAuth 2.0, with no firmware promised - the vendor's own guidance for those owners is to use a different mail service. Listed models split into two tiers: OAuth already present, or present after a firmware update that is already downloadable. Affects Scan to Email Server, Internet Fax, Email Reports and Email Notifications. Check the exact model: support is firmware-dependent as well as model-dependent."
     },
     {
       "vendor": "Canon",

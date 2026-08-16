@@ -37,6 +37,7 @@ answer.
 | **Microsoft** Dynamics NAV / Business Central | Some models or versions | — | [advisory](https://www.innovia.com/blog/microsoft-to-retire-basic-auth-smtp-for-exchange-online-what-bc-nav-users-need-to-know) |
 | **Veeam** Backup for Microsoft 365 and related products | Some models or versions | — | [advisory](https://helpcenter.veeam.com/docs/vbo365/guide/smtp_server.html) |
 | **Xerox** ConnectKey printers and MFPs | Some models or versions | `VersaLink B415`, `VersaLink C415`, `VersaLink B620`, `VersaLink C620`, `VersaLink B625`, `VersaLink C625`, `AltaLink`, `PrimeLink` | [advisory](https://www.xerox.com/en-us/office/insights/exchange-online-authentication) |
+| **Brother** printers, MFPs and document scanners | Check vendor advisory | — | [advisory](https://support.brother.com/g/b/oscontents.aspx?c=us&lang=en&ossid=42) |
 | **Cerberus** FTP Server | Check vendor advisory | — | [advisory](https://support.cerberusftp.com/hc/en-us/articles/24103821642643-Troubleshooting-SMTP-Setup-Error-on-Office365-com-Resolving-EHLO-Message-Failure-535-5-7-139-Authentication-Unsuccessful-Basic-Authentication-Disabled) |
 | **Cisco** Unity Connection | Check vendor advisory | — | [advisory](https://learn.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/deprecation-of-basic-authentication-exchange-online) |
 | **Faxination** fax server | Check vendor advisory | — | [advisory](https://faxination.com/microsoft-timeline-for-basic-authentication-deprecation-in-exchange-online-smtp-auth/) |
@@ -66,6 +67,9 @@ Older versions support SMTP basic auth only; newer versions added OAuth. Upgradi
 **Xerox — ConnectKey printers and MFPs**  
 Device Code Flow is supported broadly; Client Credentials Flow only on the ConnectKey models listed. Devices not on Xerox's supported-firmware list are the problem cases and are not promised an update. Affects Scan to Email, Internet Fax (Send), Fax Forward to Email and Auto Email Notifications.
 
+**Brother — printers, MFPs and document scanners**  
+Brother publishes a per-model Product Support List and states plainly that a machine not on it does not support OAuth 2.0, with no firmware promised - the vendor's own guidance for those owners is to use a different mail service. Listed models split into two tiers: OAuth already present, or present after a firmware update that is already downloadable. Affects Scan to Email Server, Internet Fax, Email Reports and Email Notifications. Check the exact model: support is firmware-dependent as well as model-dependent.
+
 **Cerberus — FTP Server**  
 Vendor support article covers the exact 535 5.7.139 failure.
 
@@ -90,7 +94,7 @@ Ricoh publishes affected products with per-product firmware status. Not reproduc
 **Microsoft — Teams Rooms**  
 Microsoft's own product. Enable modern auth on the resource account - no relay needed.
 
-*14 entries, last reviewed 2026-08-11.*
+*15 entries, last reviewed 2026-08-16.*
 
 <!-- END GENERATED TABLE -->
 
