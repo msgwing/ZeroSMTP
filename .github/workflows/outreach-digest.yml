@@ -180,8 +180,18 @@ jobs:
 
             const seen = new Set();
             const candidates = [];
+            let failedQueries = 0;
 
-            for (const q of queries) {
+            const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+
+            for (const [i, q] of queries.entries()) {
+              // The search API enforces a strict secondary rate limit on
+              // bursts. Firing all of these back to back got the last three
+              // 403'd on 2026-08-16, and because a failed search only warns,
+              // the run then reported "nothing found" - which is a different
+              // thing from "could not look".
+              if (i > 0) await pause(3000);
+
               // -commenter: drops threads already answered here. Replying
               // twice in one thread is the single most spam-looking thing
               // an account can do.
@@ -195,6 +205,7 @@ jobs:
               try {
                 res = await github.rest.search.issuesAndPullRequests({ q: full, per_page: 10 });
               } catch (err) {
+                failedQueries += 1;
                 core.warning(`Search failed for query "${full}": ${err.message}`);
                 continue;
               }
@@ -233,11 +244,24 @@ jobs:
             const results = candidates.slice(0, MAX_ITEMS);
             core.info(`${candidates.length} candidate(s), showing ${results.length}`);
 
+            // "Found nothing" and "could not look" must not produce the same
+            // report. A quiet week is fine; a week where every search was
+            // rejected and the run went green is how a broken bot survives.
+            if (failedQueries === queries.length) {
+              core.setFailed(
+                `All ${queries.length} searches failed - most likely the secondary ` +
+                'rate limit. No digest was written; nothing was missed, but nothing ' +
+                'was checked either.');
+              return;
+            }
+
             if (!results.length) {
-              core.summary
-                .addHeading('Weekly outreach digest')
-                .addRaw('No matching public issues found this week.')
-                .write();
+              const note = failedQueries
+                ? `No new threads found. Note: ${failedQueries} of ${queries.length} ` +
+                  'searches failed, so this is an incomplete look.'
+                : 'No new matching public issues this week.';
+              core.summary.addHeading('Weekly outreach digest').addRaw(note).write();
+              core.info(note);
               return;
             }
 
@@ -258,6 +282,10 @@ jobs:
               'questions come first — those are the ones where a reply is worth',
               'something.',
               '',
+              ...(failedQueries
+                ? [`⚠️ ${failedQueries} of ${queries.length} searches failed this run, so`,
+                   'this list is incomplete.', '']
+                : []),
               '---',
               '',
             ];
