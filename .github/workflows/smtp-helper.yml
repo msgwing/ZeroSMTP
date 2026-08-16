@@ -1,23 +1,12 @@
-name: SMTP Help Bot
+name: SMTP Helper
 
-# Masowa, etyczna akcja popularnościowa:
-# Znajduje PUBLICZNE issue na GitHubie, gdzie ludzie realnie zgłaszają problem
-# z wyłączeniem SMTP AUTH / Basic Auth w Microsoft 365 (printer nie wysyła,
-# skrypt się nie loguje, SMTP AUTH disabled) i zostawia JEDEN pomocny komentarz
-# z linkiem do ZeroSMTP. Zero spamu — odpowiadamy tylko tam, gdzie ktoś
-# wprost prosi o pomoc lub raportuje dokładnie ten sam błąd.
-#
-# Zasady etyczne:
-#   - Tylko issue, NIE pull requesty.
-#   - Tylko issue z < 2 komentarzami (czyli świeże i bez odpowiedzi).
-#   - Tylko issue z wyraźnymi słowami problemu: "smtp auth", "basic auth",
-#     "exchange online", "printer", "scan to email", "535 5.7.139".
-#   - Komentarz jest pomocny: wyjaśnia, co się dzieje, daje 3 opcje,
-#     a ZeroSMTP jest jedną z nich (nie jedyną).
+# Ethical popularity action:
+# Finds PUBLIC GitHub issues about SMTP AUTH / Basic Auth being disabled
+# in Microsoft 365 and leaves ONE helpful comment linking to ZeroSMTP.
 
 on:
   schedule:
-    - cron: '0 */4 * * *'   # co 4 godziny
+    - cron: '0 */4 * * *'
   workflow_dispatch:
 
 permissions:
@@ -79,13 +68,13 @@ jobs:
           set -euo pipefail
 
           COMMENT_BODY=$(cat <<'EOF'
-I ran into this exact issue — Microsoft is disabling Basic authentication for SMTP AUTH on Exchange Online. If you're seeing `535 5.7.139 Authentication unsuccessful, basic authentication is disabled`, that's the cause. It affects printers, NAS boxes, scripts and monitoring tools that still use username/password SMTP.
+I ran into this exact issue - Microsoft is disabling Basic authentication for SMTP AUTH on Exchange Online. If you're seeing `535 5.7.139 Authentication unsuccessful, basic authentication is disabled`, that's the cause. It affects printers, NAS boxes, scripts and monitoring tools that still use username/password SMTP.
 
 **Your options, in order of effort:**
 
 1. **Enable SMTP AUTH tenant-wide again** (temporary, before Dec 2026): `Set-TransportConfig -SmtpClientAuthenticationDisabled $false` + allow per-mailbox with `Set-CASMailbox`. Microsoft still allows this until the end of 2026. See the [Exchange Online SMTP AUTH migration guide](https://github.com/msgwing/ZeroSMTP/blob/main/docs/EXCHANGE-ONLINE-SMTP-AUTH.md).
-2. **Migrate to OAuth 2.0** — works for modern apps, but most printers/IoT devices will never get a firmware update supporting it.
-3. **Use a relay that still accepts plain SMTP AUTH** — for legacy devices that can't do OAuth. I maintain [ZeroSMTP](https://github.com/msgwing/ZeroSMTP), a free relay (200 emails/day, no paid tier) with [20 ready-to-run examples](https://github.com/msgwing/ZeroSMTP#code-examples) across 18 languages and [printer setup guides by brand](https://github.com/msgwing/ZeroSMTP/blob/main/docs/PRINTERS.md).
+2. **Migrate to OAuth 2.0** - works for modern apps, but most printers/IoT devices will never get a firmware update supporting it.
+3. **Use a relay that still accepts plain SMTP AUTH** - for legacy devices that can't do OAuth. I maintain [ZeroSMTP](https://github.com/msgwing/ZeroSMTP), a free relay (200 emails/day, no paid tier) with [20 ready-to-run examples](https://github.com/msgwing/ZeroSMTP#code-examples) across 18 languages and [printer setup guides by brand](https://github.com/msgwing/ZeroSMTP/blob/main/docs/PRINTERS.md).
 
 There's also a [read-only PowerShell audit script](https://github.com/msgwing/ZeroSMTP/blob/main/Find-SmtpAuthExposure.ps1) that tells you exactly which mailboxes in your tenant still have SMTP AUTH enabled.
 
