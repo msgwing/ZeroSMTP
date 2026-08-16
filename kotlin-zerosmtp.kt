@@ -88,11 +88,19 @@ suspend fun sendEmailViaZeroSMTP(config: EmailConfig): MailResult = runCatching 
 suspend fun main() {
     // NOTE: variable names are prefixed with ZEROSMTP_ to avoid colliding with
     // reserved/OS-level variables (e.g. USERNAME is auto-set on Windows).
+    // Fail-fast: missing env vars exit with a clear error instead of silently
+    // using placeholder credentials that could leak into production.
+    val required = listOf("ZEROSMTP_USERNAME", "ZEROSMTP_PASSWORD", "ZEROSMTP_FROM", "ZEROSMTP_TO")
+    val missing = required.filter { System.getenv(it).isNullOrEmpty() }
+    if (missing.isNotEmpty()) {
+        System.err.println("ERROR: missing required environment variables: ${missing.joinToString(", ")}")
+        System.exit(1)
+    }
     val config = EmailConfig(
-        username = System.getenv("ZEROSMTP_USERNAME") ?: "your-username",
-        password = System.getenv("ZEROSMTP_PASSWORD") ?: "your-password",
-        from     = System.getenv("ZEROSMTP_FROM") ?: "sender@example.com",
-        to       = System.getenv("ZEROSMTP_TO") ?: "recipient@example.com",
+        username = System.getenv("ZEROSMTP_USERNAME")!!,
+        password = System.getenv("ZEROSMTP_PASSWORD")!!,
+        from     = System.getenv("ZEROSMTP_FROM")!!,
+        to       = System.getenv("ZEROSMTP_TO")!!,
         subject  = System.getenv("ZEROSMTP_SUBJECT") ?: "Test Email from ZeroSMTP",
     )
 

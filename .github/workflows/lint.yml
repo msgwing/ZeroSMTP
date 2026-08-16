@@ -247,8 +247,17 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
+          # Without caching every run re-downloads plugins and dependencies,
+          # which earns a 429 Too Many Requests from Maven Central and turns
+          # main red with nothing wrong in the code. Happened 2026-08-16.
+          cache: 'maven'
       - name: Build Java example
-        run: mvn -B compile
+        # Retry in case the cache is not enough: a transient 429 or 502 from
+        # Central should not look like a broken example.
+        run: >
+          mvn -B compile
+          -Dmaven.wagon.http.retryHandler.count=3
+          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
 
   kotlin:
     needs: changes

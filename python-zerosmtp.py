@@ -70,11 +70,20 @@ def send_email_via_zerosmtp(
 if __name__ == '__main__':
     # NOTE: variable names are prefixed with ZEROSMTP_ to avoid colliding with
     # reserved/OS-level variables (e.g. USERNAME is auto-set on Windows).
+    # Fail-fast: missing env vars raise SystemExit instead of silently using
+    # placeholder credentials that could leak into production.
+    required_vars = ['ZEROSMTP_USERNAME', 'ZEROSMTP_PASSWORD',
+                     'ZEROSMTP_FROM', 'ZEROSMTP_TO']
+    missing = [v for v in required_vars if not os.getenv(v)]
+    if missing:
+        raise SystemExit(
+            f'ERROR: missing required environment variables: {", ".join(missing)}'
+        )
     config = {
-        'username': os.getenv('ZEROSMTP_USERNAME', 'your-username'),
-        'password': os.getenv('ZEROSMTP_PASSWORD', 'your-password'),
-        'from_addr': os.getenv('ZEROSMTP_FROM', 'sender@example.com'),
-        'to_addr': os.getenv('ZEROSMTP_TO', 'recipient@example.com'),
+        'username': os.environ['ZEROSMTP_USERNAME'],
+        'password': os.environ['ZEROSMTP_PASSWORD'],
+        'from_addr': os.environ['ZEROSMTP_FROM'],
+        'to_addr': os.environ['ZEROSMTP_TO'],
         'subject': os.getenv('ZEROSMTP_SUBJECT', 'Test Email from ZeroSMTP'),
     }
     success = send_email_via_zerosmtp(**config)

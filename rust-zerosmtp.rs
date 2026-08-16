@@ -28,11 +28,25 @@ struct EmailConfig {
 fn get_config() -> Result<EmailConfig> {
     // NOTE: variable names are prefixed with ZEROSMTP_ to avoid colliding with
     // reserved/OS-level variables (e.g. USERNAME is auto-set on Windows).
+    // Fail-fast: missing env vars return an error instead of silently using
+    // placeholder credentials that could leak into production.
+    let required = ["ZEROSMTP_USERNAME", "ZEROSMTP_PASSWORD", "ZEROSMTP_FROM", "ZEROSMTP_TO"];
+    let missing: Vec<&str> = required
+        .iter()
+        .filter(|v| env::var(v).is_err())
+        .copied()
+        .collect();
+    if !missing.is_empty() {
+        return Err(anyhow::anyhow!(
+            "missing required environment variables: {}",
+            missing.join(", ")
+        ));
+    }
     Ok(EmailConfig {
-        username: env::var("ZEROSMTP_USERNAME").unwrap_or_else(|_| "your-username".to_string()),
-        password: env::var("ZEROSMTP_PASSWORD").unwrap_or_else(|_| "your-password".to_string()),
-        from: env::var("ZEROSMTP_FROM").unwrap_or_else(|_| "sender@example.com".to_string()),
-        to: env::var("ZEROSMTP_TO").unwrap_or_else(|_| "recipient@example.com".to_string()),
+        username: env::var("ZEROSMTP_USERNAME")?,
+        password: env::var("ZEROSMTP_PASSWORD")?,
+        from: env::var("ZEROSMTP_FROM")?,
+        to: env::var("ZEROSMTP_TO")?,
         subject: env::var("ZEROSMTP_SUBJECT").unwrap_or_else(|_| "Test Email from ZeroSMTP".to_string()),
     })
 }

@@ -83,11 +83,20 @@ public static class ZeroSMTPMailer
     {
         // NOTE: variable names are prefixed with ZEROSMTP_ to avoid colliding with
         // reserved/OS-level variables (e.g. USERNAME is auto-set on Windows).
+        // Fail-fast: missing env vars exit with a clear error instead of silently
+        // using placeholder credentials that could leak into production.
+        string[] required = { "ZEROSMTP_USERNAME", "ZEROSMTP_PASSWORD", "ZEROSMTP_FROM", "ZEROSMTP_TO" };
+        var missing = required.Where(v => string.IsNullOrEmpty(Environment.GetEnvironmentVariable(v))).ToList();
+        if (missing.Count > 0)
+        {
+            Console.Error.WriteLine($"ERROR: missing required environment variables: {string.Join(", ", missing)}");
+            Environment.Exit(1);
+        }
         var config = new EmailConfig(
-            Username: Environment.GetEnvironmentVariable("ZEROSMTP_USERNAME") ?? "your-username",
-            Password: Environment.GetEnvironmentVariable("ZEROSMTP_PASSWORD") ?? "your-password",
-            From: Environment.GetEnvironmentVariable("ZEROSMTP_FROM") ?? "sender@example.com",
-            To: Environment.GetEnvironmentVariable("ZEROSMTP_TO") ?? "recipient@example.com",
+            Username: Environment.GetEnvironmentVariable("ZEROSMTP_USERNAME")!,
+            Password: Environment.GetEnvironmentVariable("ZEROSMTP_PASSWORD")!,
+            From: Environment.GetEnvironmentVariable("ZEROSMTP_FROM")!,
+            To: Environment.GetEnvironmentVariable("ZEROSMTP_TO")!,
             Subject: Environment.GetEnvironmentVariable("ZEROSMTP_SUBJECT") ?? "Test Email from ZeroSMTP"
         );
         bool success = await SendEmailAsync(config);

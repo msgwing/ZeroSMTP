@@ -1,0 +1,163 @@
+name: Deadline milestone discussion
+
+# Posts a countdown reminder in Discussions at a handful of milestones before
+# Microsoft disables Basic auth for SMTP AUTH (end of December 2026).
+#
+# WHY MILESTONES AND NOT WEEKLY
+# A weekly digest would post the same content every Monday whether or not
+# anything changed. Announcements would fill with near-identical bot posts,
+# and a category that reads as machine-generated is worse for the project
+# than an empty one - it tells a visitor nobody is home. Six posts across
+# five months, each at a point where the number itself is news, is the
+# version of this that a reader might actually want.
+#
+# Runs daily but exits silently on every day that is not a milestone.
+
+on:
+  schedule:
+    - cron: '30 8 * * *'   # daily 08:30 UTC; almost every run is a no-op
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Post even if today is not a milestone day'
+        type: boolean
+        default: false
+
+permissions:
+  discussions: write
+  contents: read
+
+jobs:
+  milestone:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Is today a milestone?
+        id: check
+        run: |
+          set -euo pipefail
+          DEADLINE=$(date -u -d '2026-12-31' +%s)
+          NOW=$(date -u +%s)
+          DAYS=$(( (DEADLINE - NOW) / 86400 ))
+          echo "days=$DAYS" >> "$GITHUB_OUTPUT"
+
+          # Each of these is a point where the number is worth saying out
+          # loud. Between them the workflow does nothing.
+          case "$DAYS" in
+            90|60|30|14|7|1) POST=yes ;;
+            *)               POST=no  ;;
+          esac
+          if [ "${{ inputs.force }}" = "true" ]; then POST=yes; fi
+
+          echo "post=$POST" >> "$GITHUB_OUTPUT"
+          echo "$DAYS days left; post=$POST"
+
+      - name: Build the post
+        id: body
+        if: steps.check.outputs.post == 'yes'
+        run: |
+          set -euo pipefail
+          DAYS='${{ steps.check.outputs.days }}'
+
+          # Counts come from the README table rather than being written into
+          # this file, where they would silently go stale the next time
+          # somebody adds a language.
+          EXAMPLES=$(awk '/^\| Language \| File \|/,/^$/' README.md \
+            | grep -c '^| .* | \[' || echo '?')
+
+          TITLE="${DAYS} days until Microsoft 365 disables SMTP AUTH Basic auth"
+
+          {
+            echo "Microsoft disables Basic authentication for SMTP AUTH by default on"
+            echo "existing Microsoft 365 tenants at the **end of December 2026** —"
+            echo "**${DAYS} days from today**. Administrators can still re-enable it after"
+            echo "that; the final removal date is announced in the second half of 2027."
+            echo ""
+            echo "Source: [Microsoft's updated timeline](https://techcommunity.microsoft.com/blog/exchange/updated-exchange-online-smtp-auth-basic-authentication-deprecation-timeline/4489835)."
+            echo ""
+            echo "## If you have not checked yet"
+            echo ""
+            echo "[\`Find-SmtpAuthExposure.ps1\`](https://github.com/${{ github.repository }}/blob/main/Find-SmtpAuthExposure.ps1)"
+            echo "reports every mailbox in your tenant that can still authenticate this way."
+            echo "It is read-only, so it is safe to run before you have decided anything."
+            echo ""
+            echo "It counts the mailboxes that *inherit* the tenant setting separately,"
+            echo "which the widely-repeated \`-eq \$false\` one-liner misses entirely — on a"
+            echo "tenant nobody has locked down, that one-liner can report zero while every"
+            echo "mailbox is exposed."
+            echo ""
+            echo "## Then check whether your hardware has a way out"
+            echo ""
+            echo "- [Compatibility list](https://docs.msgwing.com/DEVICE-COMPATIBILITY.html) — what each vendor has published, with a link to every statement"
+            echo "- [Models the vendor has ruled out](https://docs.msgwing.com/NO-OAUTH-FIRMWARE.html) — where firmware is not a step you skipped, it does not exist"
+            echo "- [What the error messages mean](https://docs.msgwing.com/ERROR-MESSAGES.html)"
+            echo ""
+            echo "**If a firmware update exists for your model, apply it.** That keeps your"
+            echo "own domain as the sender and involves no third party. The"
+            echo "[migration guide](https://docs.msgwing.com/EXCHANGE-ONLINE-SMTP-AUTH.html)"
+            echo "covers every option in order, including Direct Send, which is free and is"
+            echo "often the right answer when every recipient is inside your own tenant."
+            echo ""
+            echo "This project's relay is the last resort on that list, for devices that"
+            echo "have no other path. There are ${EXAMPLES} ready-to-run examples if it turns out to"
+            echo "be yours."
+            echo ""
+            echo "---"
+            echo ""
+            echo "_Posted automatically at deadline milestones (90, 60, 30, 14, 7 and 1 days)._"
+            echo "_Replies are read — if you have migrated, what worked for your setup helps"
+            echo "whoever reads this next._"
+          } > body.md
+
+          echo "title=$TITLE" >> "$GITHUB_OUTPUT"
+
+      - name: Post to Discussions
+        if: steps.check.outputs.post == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: ${{ steps.body.outputs.title }}
+        run: |
+          set -euo pipefail
+
+          # Discussions cannot be created through the REST API - createDiscussion
+          # is GraphQL only, and it needs a category id. Looking the id up by
+          # slug keeps this working if the repository is forked or the category
+          # is recreated.
+          REPO_ID=$(gh api graphql -f query='
+            query($o:String!,$n:String!){ repository(owner:$o,name:$n){ id } }' \
+            -f o='${{ github.repository_owner }}' -f n='${{ github.event.repository.name }}' \
+            --jq '.data.repository.id')
+
+          CAT_ID=$(gh api graphql -f query='
+            query($o:String!,$n:String!){ repository(owner:$o,name:$n){
+              discussionCategories(first:25){ nodes{ id slug } } } }' \
+            -f o='${{ github.repository_owner }}' -f n='${{ github.event.repository.name }}' \
+            --jq '.data.repository.discussionCategories.nodes[]
+                  | select(.slug=="announcements") | .id')
+
+          if [ -z "$CAT_ID" ]; then
+            echo "::error::No 'announcements' discussion category found."
+            exit 1
+          fi
+
+          # A re-run on the same day must not produce a second copy.
+          EXISTING=$(gh api graphql -f query='
+            query($q:String!){ search(query:$q, type:DISCUSSION, first:1){ discussionCount } }' \
+            -f q="repo:${{ github.repository }} in:title \"$TITLE\"" \
+            --jq '.data.search.discussionCount')
+
+          if [ "${EXISTING:-0}" -gt 0 ]; then
+            echo "Already posted: $TITLE"
+            exit 0
+          fi
+
+          URL=$(gh api graphql -f query='
+            mutation($r:ID!,$c:ID!,$t:String!,$b:String!){
+              createDiscussion(input:{repositoryId:$r,categoryId:$c,title:$t,body:$b}){
+                discussion{ url } } }' \
+            -f r="$REPO_ID" -f c="$CAT_ID" -f t="$TITLE" -F b=@body.md \
+            --jq '.data.createDiscussion.discussion.url')
+
+          echo "Posted: $URL"
+          echo "### Posted [$TITLE]($URL)" >> "$GITHUB_STEP_SUMMARY"

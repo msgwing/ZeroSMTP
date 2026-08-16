@@ -54,11 +54,19 @@ function sendEmailViaZeroSMTP(ZeroSMTPConfig $config): bool {
 
 // NOTE: variable names are prefixed with ZEROSMTP_ to avoid colliding with
 // reserved/OS-level variables (e.g. USERNAME is auto-set on Windows).
+// Fail-fast: missing env vars exit with a clear error instead of silently
+// using placeholder credentials that could leak into production.
+$required = ['ZEROSMTP_USERNAME', 'ZEROSMTP_PASSWORD', 'ZEROSMTP_FROM', 'ZEROSMTP_TO'];
+$missing = array_filter($required, fn($v) => getenv($v) === false || getenv($v) === '');
+if (!empty($missing)) {
+    fwrite(STDERR, "ERROR: missing required environment variables: " . implode(', ', $missing) . "\n");
+    exit(1);
+}
 $config = new ZeroSMTPConfig(
-    username: getenv('ZEROSMTP_USERNAME') ?: 'your-username',
-    password: getenv('ZEROSMTP_PASSWORD') ?: 'your-password',
-    from: getenv('ZEROSMTP_FROM') ?: 'sender@example.com',
-    to: getenv('ZEROSMTP_TO') ?: 'recipient@example.com',
+    username: getenv('ZEROSMTP_USERNAME'),
+    password: getenv('ZEROSMTP_PASSWORD'),
+    from: getenv('ZEROSMTP_FROM'),
+    to: getenv('ZEROSMTP_TO'),
     subject: getenv('ZEROSMTP_SUBJECT') ?: 'Test Email from ZeroSMTP',
 );
 

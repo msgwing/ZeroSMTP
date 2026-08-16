@@ -115,14 +115,26 @@ func buildEmailBody(config EmailConfig) string {
 func main() {
 	// NOTE: variable names are prefixed with ZEROSMTP_ to avoid colliding with
 	// reserved/OS-level variables (e.g. USERNAME is auto-set on Windows).
-	config := EmailConfig{
-		Username: getEnv("ZEROSMTP_USERNAME", "your-username"),
-		Password: getEnv("ZEROSMTP_PASSWORD", "your-password"),
-		From:     getEnv("ZEROSMTP_FROM", "sender@example.com"),
-		To:       getEnv("ZEROSMTP_TO", "recipient@example.com"),
-		Subject:  getEnv("ZEROSMTP_SUBJECT", "Test Email from ZeroSMTP"),
+	// Fail-fast: missing env vars exit with a clear error instead of silently
+	// using placeholder credentials that could leak into production.
+	requiredVars := []string{"ZEROSMTP_USERNAME", "ZEROSMTP_PASSWORD", "ZEROSMTP_FROM", "ZEROSMTP_TO"}
+	var missing []string
+	for _, v := range requiredVars {
+		if os.Getenv(v) == "" {
+			missing = append(missing, v)
 	}
-
+	}
+	if len(missing) > 0 {
+		fmt.Fprintf(os.Stderr, "ERROR: missing required environment variables: %s\n", strings.Join(missing, ", "))
+		os.Exit(1)
+	}
+	config := EmailConfig{
+	Username: os.Getenv("ZEROSMTP_USERNAME"),
+	Password: os.Getenv("ZEROSMTP_PASSWORD"),
+	From:     os.Getenv("ZEROSMTP_FROM"),
+		To:       os.Getenv("ZEROSMTP_TO"),
+	Subject:  getEnv("ZEROSMTP_SUBJECT", "Test Email from ZeroSMTP"),
+	}
 	if err := sendEmailViaZeroSMTP(config); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
@@ -130,7 +142,6 @@ func main() {
 	fmt.Println("Email sent successfully")
 	os.Exit(0)
 }
-
 func getEnv(key, defaultVal string) string {
 	if value := os.Getenv(key); value != "" {
 		return value

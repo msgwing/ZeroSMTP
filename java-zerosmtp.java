@@ -29,11 +29,26 @@ final class ZeroSMTPMailer {
     public static void main(String[] args) {
         // NOTE: variable names are prefixed with ZEROSMTP_ to avoid colliding with
         // reserved/OS-level variables (e.g. USERNAME is auto-set on Windows).
+        // Fail-fast: missing env vars exit with a clear error instead of silently
+        // using placeholder credentials that could leak into production.
+        String[] required = {"ZEROSMTP_USERNAME", "ZEROSMTP_PASSWORD", "ZEROSMTP_FROM", "ZEROSMTP_TO"};
+        StringBuilder missing = new StringBuilder();
+        for (String v : required) {
+            String value = System.getenv(v);
+            if (value == null || value.isEmpty()) {
+                if (missing.length() > 0) missing.append(", ");
+                missing.append(v);
+            }
+        }
+        if (missing.length() > 0) {
+            System.err.println("ERROR: missing required environment variables: " + missing);
+            System.exit(1);
+        }
         EmailConfig config = new EmailConfig(
-            System.getenv("ZEROSMTP_USERNAME") != null ? System.getenv("ZEROSMTP_USERNAME") : "your-username",
-            System.getenv("ZEROSMTP_PASSWORD") != null ? System.getenv("ZEROSMTP_PASSWORD") : "your-password",
-            System.getenv("ZEROSMTP_FROM") != null ? System.getenv("ZEROSMTP_FROM") : "sender@example.com",
-            System.getenv("ZEROSMTP_TO") != null ? System.getenv("ZEROSMTP_TO") : "recipient@example.com",
+            System.getenv("ZEROSMTP_USERNAME"),
+            System.getenv("ZEROSMTP_PASSWORD"),
+            System.getenv("ZEROSMTP_FROM"),
+            System.getenv("ZEROSMTP_TO"),
             System.getenv("ZEROSMTP_SUBJECT") != null ? System.getenv("ZEROSMTP_SUBJECT") : "Test Email from ZeroSMTP"
         );
         Thread thread = Thread.ofVirtual().start(() -> {

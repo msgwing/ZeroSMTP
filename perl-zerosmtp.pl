@@ -17,12 +17,19 @@ use warnings;
 use Net::SMTP;
 use IO::Socket::SSL qw(SSL_VERIFY_PEER);
 
+# Fail-fast: missing env vars exit with a clear error instead of silently
+# using placeholder credentials that could leak into production.
+my @required = qw(ZEROSMTP_USERNAME ZEROSMTP_PASSWORD ZEROSMTP_FROM ZEROSMTP_TO);
+my @missing = grep { !defined $ENV{$_} || $ENV{$_} eq '' } @required;
+if (@missing) {
+    die "ERROR: missing required environment variables: " . join(', ', @missing) . "\n";
+}
 my %config = (
-    username => $ENV{ZEROSMTP_USERNAME} // 'your-username',
-    password => $ENV{ZEROSMTP_PASSWORD} // 'your-password',
-    from     => $ENV{ZEROSMTP_FROM}     // 'sender@example.com',
-    to       => $ENV{ZEROSMTP_TO}       // 'recipient@example.com',
-    subject  => $ENV{ZEROSMTP_SUBJECT}  // 'Test Email from ZeroSMTP',
+    username => $ENV{ZEROSMTP_USERNAME},
+    password => $ENV{ZEROSMTP_PASSWORD},
+    from     => $ENV{ZEROSMTP_FROM},
+    to       => $ENV{ZEROSMTP_TO},
+    subject  => $ENV{ZEROSMTP_SUBJECT} // 'Test Email from ZeroSMTP',
 );
 
 # A multipart/alternative body, so clients that cannot render HTML still show

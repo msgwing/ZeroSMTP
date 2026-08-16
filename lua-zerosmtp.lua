@@ -9,11 +9,24 @@ local mime = require("mime")
 
 -- NOTE: variable names are prefixed with ZEROSMTP_ to avoid colliding with
 -- reserved/OS-level variables (e.g. USERNAME is auto-set on Windows).
+-- Fail-fast: missing env vars exit with a clear error instead of silently
+-- using placeholder credentials that could leak into production.
+local required = {"ZEROSMTP_USERNAME", "ZEROSMTP_PASSWORD", "ZEROSMTP_FROM", "ZEROSMTP_TO"}
+local missing = {}
+for _, v in ipairs(required) do
+  if (os.getenv(v) or "") == "" then
+    table.insert(missing, v)
+  end
+end
+if #missing > 0 then
+  io.stderr:write("ERROR: missing required environment variables: " .. table.concat(missing, ", ") .. "\n")
+  os.exit(1)
+end
 local config = {
-  username = os.getenv("ZEROSMTP_USERNAME") or "your-username",
-  password = os.getenv("ZEROSMTP_PASSWORD") or "your-password",
-  from = os.getenv("ZEROSMTP_FROM") or "sender@example.com",
-  to = os.getenv("ZEROSMTP_TO") or "recipient@example.com",
+  username = os.getenv("ZEROSMTP_USERNAME"),
+  password = os.getenv("ZEROSMTP_PASSWORD"),
+  from = os.getenv("ZEROSMTP_FROM"),
+  to = os.getenv("ZEROSMTP_TO"),
   subject = os.getenv("ZEROSMTP_SUBJECT") or "Test Email from ZeroSMTP"
 }
 

@@ -23,10 +23,18 @@ defmodule ZeroSMTP do
   end
 
   def run do
-    username = System.get_env("ZEROSMTP_USERNAME") || "your-username"
-    password = System.get_env("ZEROSMTP_PASSWORD") || "your-password"
-    from = System.get_env("ZEROSMTP_FROM") || "sender@example.com"
-    to = System.get_env("ZEROSMTP_TO") || "recipient@example.com"
+    # Fail-fast: missing env vars exit with a clear error instead of silently
+    # using placeholder credentials that could leak into production.
+    required_vars = ["ZEROSMTP_USERNAME", "ZEROSMTP_PASSWORD", "ZEROSMTP_FROM", "ZEROSMTP_TO"]
+    missing = Enum.filter(required_vars, fn v -> System.get_env(v) in [nil, ""] end)
+    if missing != [] do
+      IO.puts(:stderr, "ERROR: missing required environment variables: #{Enum.join(missing, ", ")}")
+      System.halt(1)
+    end
+    username = System.get_env("ZEROSMTP_USERNAME")
+    password = System.get_env("ZEROSMTP_PASSWORD")
+    from = System.get_env("ZEROSMTP_FROM")
+    to = System.get_env("ZEROSMTP_TO")
     subject = System.get_env("ZEROSMTP_SUBJECT") || "Test Email from ZeroSMTP"
 
     {:ok, socket} =

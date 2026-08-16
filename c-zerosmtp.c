@@ -108,10 +108,27 @@ static int build_message(char *out, size_t out_size,
 
 int main(void)
 {
-    const char *username = env_or("ZEROSMTP_USERNAME", "your-username");
-    const char *password = env_or("ZEROSMTP_PASSWORD", "your-password");
-    const char *from     = env_or("ZEROSMTP_FROM", "sender@example.com");
-    const char *to       = env_or("ZEROSMTP_TO", "recipient@example.com");
+    /* Fail-fast: missing env vars exit with a clear error instead of silently
+     * using placeholder credentials that could leak into production. */
+    const char *required[] = {
+        "ZEROSMTP_USERNAME", "ZEROSMTP_PASSWORD",
+        "ZEROSMTP_FROM", "ZEROSMTP_TO", NULL
+    };
+    int missing_count = 0;
+    for (int i = 0; required[i] != NULL; i++) {
+        const char *v = getenv(required[i]);
+        if (!v || !*v) {
+            fprintf(stderr, "ERROR: missing required environment variable: %s\n", required[i]);
+            missing_count++;
+        }
+    }
+    if (missing_count > 0) {
+        return 1;
+    }
+    const char *username = getenv("ZEROSMTP_USERNAME");
+    const char *password = getenv("ZEROSMTP_PASSWORD");
+    const char *from     = getenv("ZEROSMTP_FROM");
+    const char *to       = getenv("ZEROSMTP_TO");
     const char *subject  = env_or("ZEROSMTP_SUBJECT", "Test Email from ZeroSMTP");
 
     char message[MESSAGE_MAX];
