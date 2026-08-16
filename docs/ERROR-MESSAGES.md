@@ -26,14 +26,17 @@ option — see [the migration guide](EXCHANGE-ONLINE-SMTP-AUTH.md).
 
 ## Microsoft 365 / Exchange Online
 
+Each of these has a page of its own with the full diagnosis — follow the
+error you actually saw.
+
 | Error | What it means |
 | --- | --- |
-| `535 5.7.139 Authentication unsuccessful, basic authentication is disabled` | Microsoft 365 refused username/password auth. Credentials are fine; the method is off. |
-| `535 5.7.139 ... SmtpClientAuthentication is disabled for the Tenant` | Same cause, reported at tenant level — the setting applies to every mailbox that inherits it. |
-| `535 5.7.139 ... SmtpClientAuthentication is disabled for the Mailbox` | Same cause, reported for **this one mailbox**. Either it was disabled explicitly for this mailbox, or it inherits a tenant-wide block. Common on personal Outlook.com accounts and on single mailboxes an admin has locked down. |
-| `535 5.7.3 Authentication unsuccessful` | Generic refusal, same set of causes. |
-| `535 5.7.57 SMTP; Client was not authenticated to send anonymous mail` | The client sent no credentials at all, or sent them after `MAIL FROM`. Usually a client configured for anonymous relay pointed at an authenticated endpoint. |
-| `550 5.7.60 SMTP; Client does not have permissions to send as this sender` | Authentication succeeded, but the `From` address does not belong to the authenticated mailbox. A different problem from the ones above. |
+| [`535 5.7.139 Authentication unsuccessful, basic authentication is disabled`](errors/535-5-7-139-basic-authentication-is-disabled.md) | Microsoft 365 refused username/password auth. Credentials are fine; the method is off. |
+| [`535 5.7.139 ... SmtpClientAuthentication is disabled for the Tenant`](errors/535-5-7-139-smtpclientauthentication-is-disabled-for-the-tenant.md) | Same cause, reported at tenant level — the setting applies to every mailbox that inherits it. |
+| [`535 5.7.139 ... SmtpClientAuthentication is disabled for the Mailbox`](errors/535-5-7-139-smtpclientauthentication-is-disabled-for-the-mailbox.md) | Same cause, reported for **this one mailbox**. Either it was disabled explicitly for this mailbox, or it inherits a tenant-wide block. Common on personal Outlook.com accounts and on single mailboxes an admin has locked down. |
+| [`535 5.7.3 Authentication unsuccessful`](errors/535-5-7-3-authentication-unsuccessful.md) | Generic refusal, same set of causes. |
+| [`535 5.7.57 SMTP; Client was not authenticated to send anonymous mail`](errors/535-5-7-57-client-was-not-authenticated-to-send-anonymous-mail.md) | The client sent no credentials at all, or sent them after `MAIL FROM`. Usually a client configured for anonymous relay pointed at an authenticated endpoint. |
+| [`550 5.7.60 SMTP; Client does not have permissions to send as this sender`](errors/550-5-7-60-client-does-not-have-permissions-to-send-as-this-sender.md) | Authentication succeeded, but the `From` address does not belong to the authenticated mailbox. A different problem from the ones above. |
 
 Which mailboxes are still exposed on your own tenant is answerable in one
 command — see
