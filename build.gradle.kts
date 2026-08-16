@@ -1,5 +1,18 @@
 plugins {
-    kotlin("jvm") version "2.4.10"
+    // 2.4.20-RC, nie 2.4.10, z powodu CVE-2026-53914 (GHSA-r937-wjx7-w2jp):
+    // niebezpieczna deserializacja w metadanych build cache, naprawiona
+    // od 2.4.20-Beta1. Stabilnej wersji z poprawka jeszcze nie ma -
+    // najnowsza w maven-metadata.xml to wlasnie 2.4.20-RC.
+    //
+    // Ten build kompiluje jeden przykladowy plik w CI i nie wlacza build
+    // cache, wiec realne ryzyko bylo znikome. Chodzi o to, ze Dependabot
+    // probowal to naprawic codziennie i padal z
+    // security_update_dependency_not_found, bo nie dopasowuje pluginu
+    // deklarowanego przez kotlin("jvm") - czyli czerwony przebieg kazdego
+    // ranka i alert, ktory nigdy sam nie znika.
+    //
+    // Wroc do stabilnej, gdy 2.4.20 wyjdzie.
+    kotlin("jvm") version "2.4.20-RC"
     application
 }
 

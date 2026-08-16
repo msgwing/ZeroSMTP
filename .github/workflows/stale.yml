@@ -25,7 +25,15 @@ jobs:
           days-before-close: 14
           stale-issue-label: stale
           stale-pr-label: stale
-          exempt-issue-labels: 'service-alert,pinned,security'
+          # "help wanted" i "good first issue" znacza "czekamy na ochotnika",
+          # a nie "porzucone". Bez tych wyjatkow lej kontrybutorow zamyka sie
+          # sam po 74 dniach - a zadania jezykowe potrafia czekac dluzej i to
+          # jest normalne, nie problem.
+          #
+          # Uwaga: "pinned" to ETYKIETA, nie przypiecie w interfejsie GitHuba.
+          # actions/stale nie widzi przypietych issues, wiec samo przypiecie
+          # niczego nie chroni.
+          exempt-issue-labels: 'service-alert,pinned,security,help wanted,good first issue'
           exempt-pr-labels: 'pinned'
           stale-issue-message: >
             This issue has had no activity for 60 days and will be closed in
