@@ -1,0 +1,303 @@
+name: Outreach watch
+
+# Finds people publicly asking the question this project answers, and opens
+# one issue per thread with a draft reply for a human to approve.
+#
+# Replaces outreach-digest.yml, which searched GitHub issues weekly and
+# produced four consecutive empty digests. That was not a bug: nobody asks
+# "recommend a free SMTP relay" in a GitHub issue. Sysadmins ask on Server
+# Fault and Stack Overflow, and an answer there is worth more than a reply
+# anywhere else - it reaches the asker AND ranks in Google for everyone who
+# searches the same error later.
+#
+# Two rules this workflow is built around, both of which exist to keep the
+# account alive:
+#
+#   1. It NEVER posts anything. It opens an issue containing a draft. A
+#      person reads the thread, edits the draft, and posts it by hand.
+#   2. Every draft carries the affiliation disclosure. Stack Exchange
+#      removes answers - and suspends accounts - for undisclosed
+#      self-promotion, and that rule is enforced. An answer that has to have
+#      the link removed to survive was never worth posting.
+
+on:
+  schedule:
+    # Every six hours. Speed is most of the value here: an answer posted
+    # four days late lands on a thread nobody is reading any more.
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const LABEL = 'outreach';
+            const MAX_NEW = 3;          // per run, so a noisy day cannot flood the queue
+            const LOOKBACK_DAYS = 14;
+            const MARKER = 'outreach-id:';
+
+            // --- what to look for -------------------------------------------------
+            // Stack Exchange search is bare-token AND matching, same as GitHub's.
+            // Kept short on purpose: a long query matches nothing.
+            const SE_SITES = ['serverfault', 'stackoverflow', 'superuser'];
+            const SE_QUERIES = [
+              '5.7.139',
+              'SmtpClientAuthentication disabled',
+              'smtp basic authentication office 365',
+              'scan to email office 365 oauth',
+              'free smtp relay',
+            ];
+
+            const GH_QUERIES = [
+              'smtp free relay in:title is:issue is:open',
+              'smtp auth disabled in:title is:issue is:open',
+              '5.7.139 in:title is:issue is:open',
+            ];
+
+            // Titles containing these are asking a different question - bulk
+            // marketing mail, or building a mail server rather than sending
+            // through one. A reply there is noise.
+            const SKIP = [
+              'bulk', 'newsletter', 'marketing', 'campaign', 'mailing list',
+              'spam filter', 'receive mail', 'imap', 'pop3', 'dovecot',
+              'mailbox migration', 'exchange 2013', 'exchange 2016 install',
+            ];
+
+            const since = Math.floor(Date.now() / 1000) - LOOKBACK_DAYS * 86400;
+
+            // --- what has already been queued -------------------------------------
+            const seen = new Set();
+            for await (const res of github.paginate.iterator(
+              github.rest.issues.listForRepo,
+              { owner: context.repo.owner, repo: context.repo.repo,
+                state: 'all', labels: LABEL, per_page: 100 })) {
+              for (const issue of res.data) {
+                const m = (issue.body || '').match(new RegExp(`${MARKER}\\s*(\\S+)`));
+                if (m) seen.add(m[1]);
+              }
+            }
+            core.info(`${seen.size} thread(s) already queued.`);
+
+            // --- collect candidates -----------------------------------------------
+            const candidates = [];
+            let failed = 0, attempted = 0;
+
+            const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+            for (const site of SE_SITES) {
+              for (const q of SE_QUERIES) {
+                attempted++;
+                const url = 'https://api.stackexchange.com/2.3/search/advanced'
+                  + `?order=desc&sort=creation&site=${site}&pagesize=20`
+                  + `&fromdate=${since}&q=${encodeURIComponent(q)}`;
+                try {
+                  const res = await fetch(url, {
+                    headers: { 'User-Agent': 'msgwing-zerosmtp-outreach-watch' },
+                  });
+                  if (!res.ok) {
+                    core.warning(`${site} "${q}": HTTP ${res.status}`);
+                    failed++;
+                    continue;
+                  }
+                  const body = await res.json();
+                  if (body.quota_remaining !== undefined && body.quota_remaining < 20) {
+                    core.warning(`Stack Exchange quota down to ${body.quota_remaining}.`);
+                  }
+                  for (const item of body.items || []) {
+                    candidates.push({
+                      id: `se:${site}:${item.question_id}`,
+                      source: site,
+                      title: item.title.replace(/&#(\d+);/g, (_, n) => String.fromCharCode(n))
+                                       .replace(/&quot;/g, '"').replace(/&amp;/g, '&'),
+                      url: item.link,
+                      answered: item.is_answered,
+                      answers: item.answer_count,
+                      tags: item.tags || [],
+                    });
+                  }
+                } catch (e) {
+                  core.warning(`${site} "${q}": ${e.message}`);
+                  failed++;
+                }
+                // The unauthenticated quota is 300/day per IP; pacing keeps
+                // this well inside it and avoids the backoff field entirely.
+                await sleep(1500);
+              }
+            }
+
+            for (const q of GH_QUERIES) {
+              attempted++;
+              try {
+                const res = await github.rest.search.issuesAndPullRequests({
+                  q: `${q} -repo:${context.repo.owner}/${context.repo.repo}`,
+                  per_page: 10,
+                });
+                for (const item of res.data.items) {
+                  candidates.push({
+                    id: `gh:${item.id}`,
+                    source: 'github',
+                    title: item.title,
+                    url: item.html_url,
+                    answered: false,
+                    answers: item.comments,
+                    tags: (item.labels || []).map(l => l.name),
+                  });
+                }
+              } catch (e) {
+                core.warning(`github "${q}": ${e.message}`);
+                failed++;
+              }
+              await sleep(3000);   // secondary rate limit on the search API
+            }
+
+            // A run where every search failed must not look like a quiet day.
+            if (attempted > 0 && failed === attempted) {
+              core.setFailed(
+                `All ${attempted} searches failed. Reporting nothing found would ` +
+                `be wrong - treat this as an outage, not a quiet period.`);
+              return;
+            }
+
+            // --- filter and rank ---------------------------------------------------
+            const fresh = [];
+            const byId = new Set();
+            for (const c of candidates) {
+              if (seen.has(c.id) || byId.has(c.id)) continue;
+              const lower = c.title.toLowerCase();
+              if (SKIP.some(w => lower.includes(w))) continue;
+              byId.add(c.id);
+              fresh.push(c);
+            }
+
+            // A question with no answer yet is where a good answer is worth
+            // most - both to the asker and in the eventual search result.
+            fresh.sort((a, b) =>
+              (a.answered - b.answered) || (a.answers - b.answers));
+
+            const picked = fresh.slice(0, MAX_NEW);
+
+            if (picked.length === 0) {
+              core.notice(
+                `Nothing new. ${candidates.length} result(s) seen, ` +
+                `${failed}/${attempted} searches failed.`);
+              return;
+            }
+
+            // --- draft --------------------------------------------------------------
+            const DISCLOSURE =
+              '*Disclosure: I maintain ZeroSMTP, the free relay mentioned below.*';
+
+            function draft(c) {
+              const lower = (c.title + ' ' + c.tags.join(' ')).toLowerCase();
+
+              const body = [
+                'The end of December 2026 is when Microsoft turns off Basic',
+                'authentication for SMTP AUTH by default, so a device or script that',
+                'authenticates with a username and password stops being able to send',
+                'through Microsoft 365. Three things can be true at once here, and it',
+                'is worth working out which one you have before changing anything:',
+                '',
+                '1. **The tenant setting is still on and can be re-enabled** — until',
+                '   the end of December 2026 this is reversible. Worth checking first,',
+                '   because it buys you time rather than forcing a decision today.',
+                '2. **The device can do OAuth on newer firmware** — check the exact',
+                '   model against the vendor\'s advisory. Model lists and firmware',
+                '   branches diverge, so the product line is not the answer.',
+                '3. **The vendor has ruled it out** — several have said in writing that',
+                '   no OAuth firmware is coming for specific models. If yours is one,',
+                '   the mail path has to change, not the firmware.',
+                '',
+              ];
+
+              if (/print|scan|mfp|copier|ricoh|kyocera|canon|xerox|konica|brother|sharp/.test(lower)) {
+                body.push(
+                  'For printers and MFPs specifically, the per-vendor status is',
+                  'collected here with a link to each vendor\'s own statement:',
+                  'https://docs.msgwing.com/DEVICE-COMPATIBILITY.html',
+                  '');
+              }
+              if (/office ?365|microsoft ?365|exchange|tenant|m365/.test(lower)) {
+                body.push(
+                  'To find out which mailboxes in the tenant are actually exposed,',
+                  'note that the common `SmtpClientAuthenticationDisabled -eq $false`',
+                  'one-liner misses every mailbox that *inherits* the tenant setting,',
+                  'and can report zero on a fully exposed tenant.',
+                  '');
+              }
+
+              body.push(
+                'If the answer turns out to be (3) and the from-address genuinely',
+                'does not need to be your own domain — a scanner, a cron job, a',
+                'monitoring alert — a relay that still accepts plain SMTP AUTH is',
+                'three fields on the device rather than a project. ZeroSMTP is one:',
+                'free, no paid tier, capped at 200 messages a day, and it sends from',
+                'a shared @msgwing.com address rather than yours. If the from-address',
+                'has to be your domain, it is the wrong answer and Graph API or a paid',
+                'relay is the honest recommendation instead.',
+                '',
+                DISCLOSURE);
+
+              return body.join('\n');
+            }
+
+            // --- queue ----------------------------------------------------------------
+            for (const c of picked) {
+              const guidance = c.source === 'github'
+                ? [
+                    '**Before replying:** an unsolicited comment on somebody else\'s',
+                    'issue is the fastest way to get flagged. Only reply if the thread',
+                    'is genuinely about this and is still active.',
+                  ]
+                : [
+                    '**Before answering on Stack Exchange, read this.** Undisclosed',
+                    'self-promotion gets answers deleted and accounts suspended, and',
+                    'the rule is enforced. The draft ends with the disclosure line —',
+                    'do not remove it. More importantly: the answer has to stand on',
+                    'its own with the link taken out. If it does not, do not post it.',
+                  ];
+
+              const body = [
+                `<!-- ${MARKER} ${c.id} -->`,
+                `**[${c.title}](${c.url})**`,
+                '',
+                `Source: \`${c.source}\` · ${c.answered ? 'has an accepted answer' : 'no accepted answer'}`
+                  + ` · ${c.answers} answer(s)/comment(s)`
+                  + (c.tags.length ? ` · tags: ${c.tags.map(t => `\`${t}\``).join(', ')}` : ''),
+                '',
+                ...guidance,
+                '',
+                'Nothing has been posted. This is a draft.',
+                '',
+                '---',
+                '',
+                '### Draft',
+                '',
+                draft(c),
+                '',
+                '---',
+                '',
+                'Close this issue once you have replied, or if the thread turns out',
+                'not to fit. Closed issues are remembered, so it will not be queued',
+                'again.',
+              ].join('\n');
+
+              const created = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `Outreach: ${c.title}`.slice(0, 200),
+                body,
+                labels: [LABEL],
+              });
+              core.notice(`Queued #${created.data.number} — ${c.url}`);
+            }
+
+            core.notice(
+              `${picked.length} queued of ${fresh.length} new ` +
+              `(${candidates.length} results, ${failed}/${attempted} searches failed).`);
