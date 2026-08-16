@@ -110,6 +110,15 @@ scan-to-email · IoT and device notifications · homelabs.
 
 Setup guides: [Network printers](docs/PRINTERS.md) · [Popular applications](docs/APPS.md) · [Linux (Debian/Ubuntu/Rocky/Fedora/openSUSE)](docs/LINUX.md) · [System-wide mail relay (Postfix/msmtp/Exim4)](docs/SYSTEM-MTA.md) · [Windows Server](docs/WINDOWS-SERVER.md) · [Exchange Online SMTP AUTH migration](docs/EXCHANGE-ONLINE-SMTP-AUTH.md) · [Monitoring alerts](docs/MONITORING.md) · [OAuth compatibility list](docs/DEVICE-COMPATIBILITY.md) · [No OAuth firmware coming](docs/NO-OAUTH-FIRMWARE.md) · [Device case studies](docs/DEVICE-CASE-STUDIES.md) · [Troubleshooting](docs/TROUBLESHOOTING.md) · [Reliability (retries)](docs/RELIABILITY.md) · [vs. other free relays](docs/ALTERNATIVES.md) · [FAQ](docs/FAQ.md)
 
+> **Did this get a specific device sending again?** Tell us which one — a
+> [device report](https://github.com/msgwing/ZeroSMTP/issues/new?template=device_report.yml)
+> takes a couple of minutes. Vendors publish headline model lists; firmware
+> branches, regional names and OEM rebadges drift away from them, so a report
+> from someone holding the hardware is the part of
+> [the compatibility list](docs/DEVICE-COMPATIBILITY.md) nobody else can copy.
+> Confirming a device that *works* is just as useful as reporting one that
+> doesn't.
+
 ## How does this compare to other options?
 
 |  | ZeroSMTP | Gmail SMTP relay | Amazon SES | Mailgun / SendGrid / Brevo (typical free tier) |

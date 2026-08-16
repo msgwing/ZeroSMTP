@@ -113,6 +113,15 @@ monitoringu · skan-do-mail · powiadomień IoT · homelabów.
 
 Przewodniki konfiguracji: [Drukarki sieciowe](docs/PRINTERS.md) · [Popularne aplikacje](docs/APPS.md) · [Linux (Debian/Ubuntu/Rocky/Fedora/openSUSE)](docs/LINUX.md) · [Systemowy relay pocztowy (Postfix/msmtp/Exim4)](docs/SYSTEM-MTA.md) · [Windows Server](docs/WINDOWS-SERVER.md) · [Migracja z Exchange Online SMTP AUTH](docs/EXCHANGE-ONLINE-SMTP-AUTH.md) · [Alerty monitoringu](docs/MONITORING.md) · [Lista zgodności OAuth](docs/DEVICE-COMPATIBILITY.md) · [Urządzenia bez firmware z OAuth](docs/NO-OAUTH-FIRMWARE.md) · [Przypadki konkretnych urządzeń](docs/DEVICE-CASE-STUDIES.md) · [Rozwiązywanie problemów](docs/TROUBLESHOOTING.md) · [Niezawodność (ponawianie prób)](docs/RELIABILITY.md) · [FAQ](docs/FAQ.md)
 
+> **Udało Ci się dzięki temu przywrócić wysyłkę na konkretnym urządzeniu?**
+> Napisz na jakim — [zgłoszenie urządzenia](https://github.com/msgwing/ZeroSMTP/issues/new?template=device_report.yml)
+> zajmuje kilka minut. Producenci publikują ogólne listy modeli, ale gałęzie
+> firmware'u, nazwy regionalne i rebrandingi OEM się od nich rozjeżdżają —
+> dlatego zgłoszenie od kogoś, kto ma sprzęt pod ręką, to ta część
+> [listy zgodności](docs/DEVICE-COMPATIBILITY.md), której nikt inny nie
+> skopiuje. Potwierdzenie, że urządzenie *działa*, jest tak samo przydatne jak
+> zgłoszenie takiego, które nie działa.
+
 ## Jak to wypada na tle innych opcji?
 
 |  | ZeroSMTP | Gmail SMTP relay | Amazon SES | Mailgun / SendGrid / Brevo (typowy darmowy plan) |

@@ -1,0 +1,48 @@
+# Routes people to an answer before they open an issue.
+#
+# The Microsoft 365 Basic auth default-off date is the end of December 2026,
+# and the questions arriving around it are overwhelmingly the same four:
+# "why 535 5.7.139", "does my printer have OAuth firmware", "why does the
+# send hang", "can I use my own domain". All four already have a written
+# answer. Pointing at it beats retyping it.
+#
+# Blank issues stay enabled: somebody hitting a genuinely new problem in the
+# middle of a broken-mail incident should not have to pick a category first.
+blank_issues_enabled: true
+
+contact_links:
+  - name: "535 5.7.139 or another SMTP error"
+    url: https://docs.msgwing.com/ERROR-MESSAGES.html
+    about: >-
+      What each SMTP AUTH error actually means, and which of them are still
+      reversible before the end of December 2026.
+
+  - name: "Does my printer, MFP or NAS support OAuth?"
+    url: https://docs.msgwing.com/DEVICE-COMPATIBILITY.html
+    about: >-
+      Vendor-by-vendor status, with a link to the advisory behind every row.
+      Models the vendor has ruled out are listed separately.
+
+  - name: "The send hangs or times out"
+    url: https://docs.msgwing.com/TROUBLESHOOTING.html
+    about: >-
+      Most first-run failures are a cloud provider blocking outbound port 587
+      or 465, not a misconfiguration. Start here.
+
+  - name: "Can I send from my own domain? What are the limits?"
+    url: https://docs.msgwing.com/FAQ.html
+    about: >-
+      No to the first (shared @msgwing.com sender) and 200 messages/day to
+      the second. The FAQ explains why both are the way they are.
+
+  - name: "Question about using the relay"
+    url: https://github.com/msgwing/ZeroSMTP/discussions/categories/q-a
+    about: >-
+      Ask in Discussions rather than Issues. Answers there stay findable for
+      the next person with the same question.
+
+  - name: "Report abuse coming from an @msgwing.com address"
+    url: mailto:abuse@msgwing.com
+    about: >-
+      Email abuse@msgwing.com with headers. Do not open a public issue -
+      abuse reports contain other people's addresses.

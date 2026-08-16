@@ -33,7 +33,11 @@ jobs:
           # Uwaga: "pinned" to ETYKIETA, nie przypiecie w interfejsie GitHuba.
           # actions/stale nie widzi przypietych issues, wiec samo przypiecie
           # niczego nie chroni.
-          exempt-issue-labels: 'service-alert,pinned,security,help wanted,good first issue'
+          # advisory-review is exempt because advisory-review.yml refuses to
+          # open a new one while the previous is still open. Letting the bot
+          # close it would silently switch the monthly check back on without
+          # anybody having done the pass.
+          exempt-issue-labels: 'service-alert,pinned,security,help wanted,good first issue,advisory-review'
           exempt-pr-labels: 'pinned'
           stale-issue-message: >
             This issue has had no activity for 60 days and will be closed in

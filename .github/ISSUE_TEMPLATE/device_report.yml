@@ -1,0 +1,91 @@
+name: Device report
+description: Tell us what a specific printer, MFP, NAS or application actually did
+title: "[device] "
+labels: ["printers", "docs"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is the part of the project nobody else can copy. Vendors publish
+        headline model lists; firmware branches, regional model names and OEM
+        rebadges drift away from them. A report from someone holding the
+        hardware is worth more than another row copied out of an advisory.
+
+        Confirming that a device **works** is just as useful as reporting one
+        that doesn't — an empty row is what makes the next reader unsure.
+
+  - type: input
+    id: vendor
+    attributes:
+      label: Vendor
+      placeholder: Ricoh, Kyocera, Konica Minolta, Synology, Veeam...
+    validations:
+      required: true
+
+  - type: input
+    id: model
+    attributes:
+      label: Exact model string
+      description: >-
+        As printed on the device or shown in its web interface, not the
+        marketing name. Regional variants differ.
+      placeholder: MP C4504ex
+    validations:
+      required: true
+
+  - type: dropdown
+    id: status
+    attributes:
+      label: OAuth status
+      description: The meanings are documented at the top of data/devices.json.
+      options:
+        - "none-planned — the vendor has said no OAuth firmware is coming"
+        - "available — OAuth works on this model"
+        - "partial — works on some firmware versions or sub-models only"
+        - "check-advisory — the vendor publishes a per-model list"
+        - "unsupported — no OAuth capability for this purpose"
+        - "I don't know — I just know what happened when I tried"
+    validations:
+      required: true
+
+  - type: input
+    id: firmware
+    attributes:
+      label: Firmware or software version
+      placeholder: "1.09 / DSM 7.2.1 / Veeam B&R 12.1"
+
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: What happened
+      description: >-
+        What you configured, what it did, and the exact error if there was
+        one. If a menu was somewhere other than where the manual says, that
+        detail is worth more than it looks.
+      placeholder: |
+        Set SMTP to mx.msgwing.com:587 with STARTTLS. The device refused the
+        certificate until I ...
+    validations:
+      required: true
+
+  - type: input
+    id: evidence
+    attributes:
+      label: Evidence URL
+      description: >-
+        A vendor advisory, support article or forum thread anyone can open.
+        The build script refuses an entry without one — a compatibility list
+        is only worth citing if every row can be checked. Leave this blank if
+        all you have is your own experience; that still belongs in
+        docs/DEVICE-CASE-STUDIES.md, which credits you by username.
+      placeholder: https://www.ricoh.com/info/2025/0526_1
+
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Optional
+      options:
+        - label: >-
+            I'd rather open the pull request myself — point me at the file and
+            I'll add the row.
+          required: false

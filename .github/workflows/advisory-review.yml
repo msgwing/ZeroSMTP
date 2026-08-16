@@ -1,0 +1,132 @@
+name: Vendor advisory review
+
+# The compatibility list is only worth citing if it is current. Vendors keep
+# publishing and revising SMTP AUTH advisories through 2026, and a page that
+# quietly froze in August is worse than no page - it reads as authoritative
+# while being wrong.
+#
+# This opens one issue a month with a checklist built from data/devices.json
+# itself, so the vendor list cannot drift out of sync with the data the way a
+# hardcoded list would. It does not scrape anything: reading a vendor's
+# advisory and deciding what changed is the part that needs a person.
+
+on:
+  schedule:
+    # 07:00 UTC on the 1st of each month.
+    - cron: '0 7 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const data = JSON.parse(fs.readFileSync('data/devices.json', 'utf8'));
+
+            const LABEL = 'advisory-review';
+
+            // One open review issue at a time. If last month's is still open,
+            // the backlog is the problem and a second issue does not help.
+            const open = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: LABEL,
+            });
+            if (open.data.length > 0) {
+              core.notice(
+                `Issue #${open.data[0].number} is still open - not opening another.`);
+              return;
+            }
+
+            // `updated` is a plain YYYY-MM-DD string maintained by hand in the
+            // data file; treat a missing or unparseable value as "unknown"
+            // rather than guessing a date.
+            const updated = data.updated;
+            const parsed = Date.parse(updated);
+            const staleDays = Number.isNaN(parsed)
+              ? null
+              : Math.floor((Date.now() - parsed) / 86400000);
+
+            const entries = data.entries || [];
+
+            // Group by vendor so a vendor with several product lines is one
+            // checklist line, not four.
+            const byVendor = new Map();
+            for (const e of entries) {
+              if (!byVendor.has(e.vendor)) byVendor.set(e.vendor, []);
+              byVendor.get(e.vendor).push(e);
+            }
+
+            const checklist = [...byVendor.entries()]
+              .sort((a, b) => a[0].localeCompare(b[0]))
+              .map(([vendor, rows]) => {
+                const links = rows
+                  .map(r => r.evidence)
+                  .filter((url, i, all) => url && all.indexOf(url) === i)
+                  .map(url => `[advisory](${url})`)
+                  .join(' · ');
+                const statuses = [...new Set(rows.map(r => r.status))].join(', ');
+                return `- [ ] **${vendor}** — currently \`${statuses}\` — ${links}`;
+              })
+              .join('\n');
+
+            const staleLine = staleDays === null
+              ? `\`updated\` in data/devices.json is \`${updated}\`, which could not be parsed as a date.`
+              : `data/devices.json was last marked updated **${updated}** — ${staleDays} days ago.`;
+
+            const body = [
+              'Monthly check that the compatibility list still matches what the',
+              'vendors are publishing. Nothing here is automated on purpose:',
+              'deciding whether an advisory changed in a way that matters is the',
+              'part that needs reading.',
+              '',
+              staleLine,
+              '',
+              `Currently tracking **${entries.length} entries** across`,
+              `**${byVendor.size} vendors**.`,
+              '',
+              '## Re-check each advisory',
+              '',
+              checklist,
+              '',
+              '## What to look for',
+              '',
+              '- A model moving off the "no OAuth firmware" list — that is the',
+              '  single most valuable change to catch, because',
+              '  [NO-OAUTH-FIRMWARE.md](../blob/main/docs/NO-OAUTH-FIRMWARE.md)',
+              '  tells people their hardware is a write-off.',
+              '- New models added to an existing advisory.',
+              '- A vendor publishing an advisory for the first time — those are',
+              '  new rows, and the reason to keep doing this.',
+              '- A dead link. An entry whose evidence URL 404s cannot be checked',
+              '  by a reader and should be replaced or removed.',
+              '',
+              '## When something changed',
+              '',
+              '1. Edit [`data/devices.json`](../blob/main/data/devices.json) and',
+              '   bump its `updated` field.',
+              '2. Run `python tools/build-device-table.py` to regenerate the',
+              '   docs table. CI fails if you skip it.',
+              '',
+              'Close this issue when the pass is done, even if nothing changed —',
+              'that is a useful signal too.',
+            ].join('\n');
+
+            const created = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Vendor advisory review — ${new Date().toISOString().slice(0, 7)}`,
+              body,
+              labels: [LABEL, 'docs', 'printers'],
+            });
+            core.notice(`Opened #${created.data.number}`);
