@@ -100,7 +100,7 @@ Found only by actually running each build in CI, not by review:
   variable, which collides with the OS-reserved `USERNAME` variable on
   Windows; renamed to `ZEROSMTP_USERNAME` (and `ZEROSMTP_PASSWORD`,
   `ZEROSMTP_FROM`, `ZEROSMTP_TO`, `ZEROSMTP_SUBJECT`, `ZEROSMTP_BODY`)
-  across every example and the Copilot prompts file
+  across every example and the example-specs file
 - `php-zerosmtp.php` referenced a non-functional placeholder path
   (`/path/to/vendor/autoload.php`) instead of `__DIR__`
 - `bash-curl-zerosmtp.sh` hardcoded a Debian/Ubuntu-specific CA bundle

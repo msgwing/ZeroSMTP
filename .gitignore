@@ -3,7 +3,6 @@
 .env.*
 !.env.example
 
-# Local Claude Code tool config — machine-specific, not project source
 .claude/
 
 # Continue IDE extension config — machine-specific, not project source
