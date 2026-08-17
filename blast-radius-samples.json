@@ -48,7 +48,7 @@
       "date": "2026-08-17",
       "counts": {
         "o365-smtp-host": 24960,
-        "outlook-smtp-host": 22080
+        "outlook-smtp-host": null
       }
     }
   ]
