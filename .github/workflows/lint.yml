@@ -161,9 +161,33 @@ jobs:
     needs: changes
     if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
+    strategy:
+      # Both versions always report. If 5.1 breaks, we want to see whether 5.4
+      # still passes - cancelling the sibling would hide half the answer.
+      fail-fast: false
+      matrix:
+        # Pinned deliberately, and to two versions on purpose (measured
+        # 2026-08-19, #191). leafo/gh-actions-lua@v13 moved its default
+        # luaVersion from 5.4 to 5.5, so this job silently started building
+        # Lua 5.5.0 from source; 5.5.0 shipped 2025-12-15 and is in no distro
+        # repository yet, meaning the example was being checked against an
+        # interpreter no reader can install.
+        #   5.4 - what docs/LINUX.md tells readers to apt/dnf/zypper install.
+        #   5.1 - the stricter parser, and the only thing that verifies the
+        #         "Lua 5.1+" claim in the header of lua-zerosmtp.lua. It is
+        #         what rejects goto/::labels::/`//`/bitwise ops creeping in.
+        # Both build from source in well under a minute and run in parallel,
+        # so wall-clock cost is ~0. Safe to rename the job: `lua` is not a
+        # required status check on main (verified 2026-08-19; the eleven
+        # required contexts are bash, csharp, go, java, kotlin,
+        # node-and-typescript, php, powershell, python, ruby, rust). Renaming
+        # a *required* job would block every future pull request permanently.
+        luaVersion: ['5.1', '5.4']
     steps:
       - uses: actions/checkout@v7
       - uses: leafo/gh-actions-lua@v13
+        with:
+          luaVersion: ${{ matrix.luaVersion }}
       - name: Syntax-check Lua script
         run: luac -p lua-zerosmtp.lua
 
