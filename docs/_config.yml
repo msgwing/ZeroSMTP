@@ -16,10 +16,14 @@
 
 title: ZeroSMTP
 tagline: Free SMTP relay that still accepts basic username/password auth
+# Fallback description for every page that has no `description:` of its own
+# below, and the site description in the JSON-LD. It is an offer, so it
+# carries both limits: the 200/day cap and the from-address. See the
+# index.md scope for the other one. 159 chars, under the ~160 SERP budget.
 description: >-
-  Free SMTP relay for printers, scanners and legacy apps affected by the
-  Microsoft 365 SMTP AUTH Basic authentication shutdown. Plain
-  username/password auth, no OAuth required.
+  Free SMTP relay for printers, scanners and legacy apps that cannot do
+  OAuth 2.0. Plain username/password auth, 200 messages a day from an
+  @msgwing.com address.
 
 url: https://docs.msgwing.com
 baseurl: ""
@@ -65,10 +69,15 @@ defaults:
       path: "index.md"
     values:
       title: "Free SMTP relay that still accepts basic auth"
+      # The homepage is where the offer is made, so both limits are in the
+      # description itself, not only in the body. "no credit card" was
+      # removed rather than supplemented: in free-tier idiom it means "no
+      # paid gate", and next to an unstated cap the reader finishes the
+      # sentence as "unlimited". 157 chars, under the ~160 SERP budget.
       description: >-
         Free SMTP relay for printers, scanners and legacy apps hit by the
-        Microsoft 365 SMTP AUTH Basic authentication shutdown. No OAuth, no
-        credit card, no mail server to run.
+        Microsoft 365 SMTP AUTH shutdown. 200 messages a day from a generated
+        @msgwing.com address.
       widget: countdown
   - scope:
       path: "EXCHANGE-ONLINE-SMTP-AUTH.md"
