@@ -16,10 +16,15 @@
 
 title: ZeroSMTP
 tagline: Free SMTP relay that still accepts basic username/password auth
-# Fallback description for every page that has no `description:` of its own
-# below, and the site description in the JSON-LD. It is an offer, so it
-# carries both limits: the 200/day cap and the from-address. See the
-# index.md scope for the other one. 159 chars, under the ~160 SERP budget.
+# Where this actually surfaces, checked against the live site 2026-08-19:
+# the <subtitle> of feed.xml, and the meta description of any page that has
+# no `description:` of its own - which today is none of the 40, all of them
+# have one either from a scope below or from generated front matter. It is
+# NOT the JSON-LD description; jekyll-seo-tag uses the page's there.
+#
+# It is still an offer, so it carries both limits - the 200/day cap and the
+# from-address - because the next page added here inherits it by default.
+# See the index.md scope for the other offer. 159 chars, under ~160.
 description: >-
   Free SMTP relay for printers, scanners and legacy apps that cannot do
   OAuth 2.0. Plain username/password auth, 200 messages a day from an
