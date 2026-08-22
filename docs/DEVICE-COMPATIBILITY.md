@@ -34,6 +34,7 @@ answer.
 | **[Konica Minolta / DEVELOP](devices/konica-minolta-develop-ineo-and-ineo-mfps.md)** ineo and ineo+ MFPs | **No OAuth firmware planned** | `ineo 306`, `ineo 7228`, `ineo 266`, `ineo+ 266`, `ineo+ 256`, `ineo+ 226`, `ineo 4752`, `ineo 4052`, `ineo 4750`, `ineo 4050`, `ineo+ 3110`, `ineo+ 3100P`, `ineo+ 754e`, `ineo+ 654e`, `ineo 246`, `ineo 236`, `ineo 226`, `ineo 216`, `ineo 4700P`, `ineo 3301P`, `ineo 4000P`, `ineo 165 variants`, `ineo 185 variants` | [advisory](https://www.develop.eu/en/support/discontinuation-of-basic-authentication-for-smtp.html) |
 | **[Canon](devices/canon-maxify-mb2755.md)** Maxify MB2755 | No OAuth for this purpose | `Maxify MB2755` | [advisory](https://github.com/msgwing/ZeroSMTP/blob/main/docs/DEVICE-CASE-STUDIES.md) |
 | **[QNAP](devices/qnap-nas-notification-settings.md)** NAS notification settings | No OAuth for this purpose | — | [advisory](https://gist.github.com/msgwing/39958d909e085ae9cc0e6b3584d930bf) |
+| **[HP](devices/hp-printers-and-mfps.md)** printers and MFPs | Some models or versions | — | [advisory](https://support.hp.com/nz-en/document/ish_13623350-13600809-16) |
 | **[Microsoft](devices/microsoft-dynamics-nav-business-central.md)** Dynamics NAV / Business Central | Some models or versions | — | [advisory](https://www.innovia.com/blog/microsoft-to-retire-basic-auth-smtp-for-exchange-online-what-bc-nav-users-need-to-know) |
 | **[Veeam](devices/veeam-backup-for-microsoft-365-and-related-products.md)** Backup for Microsoft 365 and related products | Some models or versions | — | [advisory](https://helpcenter.veeam.com/docs/vbo365/guide/smtp_server.html) |
 | **[Xerox](devices/xerox-connectkey-printers-and-mfps.md)** ConnectKey printers and MFPs | Some models or versions | `VersaLink B415`, `VersaLink C415`, `VersaLink B620`, `VersaLink C620`, `VersaLink B625`, `VersaLink C625`, `AltaLink`, `PrimeLink` | [advisory](https://www.xerox.com/en-us/office/insights/exchange-online-authentication) |
@@ -57,6 +58,9 @@ Separate failure mode from OAuth: the firmware ships a fixed root CA store preda
 
 **QNAP — NAS notification settings**  
 The notification settings accept username and password only; there is no OAuth option for Microsoft 365 SMTP.
+
+**HP — printers and MFPs**  
+HP documents OAuth 2.0 support for Microsoft 365 Scan to Email on HP Enterprise and HP Managed printers running FutureSmart firmware 5.7 and newer. However, HP also states that certain LaserJet Pro models, including the M478-M479 and M428-M429f, do not support OAuth 2.0. Verify the exact product family and firmware before assuming Microsoft 365 SMTP AUTH compatibility.
 
 **Microsoft — Dynamics NAV / Business Central**  
 Newer Business Central handles modern auth. Older on-prem NAV installs generally need the SMTP account repointed.
@@ -94,7 +98,7 @@ Ricoh publishes affected products with per-product firmware status, revised on 2
 **Microsoft — Teams Rooms**  
 Microsoft's own product. Enable modern auth on the resource account - no relay needed.
 
-*15 entries, last reviewed 2026-08-16.*
+*16 entries, last reviewed 2026-08-16.*
 
 <!-- END GENERATED TABLE -->
 

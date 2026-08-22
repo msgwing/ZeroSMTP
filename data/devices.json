@@ -151,7 +151,14 @@
       "status": "check-advisory",
       "models": [],
       "evidence": "https://faxination.com/microsoft-timeline-for-basic-authentication-deprecation-in-exchange-online-smtp-auth/",
-      "notes": "Vendor published a timeline notice. Apply their update if one exists for the version in use; otherwise the outbound SMTP account has to be repointed."
+      "notes": "Vendor published a timeline notice. Apply their update if one exists for the version in use; otherwise the outbound SMTP account has to be repointed."    },
+    {
+      "vendor": "HP",
+      "product": "printers and MFPs",
+      "status": "partial",
+      "models": [],
+      "evidence": "https://support.hp.com/nz-en/document/ish_13623350-13600809-16",
+      "notes": "HP documents OAuth 2.0 support for Microsoft 365 Scan to Email on HP Enterprise and HP Managed printers running FutureSmart firmware 5.7 and newer. However, HP also states that certain LaserJet Pro models, including the M478-M479 and M428-M429f, do not support OAuth 2.0. Verify the exact product family and firmware before assuming Microsoft 365 SMTP AUTH compatibility."
     }
   ]
 }
