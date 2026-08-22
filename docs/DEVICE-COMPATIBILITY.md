@@ -43,6 +43,7 @@ answer.
 | **[Faxination](devices/faxination-fax-server.md)** fax server | Check vendor advisory | — | [advisory](https://faxination.com/microsoft-timeline-for-basic-authentication-deprecation-in-exchange-online-smtp-auth/) |
 | **[Kyocera](devices/kyocera-mfps-reporting-send-error-1102.md)** MFPs reporting send error 1102 | Check vendor advisory | — | [advisory](https://github.com/msgwing/ZeroSMTP/blob/main/docs/ERROR-MESSAGES.md) |
 | **[Laserfiche](devices/laserfiche-workflow-email.md)** Workflow email | Check vendor advisory | — | [advisory](https://answers.laserfiche.com/questions/200557/Disabling-basic-authentication-causing-Workflow-emails-to-fail) |
+| **[Lexmark](devices/lexmark-printers-and-mfps.md)** printers and MFPs | Check vendor advisory | — | [advisory](https://support.lexmark.com/content/support/guides/en/kb20211110020010549/setup-installation-and-configuration-issues/how-to-set-up-oauth-2-authentication.html) |
 | **[ManageEngine](devices/manageengine-opmanager.md)** OpManager | Check vendor advisory | — | [advisory](https://www.manageengine.com/network-monitoring/how-to/fix-smtpclientauth-disabled-error.html) |
 | **[Ricoh](devices/ricoh-multifunction-printers.md)** multifunction printers | Check vendor advisory | — | [advisory](https://www.ricoh.com/info/2025/0526_1) |
 | **[Microsoft](devices/microsoft-teams-rooms.md)** Teams Rooms | OAuth available | — | [advisory](https://learn.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/deprecation-of-basic-authentication-exchange-online) |
@@ -85,6 +86,9 @@ Vendor published a timeline notice. Apply their update if one exists for the ver
 **Laserfiche — Workflow email**  
 Workflow emails failing on Basic auth removal, reported in the vendor's own community.
 
+**Lexmark — printers and MFPs**  
+Lexmark documents OAuth 2.0 authentication for printers starting with the FW24 firmware release, including Outlook Live and Microsoft 365. The Email Server flow is configured through the printer's Embedded Web Server and requires OAuth 2.0 registration. Verify the specific device and firmware before assuming support.
+
 **ManageEngine — OpManager**  
 OpManager supports OAuth 2.0 from build 126306, so for anyone on that build or later this is a settings change rather than a migration - the vendor's guide states it directly. The same page also documents re-enabling SMTP AUTH in the Exchange admin centre, which works until the end of December 2026 and not after; treat it as breathing room, not a fix.
 
@@ -94,7 +98,7 @@ Ricoh publishes affected products with per-product firmware status, revised on 2
 **Microsoft — Teams Rooms**  
 Microsoft's own product. Enable modern auth on the resource account - no relay needed.
 
-*15 entries, last reviewed 2026-08-16.*
+*16 entries, last reviewed 2026-08-16.*
 
 <!-- END GENERATED TABLE -->
 

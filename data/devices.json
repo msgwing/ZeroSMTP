@@ -152,6 +152,14 @@
       "models": [],
       "evidence": "https://faxination.com/microsoft-timeline-for-basic-authentication-deprecation-in-exchange-online-smtp-auth/",
       "notes": "Vendor published a timeline notice. Apply their update if one exists for the version in use; otherwise the outbound SMTP account has to be repointed."
+    },
+    {
+      "vendor": "Lexmark",
+      "product": "printers and MFPs",
+      "status": "check-advisory",
+      "models": [],
+      "evidence": "https://support.lexmark.com/content/support/guides/en/kb20211110020010549/setup-installation-and-configuration-issues/how-to-set-up-oauth-2-authentication.html",
+      "notes": "Lexmark documents OAuth 2.0 authentication for printers starting with the FW24 firmware release, including Outlook Live and Microsoft 365. The Email Server flow is configured through the printer's Embedded Web Server and requires OAuth 2.0 registration. Verify the specific device and firmware before assuming support."
     }
   ]
 }
