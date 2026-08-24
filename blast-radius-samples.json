@@ -45,10 +45,10 @@
       }
     },
     {
-      "date": "2026-08-17",
+      "date": "2026-08-24",
       "counts": {
-        "o365-smtp-host": 24960,
-        "outlook-smtp-host": null
+        "o365-smtp-host": 25728,
+        "outlook-smtp-host": 22208
       }
     }
   ]
