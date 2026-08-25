@@ -91,6 +91,67 @@ jobs:
               owner, repo: context.repo.repo, issue_number, body,
             });
 
+  # Copilot zostal powolany do zarzadu 2026-08-25 i do dzis nie wykonal ani
+  # jednej czynnosci: zero komentarzy, zero recenzji. Nie z powodu jakosci -
+  # nie jest w tym repozytorium wystawiony jako aktor, ktoremu mozna cokolwiek
+  # przypisac. Wlasciciel zaakceptowal wlaczenie, ale to ustawienie konta,
+  # nie repozytorium, i nic po naszej stronie sie nie zmienilo.
+  #
+  # Zamiast wpisywac komus "pamietaj, zeby sprawdzac", pyta o to maszyna.
+  # Milczy, dopoki stan sie nie zmieni. Gdy Copilot sie pojawi, zaklada
+  # jedno zgloszenie i firma wie, ze etat moze zaczac prace.
+  copilot:
+    if: github.event_name != 'issues'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            const owner = context.repo.owner, repo = context.repo.repo;
+            const q = `{repository(owner:"${owner}",name:"${repo}"){` +
+              `suggestedActors(capabilities:[CAN_BE_ASSIGNED],first:20){nodes{login}}}}`;
+            let aktorzy = [];
+            try {
+              const r = await github.graphql(q);
+              aktorzy = r.repository.suggestedActors.nodes.map(n => n.login);
+            } catch (e) {
+              core.warning(`Nie udalo sie odpytac o aktorow: ${e.message}`);
+              return;
+            }
+            const jest = aktorzy.some(a => /copilot/i.test(a));
+            core.info(`Aktorzy: ${aktorzy.join(', ') || 'brak'}`);
+            if (!jest) {
+              core.info('Copilot nadal niedostepny - bez zgloszenia.');
+              return;
+            }
+            const MARKER = '<!-- copilot-dostepny -->';
+            const otwarte = (await github.rest.issues.listForRepo({
+              owner, repo, state: 'all', per_page: 50, labels: 'do-akceptacji',
+            })).data;
+            if (otwarte.some(i => (i.body || '').includes(MARKER))) {
+              core.info('Zgloszenie o dostepnosci Copilota juz istnieje.');
+              return;
+            }
+            const NL2 = String.fromCharCode(10);
+            await github.rest.issues.create({
+              owner, repo,
+              title: 'Copilot jest juz dostepny - etat moze zaczac prace',
+              body: [
+                MARKER,
+                'Zapytanie o aktorow zwrocilo Copilota, czego przez caly czas',
+                'od powolania nie robilo. Etat doradcy zarzadu moze zaczac',
+                'wykonywac zadania weryfikacyjne.',
+                '',
+                `Zwroceni aktorzy: ${aktorzy.join(', ')}`,
+                '',
+                'Pierwsze zadanie: recenzja najblizszego otwartego pull requesta.',
+              ].join(NL2),
+              labels: ['do-akceptacji'],
+            });
+            core.notice('Copilot dostepny - zalozono zgloszenie.');
+
   waiting:
     if: github.event_name != 'issues'
     runs-on: ubuntu-latest
