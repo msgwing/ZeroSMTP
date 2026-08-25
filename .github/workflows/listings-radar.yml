@@ -269,7 +269,7 @@ jobs:
               // tam usluge i myslila sie; sprawdzenie na dwoch lokalach przeszlo,
               // bo oba mialy emoji albo nie mialy nic. Tozsamosc lokalu jest
               // mocniejszym dowodem niz sposob, w jaki formatuje wiersze.
-              const NARZEDZIOWE = /(cli|command[- ]?line|terminal|devtools|developer tools|shell)/i;
+              const NARZEDZIOWE = /\b(cli|command[- ]?line|terminal|devtools|developer tools|shell)\b/i;
               const nazwaLokalu = (r.name || '') + ' ' + (r.description || '');
               const kandydat = (udzial > 0.5 || NARZEDZIOWE.test(nazwaLokalu)) ? 'cli' : 'usluga';
 
