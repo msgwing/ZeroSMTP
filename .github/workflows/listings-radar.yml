@@ -233,20 +233,6 @@ jobs:
                 continue;
               }
 
-              // And it has to have a section this belongs in - a *heading*,
-              // not the word somewhere in the prose. A general list with no
-              // mail section is not a rejection of the project, it is simply
-              // the wrong list, and submitting anyway is how a maintainer
-              // learns to ignore you.
-              const heading = readme.match(
-                /^#{1,4}[ \t]+.*\b(e-?mail|smtp|mail|transactional)\b.*$/im);
-              if (!heading) {
-                core.info(`${r.full_name}: ${entries} entries but no mail section.`);
-                rejected++;
-                continue;
-              }
-              const section = heading[0].replace(/^#+\s*/, '').trim().slice(0, 60);
-
               // Który z naszych dwóch bytów tu startuje? Radar opisywał lokal
               // i nigdy tego nie rozstrzygał, więc szkic zawsze proponował
               // usługę hostowaną. 2026-08-25 kosztowało to zamknięcie
@@ -272,6 +258,27 @@ jobs:
               const NARZEDZIOWE = /\b(cli|command[- ]?line|terminal|devtools|developer tools|shell)\b/i;
               const nazwaLokalu = (r.name || '') + ' ' + (r.description || '');
               const kandydat = (udzial > 0.5 || NARZEDZIOWE.test(nazwaLokalu)) ? 'cli' : 'usluga';
+
+              // And it has to have a section this belongs in - a *heading*,
+              // not the word somewhere in the prose. A general list with no
+              // mail section is not a rejection of the project, it is simply
+              // the wrong list, and submitting anyway is how a maintainer
+              // learns to ignore you.
+              // Kandydat CLI trafia pod inny naglowek. Katalog narzedzi wiersza
+              // polecen dzieli sie wedlug funkcji - Network, Sysadmin, DevOps -
+              // i sekcji o poczcie zwykle nie ma wcale. Przebieg 2026-08-25
+              // odrzucil z tego powodu liste o 246 wpisach, w ktorej sprawdzacz
+              // polaczenia SMTP jest dokladnie na miejscu.
+              const SEKCJA_USLUGA = /^#{1,4}[ \t]+.*\b(e-?mail|smtp|mail|transactional)\b.*$/im;
+              const SEKCJA_CLI = /^#{1,4}[ \t]+.*\b(e-?mail|smtp|mail|network|networking|sysadmin|devops|monitoring|utilities|internet)\b.*$/im;
+              const heading = readme.match(kandydat === 'cli' ? SEKCJA_CLI : SEKCJA_USLUGA);
+              if (!heading) {
+                core.info(`${r.full_name}: ${entries} entries but no mail section.`);
+                rejected++;
+                continue;
+              }
+              const section = heading[0].replace(/^#+\s*/, '').trim().slice(0, 60);
+
 
               // What kind of list is it? Having a mail section is not enough,
               // and this is where the first run went wrong: it queued
