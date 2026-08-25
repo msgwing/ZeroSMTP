@@ -1,9 +1,12 @@
 # ZeroSMTP vs. other free SMTP relays
 
-Free transactional SMTP relays fall into two groups: services built for
-sending from **your own domain** (SMTP2GO, Brevo, MailerSend, and similar),
-and ZeroSMTP, built for sending when you **don't want to touch DNS at all**.
-Neither is "better" in the abstract — they solve different problems.
+There are three ways to keep mail flowing without Basic authentication.
+Services built for sending from **your own domain** (SMTP2GO, Brevo,
+MailerSend, and similar). A **proxy you run yourself**, which keeps your
+domain and your tenant. And ZeroSMTP, for sending when you **don't want to
+touch DNS or run anything at all**. None is "better" in the abstract — they
+solve different problems, and the third option is the one most comparisons
+leave out.
 
 ![Setup path: a typical free relay takes five steps including DNS configuration; ZeroSMTP takes three steps with no DNS work](assets/setup-comparison.svg)
 
@@ -63,12 +66,47 @@ Limits move. These were current when this page was last reviewed; check the
 provider before deciding on the strength of a number in somebody else's table,
 including ours.
 
+## The option most comparisons leave out: a proxy you run yourself
+
+If the mail has to come from your own domain **and** you would rather not
+hand it to a third party, there is a third answer: run a small SMTP server
+inside your own network that accepts username-and-password from the device
+and speaks OAuth2 to Microsoft on the other side. The device never learns
+that anything changed.
+
+[`oldium/microsoft-smtp-oauth2-proxy`](https://github.com/oldium/microsoft-smtp-oauth2-proxy)
+is the one to look at. It is open source, it is small, and for the case it
+serves it is a better answer than we are.
+
+| | ZeroSMTP | A proxy you run yourself |
+| --- | --- | --- |
+| **Sends from your own domain** | ❌ shared `@msgwing.com` address | ✅ your tenant, your domain |
+| **Anything to install or keep running** | ✅ nothing | ❌ a server that has to stay up, patched, and reachable by the device |
+| **Entra app registration required** | ✅ none | ❌ yes — you register the app and manage its secret |
+| **Who is in the mail path** | us | nobody but you and Microsoft |
+| **Time to first email** | ~2 minutes | as long as it takes to deploy and register the app |
+| **When it fails at 2am** | our problem | yours |
+
+**Pick the proxy if** the sender identity matters, you already run
+infrastructure, and adding one more service to keep alive is not a burden.
+**Pick us if** the thing sending the mail is a printer in an office with
+nobody to look after a server, and the address it sends from does not
+matter to anyone.
+
+We are not going to pretend that a shared sending address is a feature. It
+is the price of having nothing to install, and for a scan-to-email button
+on a copier it is usually the right price. For an application that sends
+receipts to your customers, it is not.
+
 ## Which one fits you
 
 - ✅ **Pick ZeroSMTP if:** you don't have a domain to spare for this, don't
   want to learn what an SPF record is, or the device sending the mail
   (a printer, a NAS, a cron job) doesn't care whose address it comes from —
   see [Printers](PRINTERS.md) and [Device case studies](DEVICE-CASE-STUDIES.md).
+- ✅ **Pick a proxy you run yourself if:** the mail must come from your own
+  domain, you want nobody else in the path, and you already have somewhere
+  to run it — see [the section above](#the-option-most-comparisons-leave-out-a-proxy-you-run-yourself).
 - ✅ **Pick a domain-based relay if:** the mail needs to visibly come from
   *your* company, you're past a couple hundred messages a day, or the
   sending identity is part of your product (receipts, customer
