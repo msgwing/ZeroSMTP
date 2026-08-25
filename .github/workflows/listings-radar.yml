@@ -262,7 +262,16 @@ jobs:
               const wiersze = readme.match(/^[ \t]*[-*] \[[^\]]+\]\(https?:\/\/.*$/gm) || [];
               const zPlatforma = wiersze.filter(w => PLAT.some(e => w.includes(e))).length;
               const udzial = wiersze.length ? zPlatforma / wiersze.length : 0;
-              const kandydat = udzial > 0.5 ? 'cli' : 'usluga';
+              // Emoji platformy to sygnal wtorny, nie jedyny. Zmierzone na
+              // agarrharr/awesome-cli-apps: 0% wpisow niesie emoji, a to jest
+              // katalog narzedzi wiersza polecen - czyli dokladnie tam, gdzie
+              // startuje `zerosmtp-check`. Pierwsza wersja tej bramki wskazala
+              // tam usluge i myslila sie; sprawdzenie na dwoch lokalach przeszlo,
+              // bo oba mialy emoji albo nie mialy nic. Tozsamosc lokalu jest
+              // mocniejszym dowodem niz sposob, w jaki formatuje wiersze.
+              const NARZEDZIOWE = /(cli|command[- ]?line|terminal|devtools|developer tools|shell)/i;
+              const nazwaLokalu = (r.name || '') + ' ' + (r.description || '');
+              const kandydat = (udzial > 0.5 || NARZEDZIOWE.test(nazwaLokalu)) ? 'cli' : 'usluga';
 
               // What kind of list is it? Having a mail section is not enough,
               // and this is where the first run went wrong: it queued
