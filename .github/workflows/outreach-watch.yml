@@ -24,7 +24,17 @@ on:
   schedule:
     # Every six hours. Speed is most of the value here: an answer posted
     # four days late lands on a thread nobody is reading any more.
-    - cron: '0 */6 * * *'
+    # Raz dziennie, nie co szesc godzin. Zmierzone 2026-08-25: kanal dal
+    # 16 watkow w calej historii, wszystkie zamkniete, ani jeden oznaczony
+    # jako trafiony, i zero nowych od osmiu dni przy czterech przebiegach
+    # dziennie. Cztery razy dziennie pytac o cos, czego nie ma, to koszt
+    # bez plonu.
+    #
+    # Nie wylaczone, bo grudzien 2026 jest dokladnie momentem, w ktorym
+    # ludzie zaczna pytac publicznie. Przywrocic czestotliwosc, gdy
+    # pierwszy watek od miesiecy sie pojawi - to jest sygnal, ze kanal
+    # ozyl, i wtedy warto patrzec czesciej.
+    - cron: '0 7 * * *'
   workflow_dispatch:
 
 permissions:
