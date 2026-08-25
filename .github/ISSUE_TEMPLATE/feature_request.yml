@@ -1,0 +1,51 @@
+name: Something is missing
+description: A device, an app, a language example or a page that should exist and does not
+title: "[request] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This project exists because Microsoft is switching Basic authentication for
+        SMTP AUTH off in December 2026, and a great many devices cannot follow.
+        Requests that name **a real device or app somebody is stuck with** get built
+        first, because somebody is already blocked by them.
+
+        If you have the hardware in front of you, say so - the panel wording and the
+        exact error are worth more than a careful description of them.
+  - type: dropdown
+    id: rodzaj
+    attributes:
+      label: What kind of gap is it
+      options:
+        - A printer, scanner, MFP or NAS that is not covered
+        - An application or service that is not covered
+        - A programming language or framework without an example
+        - A documentation page that should exist
+        - Something else
+    validations:
+      required: true
+  - type: input
+    id: co
+    attributes:
+      label: Name it exactly
+      description: Model number, product name or language. Exact names are what people search for.
+      placeholder: "Ricoh IM C3000, Veeam Backup, Rust, ..."
+    validations:
+      required: true
+  - type: textarea
+    id: dlaczego
+    attributes:
+      label: Who is stuck without it
+      description: >-
+        One sentence is enough. "Our office has forty of these and scan to email
+        died" tells us more than a page of reasoning.
+    validations:
+      required: true
+  - type: checkboxes
+    id: dostep
+    attributes:
+      label: Do you have it in front of you
+      options:
+        - label: I can read the panel or the logs and paste what it actually says
+          required: false

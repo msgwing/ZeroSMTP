@@ -1,0 +1,55 @@
+name: Something is broken
+description: An example, script, generated page or workflow does not do what it says
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Most of what ships here is generated from `data/`, so the same defect can
+        appear on twenty pages at once. Telling us **which file** you were looking
+        at is what separates a one-line fix in a generator from an afternoon of
+        guessing.
+  - type: dropdown
+    id: gdzie
+    attributes:
+      label: Where did you hit it
+      options:
+        - A code example (one of the language folders)
+        - The zerosmtp-check CLI
+        - A documentation page
+        - A GitHub Action or workflow
+        - Somewhere else / not sure
+    validations:
+      required: true
+  - type: input
+    id: plik
+    attributes:
+      label: Which file or page
+      description: A path or a URL. If you are not sure, paste the link you were on.
+      placeholder: "examples/python/zerosmtp.py, docs/PRINTERS.md, https://docs.msgwing.com/FAQ"
+    validations:
+      required: true
+  - type: textarea
+    id: co
+    attributes:
+      label: What happened, and what you expected instead
+    validations:
+      required: true
+  - type: textarea
+    id: wyjscie
+    attributes:
+      label: The exact output
+      description: >-
+        Paste it unedited. Tidying it up removes the part that identifies the
+        cause more often than not.
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: wersja
+    attributes:
+      label: Version, if it was the CLI
+      placeholder: "output of: npx zerosmtp-check --version"
+    validations:
+      required: false
