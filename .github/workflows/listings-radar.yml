@@ -237,6 +237,23 @@ jobs:
               }
               const section = heading[0].replace(/^#+\s*/, '').trim().slice(0, 60);
 
+              // Który z naszych dwóch bytów tu startuje? Radar opisywał lokal
+              // i nigdy tego nie rozstrzygał, więc szkic zawsze proponował
+              // usługę hostowaną. 2026-08-25 kosztowało to zamknięcie
+              // Axorax/awesome-free-apps jako "nie kwalifikujemy się", podczas
+              // gdy leżał tam nasz poprawny, otwarty PR - bo złożone było CLI,
+              // a oceniana była usługa. Dwa byty, rozłączne zbiory list.
+              //
+              // Sygnał jest mechaniczny: lista programów do zainstalowania
+              // znaczy wpisy emoji platformy. Zmierzone na awesome-free-apps:
+              // 601 wpisów, praktycznie każdy z emoji Windows/macOS/Linux,
+              // a jedyne wiersze bez nich to automatyczny spis treści.
+              const PLAT = [0x1FA9F, 0x1F34E, 0x1F427].map(c => String.fromCodePoint(c));
+              const wiersze = readme.match(/^[ \t]*[-*] \[[^\]]+\]\(https?:\/\/.*$/gm) || [];
+              const zPlatforma = wiersze.filter(w => PLAT.some(e => w.includes(e))).length;
+              const udzial = wiersze.length ? zPlatforma / wiersze.length : 0;
+              const kandydat = udzial > 0.5 ? 'cli' : 'usluga';
+
               // What kind of list is it? Having a mail section is not enough,
               // and this is where the first run went wrong: it queued
               // awesome-selfhosted and awesome-sysadmin, both of which
@@ -290,6 +307,8 @@ jobs:
               }
 
               candidates.push({
+                kandydat,
+                udzial: Math.round(udzial * 100),
                 id,
                 full_name: r.full_name,
                 url: r.html_url,
@@ -318,12 +337,21 @@ jobs:
             }
 
             // --- draft --------------------------------------------------------------
-            const ENTRY =
+            // Dwa byty, dwa szkice. Który z nich wchodzi, rozstrzyga bramka
+            // kształtu listy wyżej - nie autor zgłoszenia w biegu.
+            const ENTRY_USLUGA =
               '- [ZeroSMTP](https://msgwing.com) — Free SMTP relay that still ' +
               'accepts plain username-and-password SMTP AUTH, for printers, ' +
               'scanners, NAS units and legacy apps that cannot do OAuth2. ' +
               '200 messages/day; sends from a shared @msgwing.com address ' +
               'rather than your own domain.';
+
+            // Sformułowanie wzięte z wpisu, który faktycznie przeszedł format
+            // Axorax/awesome-free-apps#275 - nie napisane od nowa.
+            const ENTRY_CLI =
+              '- [zerosmtp-check](https://github.com/msgwing/ZeroSMTP/tree/main/packages/zerosmtp-check) ' +
+              '- Checks whether outbound SMTP works from a machine, testing ports, ' +
+              'TLS and authentication, and explains the error your mail client printed.';
 
             for (const c of picked) {
               const body = [
@@ -338,6 +366,10 @@ jobs:
                 ...(c.prTarget
                   ? [`⚠️ **This repository does not take pull requests.** Its PR template redirects to ${c.prTarget} — submit there, not here.`, '']
                   : []),
+                c.kandydat === 'cli'
+                  ? `**Kandydatem jest CLI \`zerosmtp-check\`, nie usługa.** ${c.udzial}% wpisów tej listy niesie emoji platformy, czyli jest to lista oprogramowania do zainstalowania. Usługa hostowana nie ma tu kategorii; narzędzie uruchamiane poleceniem ma.`
+                  : `**Kandydatem jest usługa ZeroSMTP.** Tylko ${c.udzial}% wpisów niesie emoji platformy, więc lista nie jest katalogiem programów do zainstalowania i wpis o usłudze ma tu sens.`,
+                '',
                 'Nothing has been submitted. This is a draft.',
                 '',
                 '### Check before submitting',
@@ -355,7 +387,7 @@ jobs:
                 '### Draft entry',
                 '',
                 '```markdown',
-                ENTRY,
+                c.kandydat === 'cli' ? ENTRY_CLI : ENTRY_USLUGA,
                 '```',
                 '',
                 'The 200/day cap and the shared from-address stay in. They are ' +
