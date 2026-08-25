@@ -310,17 +310,34 @@ jobs:
             L.push('');
             L.push(`<!-- reach: ${JSON.stringify(now)} -->`);
 
+            // Bez wzrostu raport nie tworzy zgloszenia. Zalozenie, ktore tu wczesniej
+            // stalo - ze brak przypisania wystarczy, bo GitHub wysyla list tylko do
+            // przypisanego - bylo niesprawdzone. Zmierzone 2026-08-25: skrzynka
+            // powiadomien miala 14 pozycji, z czego 13 z naszego wlasnego repozytorium.
+            // Wiadomosc od jedynego powtarzalnego kontrybutora, proszacego o zadanie
+            // programistyczne, lezala w niej dwa dni.
+            //
+            // Zgloszenie w publicznym repozytorium trafia do skrzynki kazdego, kto je
+            // obserwuje, niezaleznie od przypisania. Cykl bez wzrostu nie ma nic do
+            // powiedzenia i nie ma prawa zajmowac miejsca, w ktorym szuka sie ludzi.
+            //
+            // Liczby nie gina - ida do podsumowania przebiegu, czytelnego w Actions,
+            // ktore nie powiadamia nikogo.
+            if (!grew) {
+              await core.summary
+                .addHeading(`Cykl bez wzrostu - ${day}`)
+                .addRaw(L.join(String.fromCharCode(10)))
+                .write();
+              core.notice('Bez wzrostu - raport w podsumowaniu przebiegu, bez zgloszenia.');
+              return;
+            }
+            
             const issue = await github.rest.issues.create({
               owner, repo,
-              title: grew
-                ? `Raport postępów — ${day}`
-                : `Cykl bez wzrostu — ${day}`,
-              body: L.join('\n'),
-              // No assignee when nothing grew: GitHub only mails the assignee,
-              // so this is the whole mechanism. The report still exists and is
-              // still readable - it simply does not interrupt anybody.
-              assignees: grew ? [owner] : [],
-              labels: grew ? ['raport'] : ['raport', 'bez-wzrostu'],
+              title: `Raport postepow - ${day}`,
+              body: L.join(String.fromCharCode(10)),
+              assignees: [owner],
+              labels: ['raport'],
             });
             core.notice(`Raport: ${issue.data.html_url}`);
 
