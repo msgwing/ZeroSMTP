@@ -23,7 +23,7 @@ zacommitowane; przy uruchomieniu recznie na swiezym pliku - ma.
 import subprocess
 import sys
 
-DOZWOLONE = {9, 10, 13}  # probny znak
+DOZWOLONE = {9, 10, 13}
 POMIN = (".png", ".jpg", ".jpeg", ".gif", ".ico", ".pdf", ".woff", ".woff2",
          ".zip", ".gz", ".svgz", ".webp", ".mp4")
 
