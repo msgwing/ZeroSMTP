@@ -412,6 +412,8 @@ jobs:
                 '- [ ] The format matches the neighbouring lines exactly — dash style, trailing period, link form.',
                 '- [ ] Any minimum age, star count or license requirement is met.',
                 '- [ ] Their linter (`awesome-lint`, `remark`) passes locally.',
+                '- [ ] Sklonowane przez `git -c core.autocrlf=false clone` - inaczej Windows przepisze konce wierszy calego pliku.',
+                '- [ ] Po commicie, przed `git push`: `python tools/check-submission.py --repo <klon> --max-lines 3` wychodzi czysto. Jednolinijkowy wpis wyszedl juz raz jako commit na 4417 linii.',
                 '',
                 '---',
                 '',
