@@ -72,6 +72,8 @@ jobs:
       # request, on a change that had nothing to do with it.
       - name: Python dependencies for the checks below
         run: pip install --quiet pyyaml
+      - name: No control characters anywhere in the repository
+        run: python tools/check-control-chars.py
       - name: Device table and pages match data/devices.json
         run: python tools/build-device-table.py --check
       - name: Error pages match data/errors.json
