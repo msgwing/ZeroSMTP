@@ -1,5 +1,5 @@
 ---
-title: "535 5.7.139 SmtpClientAuthentication is disabled"
+title: "535 5.7.139 SmtpClientAuthentication (Mailbox)"
 description: "What 535 5.7.139 SmtpClientAuthentication is disabled for the Mailbox means, whether it can still be turned back on, and what to do if it cannot."
 ---
 

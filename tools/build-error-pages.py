@@ -28,6 +28,8 @@ KATALOG = KORZEN / "docs" / "errors"
 # characters for the part before it.
 LIMIT_TYTULU = 48
 
+SPOJNIKI = {"is", "was", "for", "the", "a", "an", "to", "of", "by", "not", "be", "been"}
+
 RODZAJE = {"auth-refused", "no-credentials", "wrong-sender", "throttled"}
 
 # Three of the four causes are still reversible before the end of December
@@ -46,20 +48,56 @@ PRZYCZYNY = [
 ]
 
 
-def tytul(wpis):
-    """The code alone is what people paste and what should win the match."""
+def tytul(wpis, wyrozniki=None):
+    """The code alone is what people paste and what should win the match.
+
+    Words are dropped from the end, which is fine until the word that
+    distinguishes two entries happens to be the last one. Measured 2026-08-25:
+    "SmtpClientAuthentication is disabled for the Mailbox" and the same string
+    ending in "Tenant" both truncated to an identical title. Two pages, one
+    title, on the error that defines December 2026 - and a search engine reads
+    a duplicate title as a reason to show only one of them.
+
+    Mailbox and Tenant are different problems with different fixes, so the
+    distinguishing word has to survive. Pass `wyrozniki` - the set of titles
+    already taken - and a colliding entry keeps its last word in brackets.
+    """
     pelny = f"{wpis['code']} {wpis['message']}"
-    if len(pelny) <= LIMIT_TYTULU:
+    if len(pelny) <= LIMIT_TYTULU and (wyrozniki is None or pelny not in wyrozniki):
         return pelny
 
     slowa = wpis["message"].split()
+    skrocony = None
     while slowa:
         slowa.pop()
-        skrocony = f"{wpis['code']} {' '.join(slowa)}"
-        if slowa and len(skrocony) <= LIMIT_TYTULU:
-            return skrocony
+        kandydat = f"{wpis['code']} {' '.join(slowa)}"
+        if slowa and len(kandydat) <= LIMIT_TYTULU:
+            skrocony = kandydat
+            break
 
-    return wpis["code"]
+    if skrocony is None:
+        return wpis["code"]
+    if wyrozniki is None or skrocony not in wyrozniki:
+        return skrocony
+
+    # Kolizja. Ostatnie slowo oryginalu jest tym, co odroznia te dwa wpisy,
+    # wiec musi sie zmiescic - reszte skracamy dalej, az zrobi mu miejsce.
+    ogon = wpis["message"].split()[-1]
+    przyrostek = f" ({ogon})"
+    slowa = wpis["message"].split()[:-1]
+    while slowa:
+        # Slowo funkcyjne tuz przed nawiasem czyta sie jak urwane zdanie -
+        # "SmtpClientAuthentication is (Tenant)". Tytul trafia do wynikow
+        # wyszukiwania, wiec ma sie konczyc na slowie, ktore cos znaczy.
+        while slowa and slowa[-1].lower() in SPOJNIKI:
+            slowa.pop()
+        if not slowa:
+            break
+        kandydat = f"{wpis['code']} {' '.join(slowa)}{przyrostek}"
+        if len(kandydat) <= LIMIT_TYTULU:
+            return kandydat
+        slowa.pop()
+    return f"{wpis['code']}{przyrostek}"
 
 
 PRZEGLAD = KORZEN / "docs" / "ERROR-MESSAGES.md"
@@ -93,12 +131,12 @@ def zbuduj_indeks(wpisy):
     ])
 
 
-def zbuduj(wpis, aktualizacja):
+def zbuduj(wpis, aktualizacja, tytul_wpisu=None):
     pelny = f"{wpis['code']} {wpis['message']}"
 
     czesci = [
         "---",
-        f"title: {json.dumps(tytul(wpis))}",
+        f"title: {json.dumps(tytul_wpisu or tytul(wpis))}",
         f"description: {json.dumps(f'What {pelny} means, whether it can still be turned back on, and what to do if it cannot.')}",
         "---",
         "",
@@ -328,15 +366,52 @@ def main():
         print("Duplicate slugs - one page would silently overwrite another.")
         return 1
 
-    za_dlugie = [w for w in wpisy if len(tytul(w)) > LIMIT_TYTULU]
+    # Tytuly licza sie raz, po kolei, bo kazdy nastepny musi wiedziec, co juz
+    # jest zajete. Inaczej dwa wpisy roznlace sie ostatnim slowem dostaja ten
+    # sam tytul po skroceniu.
+    # Najpierw naturalne skrocenie dla wszystkich, potem kolizje. Przypisywanie
+    # po kolei dawalo wynik niesymetryczny: pierwszy wpis zajmowal tytul bez
+    # wyroznika, drugi dostawal nawias - i strona o dzierzawie nie mowila
+    # "Tenant", mimo ze to jedyne, co ja odroznia. Wyroznik dostaja wszyscy
+    # uczestnicy kolizji albo nikt.
+    naturalne = {w["slug"]: tytul(w) for w in wpisy}
+    grupy = {}
+    for slug, t in naturalne.items():
+        grupy.setdefault(t, []).append(slug)
+    kolidujace = {sl for grupa in grupy.values() if len(grupa) > 1 for sl in grupa}
+
+    tytuly = {}
+    for w in wpisy:
+        if w["slug"] in kolidujace:
+            tytuly[w["slug"]] = tytul(w, {naturalne[w["slug"]]})
+        else:
+            tytuly[w["slug"]] = naturalne[w["slug"]]
+
+    za_dlugie = [w for w in wpisy if len(tytuly[w["slug"]]) > LIMIT_TYTULU]
     if za_dlugie:
         print(f"Titles over the {LIMIT_TYTULU}-character SEO budget:")
         for w in za_dlugie:
-            print(f"  {len(tytul(w))}: {tytul(w)}")
+            print(f"  {len(tytuly[w['slug']])}: {tytuly[w['slug']]}")
+        return 1
+
+    # Bramka, ktorej tu nie bylo. Kontrola duplikatow istniala dla nazw plikow
+    # i nie istniala dla tytulow, wiec dwie strony o 5.7.139 - jedna o skrzynce,
+    # druga o dzierzawie - wyszly z identycznym tytulem. Wyszukiwarka czyta
+    # duplikat tytulu jako powod, zeby pokazac tylko jedna z nich, a to sa dwa
+    # rozne problemy z roznymi rozwiazaniami.
+    licznik = {}
+    for slug, t in tytuly.items():
+        licznik.setdefault(t, []).append(slug)
+    zdublowane = {t: sl for t, sl in licznik.items() if len(sl) > 1}
+    if zdublowane:
+        print("Duplicate titles - a search engine will show only one of them:")
+        for t, sl in zdublowane.items():
+            print(f"  {t!r}: {', '.join(sl)}")
         return 1
 
     wyjscia = {
-        KATALOG / f"{w['slug']}.md": zbuduj(w, dane["updated"]) for w in wpisy
+        KATALOG / f"{w['slug']}.md": zbuduj(w, dane["updated"], tytuly[w["slug"]])
+        for w in wpisy
     }
 
     # The overview table joins the same check/write loop as the pages, so the
