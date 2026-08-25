@@ -21,11 +21,19 @@ jobs:
           script: |
             const RULES = [
               { label: 'printers', color: '5319e7', keywords: ['printer', 'scan-to-email', 'scan to email', 'canon', 'epson', 'brother', 'hp printer'] },
-              { label: 'windows', color: '0e8a16', keywords: ['windows server', 'powershell', 'iis', 'exchange'] },
+              // 'exchange' usuniete 2026-08-25. Ten projekt istnieje z powodu
+              // Exchange Online, wiec slowo wystepuje praktycznie w kazdym
+              // zgloszeniu. Zmierzone: trzy zgloszenia z ta etykieta i zadne
+              // nie dotyczy Windowsa - zadanie lint dla Lua, opis grudniowej
+              // awarii i prosba o przyklad w Perlu.
+              { label: 'windows', color: '0e8a16', keywords: ['windows server', 'powershell', 'iis', 'active directory'] },
               { label: 'linux', color: 'fbca04', keywords: ['ubuntu', 'debian', 'rocky', 'fedora', 'opensuse', 'postfix', 'msmtp', 'exim'] },
               { label: 'docs', color: '0075ca', keywords: ['documentation', 'readme', 'typo', 'docs/'] },
               { label: 'question', color: 'd876e3', keywords: ['how do i', 'how to', 'can i', 'is it possible'] },
-              { label: 'bug', color: 'd73a4a', keywords: ['error', 'failed', 'failure', 'exception', 'traceback', 'not working', "doesn't work", 'timeout'] },
+              // 'error' usuniete z tej samej przyczyny: dokumentujemy komunikaty
+              // bledu, wiec slowo jest w tresci projektu, nie w objawie usterki.
+              // Zostaja sformulowania opisujace zepsute dzialanie, a nie temat.
+              { label: 'bug', color: 'd73a4a', keywords: ['traceback', 'stack trace', 'not working', "doesn't work", 'crashes', 'regression'] },
             ];
 
             const title = (context.payload.issue.title || '').toLowerCase();
