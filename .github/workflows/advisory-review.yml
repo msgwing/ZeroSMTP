@@ -88,7 +88,19 @@ jobs:
                 const r = await fetch(url, {
                   redirect: 'follow',
                   signal: AbortSignal.timeout(20000),
-                  headers: { 'user-agent': 'Mozilla/5.0 (compatible; zerosmtp-advisory-review)' },
+                  // Pełny nagłówek przeglądarki, nie nazwa bota. Zendesk
+                  // i część portali producentów odrzucają wszystko inne
+                  // przez 403, a 403 od filtra nie odróżnia się w logu od
+                  // 403 od serwera. 2026-08-25 przegląd zgłosił Cerberus
+                  // jako niezweryfikowany; ten sam adres z nagłówkiem
+                  // przeglądarki odpowiada 200. Sprawdzanie, które nie
+                  // dociera do strony, produkuje pracę ręczną co miesiąc.
+                  headers: {
+                    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                      + 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36',
+                    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                    'accept-language': 'en-US,en;q=0.9',
+                  },
                 });
                 zywe.set(url, r.status === 200 ? 'ok'
                             : (r.status === 404 || r.status === 410) ? `gone (${r.status})`
