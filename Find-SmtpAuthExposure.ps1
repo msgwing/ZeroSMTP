@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.0
+.VERSION 1.0.1
 
 .GUID 699c5654-5dd9-4914-b032-fb8744cdb6ec
 
@@ -10,7 +10,7 @@
 
 .COPYRIGHT MIT
 
-.TAGS SMTP SMTPAUTH BasicAuthentication ExchangeOnline Microsoft365 Office365 Audit ReadOnly Deprecation
+.TAGS SMTP SMTPAUTH SmtpClientAuthentication BasicAuthentication ExchangeOnline Microsoft365 Office365 Audit ReadOnly Deprecation Relay Printer MFP Scanner 5.7.139
 
 .LICENSEURI https://github.com/msgwing/ZeroSMTP/blob/main/LICENSE
 
@@ -36,6 +36,12 @@ which inherits the tenant setting - the state that the commonly repeated
     for SMTP AUTH at the end of December 2026.
 
 .DESCRIPTION
+    Answers one question before December 2026: which mailboxes in this tenant
+    can still send with a username and password, and will therefore stop when
+    Microsoft disables SMTP AUTH Basic authentication by default at the end of
+    that month. Printers, scanners, MFPs, NAS units and scripts are what break,
+    and the error they will report is 535 5.7.139.
+
     Read-only. The script queries configuration and prints a report; it never
     changes a setting, so it is safe to run against production before you have
     decided anything.
