@@ -1,0 +1,106 @@
+name: Publish Find-SmtpAuthExposure to PowerShell Gallery
+
+# Publikuje Find-SmtpAuthExposure.ps1 do publicznego PowerShell Gallery.
+#
+# DLACZEGO TAM: nasza publicznosc to administratorzy Exchange Online. Oni nie
+# maja Node - maja otwarta konsole PowerShella, bo wlasnie w niej wykonuja
+# Get-CASMailbox. `npx zerosmtp-check` kaze im zainstalowac srodowisko, ktorego
+# nie uzywaja do niczego innego.
+#
+# Zmierzone 2026-08-26: nasz najblizszy rywal `SmtpClientDiag` ma tam **4370
+# pobran**, a zapytanie `zerosmtp` zwraca **404**. W calym PowerShell Gallery
+# nie ma ani jednego pakietu pod kodem bledu, ktory zdefiniuje grudzien.
+#
+# Recznie, nigdy automatycznie. Wersja w Gallery jest trwala tak samo jak w npm,
+# a nazwa zostaje zajeta na zawsze.
+#
+# Wymaga sekretu PSGALLERY_API_KEY - klucza z powershellgallery.com. Dopoki go
+# nie ma, ten workflow nie moze sie wykonac, i to jest stan zamierzony:
+# publikacja jest decyzja wlasciciela.
+#
+# UWAGA: klucze Gallery WYGASAJA (maksymalnie 365 dni). To nie jest
+# "ustaw i zapomnij" jak NPM_TOKEN.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Sprawdz bez publikowania'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v5
+
+      # Limit egzekwowany cudzym formularzem sprawdza sie u siebie - mechanika 4.
+      # Gallery odrzuca skrypt bez poprawnego bloku PSScriptInfo, a komunikat
+      # z ich strony przychodzi dopiero po wyslaniu klucza.
+      - name: Metadane skryptu sa poprawne
+        run: |
+          $i = Test-ScriptFileInfo -Path ./Find-SmtpAuthExposure.ps1
+          "Name    : $($i.Name)"
+          "Version : $($i.Version)"
+          "Guid    : $($i.Guid)"
+          "Tags    : $($i.Tags -join ' ')"
+          if (-not $i.Name)    { throw 'brak Name' }
+          if (-not $i.Version) { throw 'brak Version' }
+          if (-not $i.Guid)    { throw 'brak Guid' }
+
+      - name: Skrypt parsuje sie i nie ma bledow analizatora
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module PSScriptAnalyzer -Force -Scope CurrentUser
+          $w = Invoke-ScriptAnalyzer -Path ./Find-SmtpAuthExposure.ps1 -Severity Error
+          if ($w) { $w | Format-Table -AutoSize | Out-String | Write-Host; throw 'analizator zglosil bledy' }
+          'Analizator: bez bledow.'
+
+      # Ta sama zasada co w publish-npm.yml: wersja raz opublikowana jest trwala.
+      - name: Odmow nadpisania istniejacej wersji
+        run: |
+          $i = Test-ScriptFileInfo -Path ./Find-SmtpAuthExposure.ps1
+          $exists = Find-Script -Name $i.Name -RequiredVersion $i.Version -ErrorAction SilentlyContinue
+          if ($exists) {
+            Write-Host "::error::$($i.Name) $($i.Version) juz jest w Gallery. Podnies wersje."
+            exit 1
+          }
+          "$($i.Name) $($i.Version) nie jest jeszcze opublikowany."
+
+      - name: Publikuj
+        if: ${{ inputs.dry_run == false }}
+        env:
+          PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
+        run: |
+          if (-not $env:PSGALLERY_API_KEY) { throw 'brak sekretu PSGALLERY_API_KEY' }
+          Publish-Script -Path ./Find-SmtpAuthExposure.ps1 -NuGetApiKey $env:PSGALLERY_API_KEY
+
+      # Odpowiedz 200 nie jest dowodem publikacji - mechanika 8. Dowodem jest
+      # pakiet widoczny pod swoim adresem.
+      - name: Potwierdz, ze naprawde tam jest
+        if: ${{ inputs.dry_run == false }}
+        run: |
+          Start-Sleep -Seconds 30
+          $i = Test-ScriptFileInfo -Path ./Find-SmtpAuthExposure.ps1
+          $url = "https://www.powershellgallery.com/packages/$($i.Name)"
+          $code = (Invoke-WebRequest -Uri $url -SkipHttpErrorCheck -MaximumRedirection 0 -ErrorAction SilentlyContinue).StatusCode
+          "GET $url -> $code"
+          if ($code -ne 200 -and $code -ne 301 -and $code -ne 302) {
+            Write-Host "::error::Gallery nie pokazuje pakietu. Publikacja nie doszla."
+            exit 1
+          }
+
+      - name: Podsumowanie
+        run: |
+          if ('${{ inputs.dry_run }}' -eq 'true') {
+            'Przebieg na sucho. Nic nie opublikowano.'
+          } else {
+            'Opublikowano i potwierdzono pod adresem Gallery.'
+          }
