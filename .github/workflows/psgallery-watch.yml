@@ -1,0 +1,134 @@
+name: PowerShell Gallery watch
+
+# Pilnuje, czy w PowerShell Gallery nie pojawila sie wersja naszego pakietu,
+# ktorej NIE wypuscilismy.
+#
+# DLACZEGO TO ISTNIEJE:
+# Gallery ma wlasne powiadomienie "notify me when a package is pushed", ktore
+# jest jedynym sygnalem przy wycieku klucza API. Wlasciciel wylaczyl je
+# swiadomie, bo konto zalozone jest na prywatnym adresie, na ktory nie chce
+# poczty. To jest zamiennik po naszej stronie - ten sam alarm, bez zaleznosci
+# od tamtej skrzynki.
+#
+# Ryzyko, przed ktorym chroni: klucz jest ograniczony do jednej nazwy pakietu,
+# wiec nikt nie wypchnie nam czegos obcego. Ale wlasny pakiet owszem - a to
+# jest skrypt, ktory administratorzy uruchamiaja na wlasnej dzierzawie
+# Exchange. Podmieniona wersja poszlaby po cichu.
+#
+# REGULA: publikujemy wylacznie wersje ze zrodla, wiec Gallery nigdy nie
+# powinno byc PRZED repozytorium. Jesli jest - opublikowal to ktos inny.
+#
+# Przy okazji odczytuje licznik pobran, ktory i tak jest potrzebny do progu
+# ustalonego w #307: ponizej 100 do 2026-11-01 oznacza kanal martwy.
+
+on:
+  schedule:
+    - cron: '41 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Porownaj wersje i odczytaj pobrania
+        id: sprawdz
+        run: |
+          set -euo pipefail
+          NAZWA=Find-SmtpAuthExposure
+
+          # Wersja ze zrodla - z bloku PSScriptInfo.
+          REPO=$(grep -m1 -oE '^\.VERSION[[:space:]]+[0-9][0-9.]*' Find-SmtpAuthExposure.ps1 \
+                 | grep -oE '[0-9][0-9.]*')
+          if [ -z "$REPO" ]; then
+            echo "::error::nie udalo sie odczytac .VERSION ze skryptu"
+            exit 1
+          fi
+
+          ODP=$(curl -sS --max-time 30 \
+            "https://www.powershellgallery.com/api/v2/Packages()?\$filter=Id%20eq%20'${NAZWA}'&\$select=Version,DownloadCount")
+
+          # Kontrola pozytywna: jesli nie widac ZADNEJ wersji, to nie jest dowod
+          # nieobecnosci - to zepsute zapytanie. Mechanika 6.
+          WERSJE=$(printf '%s' "$ODP" | grep -oE '<d:Version>[^<]+' | sed 's/<d:Version>//' || true)
+          if [ -z "$WERSJE" ]; then
+            echo "::error::API nie zwrocilo zadnej wersji ${NAZWA}. Zapytanie albo Gallery sa zepsute - nie wyciagam wniosku."
+            exit 1
+          fi
+
+          NAJNOWSZA=$(printf '%s\n' "$WERSJE" | sort -V | tail -1)
+          POBRANIA=$(printf '%s' "$ODP" | grep -oE '<d:DownloadCount[^>]*>[0-9]+' | grep -oE '[0-9]+$' | sort -rn | head -1)
+
+          echo "repo=${REPO}"        >> "$GITHUB_OUTPUT"
+          echo "gallery=${NAJNOWSZA}" >> "$GITHUB_OUTPUT"
+          echo "pobrania=${POBRANIA:-0}" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "### ${NAZWA}"
+            echo ""
+            echo "| co | wartosc |"
+            echo "|---|---|"
+            echo "| wersja w repozytorium | ${REPO} |"
+            echo "| najnowsza w Gallery | ${NAJNOWSZA} |"
+            echo "| pobran | ${POBRANIA:-0} |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          # Gallery przed repozytorium = ktos opublikowal nie z naszego zrodla.
+          if [ "$NAJNOWSZA" != "$REPO" ] \
+             && [ "$(printf '%s\n%s\n' "$REPO" "$NAJNOWSZA" | sort -V | tail -1)" = "$NAJNOWSZA" ]; then
+            echo "obce=tak" >> "$GITHUB_OUTPUT"
+            echo "::warning::Gallery ma ${NAJNOWSZA}, zrodlo ma ${REPO}."
+          else
+            echo "obce=nie" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Zgloszenie, gdy w Gallery jest wersja spoza zrodla
+        if: steps.sprawdz.outputs.obce == 'tak'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const owner = context.repo.owner, repo = context.repo.repo;
+            const g = '${{ steps.sprawdz.outputs.gallery }}';
+            const r = '${{ steps.sprawdz.outputs.repo }}';
+            const MARKER = '<!-- psgallery-obca-wersja -->';
+
+            const istnieje = (await github.rest.issues.listForRepo({
+              owner, repo, state: 'open', per_page: 50,
+            })).data.some(i => (i.body || '').includes(MARKER));
+            if (istnieje) { core.info('Zgloszenie juz otwarte.'); return; }
+
+            const NL = String.fromCharCode(10);
+            const i = await github.rest.issues.create({
+              owner, repo,
+              title: `PowerShell Gallery ma wersje ${g}, a zrodlo ma ${r}`,
+              body: [
+                MARKER,
+                `**W PowerShell Gallery jest wersja \`${g}\`. W repozytorium jest \`${r}\`.**`,
+                '',
+                'Publikujemy wylacznie wersje ze zrodla, wiec Gallery nie ma prawa',
+                'byc przed repozytorium. Jesli tej wersji nie wypuscil nikt z nas,',
+                'znaczy to, ze **kluczem API poslugiwal sie ktos inny**.',
+                '',
+                '## Co zrobic natychmiast',
+                '',
+                '1. `powershellgallery.com` -> API Keys -> **Delete** klucz `ZeroSMTP CI`',
+                '2. Obejrzec tresc obcej wersji, zanim ktokolwiek ja uruchomi',
+                '3. `Unlist` obcej wersji w Gallery',
+                '',
+                'Klucz jest ograniczony do nazwy `Find-SmtpAuthExposure`, wiec zaden',
+                'inny pakiet nie mogl zostac ruszony. To jest jedyna szkoda mozliwa',
+                'tym kluczem - i wystarczajaca, bo ten skrypt uruchamiaja',
+                'administratorzy na wlasnej dzierzawie Exchange.',
+                '',
+                'Ten alarm zastepuje powiadomienie e-mail Gallery, ktore zostalo',
+                'wylaczone swiadomie - konto jest na adresie prywatnym.',
+              ].join(NL),
+              labels: ['do-akceptacji'],
+              assignees: [owner],
+            });
+            core.notice(`Zalozono ${i.data.html_url}`);
