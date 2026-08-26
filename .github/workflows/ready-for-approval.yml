@@ -152,6 +152,89 @@ jobs:
             });
             core.notice('Copilot dostepny - zalozono zgloszenie.');
 
+  # Czlowiek z zewnatrz nie czeka dluzej niz PROG godzin bez odpowiedzi.
+  #
+  # DLACZEGO TO ISTNIEJE: 2026-08-26 jedyny powtarzalny kontrybutor tego
+  # projektu zlozyl #300 - testy, o ktore sam poprosil - i czekal
+  # **15 godzin 42 minuty**. Dwa dni wczesniej ten sam czlowiek czekal dwa dni
+  # na odpowiedz w watku, w ktorym prosil o prace programistyczna.
+  #
+  # Za kazdym razem przyczyna byla ta sama: **nikt tego nie pilnowal**.
+  # Skrzynka powiadomien ma 14 pozycji, z czego 13 to nasze wlasne boty, wiec
+  # jedyny czlowiek w niej tonie. Zapisanie reguly "czytaj powiadomienia"
+  # juz raz zawiodlo - stad zadanie zamiast zdania w pliku.
+  #
+  # Przypisanie wlasciciela jest tu calym mechanizmem: GitHub wysyla list
+  # tylko do przypisanego. Etykieta pilnuje, zeby zrobic to raz.
+  czeka-czlowiek:
+    if: github.event_name != 'issues'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            const owner = context.repo.owner, repo = context.repo.repo;
+            const PROG_H = 4;
+            const ETYKIETA = 'czeka-czlowiek';
+            const granica = Date.now() - PROG_H * 3600 * 1000;
+
+            const watki = (await github.rest.issues.listForRepo({
+              owner, repo, state: 'open', per_page: 100, sort: 'created',
+            })).data;
+
+            let oznaczonych = 0;
+            for (const w of watki) {
+              const autor = w.user && w.user.login;
+              // Nasze wlasne zgloszenia i boty nie sa "czlowiekiem z zewnatrz".
+              if (!autor || autor === owner) continue;
+              if (w.user.type === 'Bot' || /\[bot\]$/.test(autor)) continue;
+              if ((w.labels || []).some(l => l.name === ETYKIETA)) continue;
+              if (new Date(w.created_at).getTime() > granica) continue;
+
+              // Czy ktokolwiek z naszej strony juz sie odezwal?
+              const kom = (await github.rest.issues.listComments({
+                owner, repo, issue_number: w.number, per_page: 100,
+              })).data;
+              let odpowiedziano = kom.some(k => k.user && k.user.login === owner);
+
+              if (!odpowiedziano && w.pull_request) {
+                const rec = (await github.rest.pulls.listReviews({
+                  owner, repo, pull_number: w.number, per_page: 100,
+                })).data;
+                odpowiedziano = rec.some(r => r.user && r.user.login === owner);
+              }
+              if (odpowiedziano) continue;
+
+              const godzin = Math.round((Date.now() - new Date(w.created_at).getTime()) / 3600000);
+              const NL = String.fromCharCode(10);
+
+              await github.rest.issues.addLabels({
+                owner, repo, issue_number: w.number, labels: [ETYKIETA],
+              });
+              await github.rest.issues.addAssignees({
+                owner, repo, issue_number: w.number, assignees: [owner],
+              });
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: w.number,
+                body: [
+                  '@' + autor + ' - dziekujemy, widzimy to i odpowiemy.',
+                  '',
+                  'Ten komentarz zostal dodany automatycznie po ' + godzin
+                    + ' godzinach bez odpowiedzi z naszej strony. Nie zastepuje',
+                  'odpowiedzi - jest po to, zeby watek nie utknal niezauwazony.',
+                ].join(NL),
+              });
+              core.notice('Oznaczono #' + w.number + ' od @' + autor + ' - czeka ' + godzin + 'h');
+              oznaczonych++;
+            }
+
+            if (oznaczonych === 0) {
+              core.info('Nikt z zewnatrz nie czeka dluzej niz ' + PROG_H + 'h.');
+            }
+
   waiting:
     if: github.event_name != 'issues'
     runs-on: ubuntu-latest
