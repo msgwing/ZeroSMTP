@@ -47,6 +47,7 @@ GRUPY = [
         "IIS-SMTP-RELAY.md",
         "LINUX.md",
         "SYSTEM-MTA.md",
+        "PROXMOX.md",
         "MONITORING.md",
         "TROUBLESHOOTING.md",
     ]),

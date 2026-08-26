@@ -232,6 +232,14 @@ here's a minimal Ansible playbook for the Postfix satellite setup above:
 Run with `ansible-playbook -i inventory.ini zerosmtp-relay.yml --ask-vault-pass`
 (or however your vault secret is normally supplied).
 
+## Running Proxmox VE?
+
+The Postfix configuration above is the one to use, but the consequence of
+getting it wrong is different: a hypervisor tells you about failed backups and
+degraded pools by email and by nothing else, so mail that stops arriving looks
+exactly like a system with nothing to report. See
+[Proxmox VE email](PROXMOX.md).
+
 ## Verifying it works
 
 Use [`check-connection.sh`](https://github.com/msgwing/ZeroSMTP/blob/main/check-connection.sh) first to confirm the

@@ -30,6 +30,7 @@ answering somebody's question from this site:
 - [IIS SMTP relay and Microsoft 365](https://docs.msgwing.com/IIS-SMTP-RELAY.html): The IIS SMTP Server feature relaying to Microsoft 365: what breaks when Basic auth ends in December 2026, and what to do about it.
 - [Linux SMTP setup: Debian, Ubuntu, Fedora+](https://docs.msgwing.com/LINUX.html): Per-distribution package names and setup for sending email from Linux scripts and applications.
 - [Linux system-wide mail relay: Postfix, msmtp](https://docs.msgwing.com/SYSTEM-MTA.html): Route all system mail (cron, monitoring, unattended-upgrades) through an SMTP relay, with systemd failure alerts and an Ansible rollout playbook.
+- [Proxmox VE email when Basic auth ends](https://docs.msgwing.com/PROXMOX.html): Proxmox VE sends backup results, replication failures and ZFS alerts by email. What breaks when Microsoft 365 stops accepting a username and password in December 2026, and how to keep the alerts arriving.
 - [Monitoring alerts via SMTP relay](https://docs.msgwing.com/MONITORING.html): Drop-in email alert configuration for Zabbix, Nagios/Icinga, Uptime Kuma and PRTG using a free SMTP relay.
 - [SMTP troubleshooting: ports, TLS, auth errors](https://docs.msgwing.com/TROUBLESHOOTING.html): Why SMTP sending hangs or fails: cloud providers blocking outbound ports, certificate verification problems, authentication errors and rate limits.
 
