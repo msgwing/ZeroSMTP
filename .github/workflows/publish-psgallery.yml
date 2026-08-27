@@ -82,20 +82,37 @@ jobs:
           if (-not $env:PSGALLERY_API_KEY) { throw 'brak sekretu PSGALLERY_API_KEY' }
           Publish-Script -Path ./Find-SmtpAuthExposure.ps1 -NuGetApiKey $env:PSGALLERY_API_KEY
 
-      # Odpowiedz 200 nie jest dowodem publikacji - mechanika 8. Dowodem jest
-      # pakiet widoczny pod swoim adresem.
-      - name: Potwierdz, ze naprawde tam jest
+      # Sprawdza adres TEJ WERSJI, nie strony pakietu.
+      #
+      # Pierwsza wersja tego kroku pytala o /packages/<nazwa>, ktore odpowiada
+      # 200 dopoki istnieje JAKAKOLWIEK wersja. 2026-08-27 przebieg publikacji
+      # wystartowal przeciwko nieaktualnej glowie galezi, zobaczyl 1.0.0 zamiast
+      # 1.0.1, nie opublikowal nic nowego - i ten krok zameldowal sukces, bo
+      # strona pakietu istniala od poprzedniej publikacji.
+      #
+      # To jest mechanika 9 we wlasnym kodzie: krok odpowiadal na pytanie
+      # "czy ten pakiet istnieje", a znaczenie mialo "czy TA wersja zostala
+      # opublikowana".
+      #
+      # Nieistniejaca wersja zwraca 301 na strone pakietu - wiec 200 jest
+      # jedynym akceptowanym kodem, a 301 jest bledem, nie sukcesem.
+      - name: Potwierdz, ze TA WERSJA naprawde tam jest
         if: ${{ inputs.dry_run == false }}
         run: |
-          Start-Sleep -Seconds 30
           $i = Test-ScriptFileInfo -Path ./Find-SmtpAuthExposure.ps1
-          $url = "https://www.powershellgallery.com/packages/$($i.Name)"
-          $code = (Invoke-WebRequest -Uri $url -SkipHttpErrorCheck -MaximumRedirection 0 -ErrorAction SilentlyContinue).StatusCode
-          "GET $url -> $code"
-          if ($code -ne 200 -and $code -ne 301 -and $code -ne 302) {
-            Write-Host "::error::Gallery nie pokazuje pakietu. Publikacja nie doszla."
+          $url = "https://www.powershellgallery.com/packages/$($i.Name)/$($i.Version)"
+          $code = 0
+          foreach ($proba in 1..6) {
+            Start-Sleep -Seconds 20
+            $code = (Invoke-WebRequest -Uri $url -SkipHttpErrorCheck -MaximumRedirection 0 -ErrorAction SilentlyContinue).StatusCode
+            "proba ${proba}: GET $url -> $code"
+            if ($code -eq 200) { break }
+          }
+          if ($code -ne 200) {
+            Write-Host "::error::Gallery nie pokazuje wersji $($i.Version) (kod $code). 301 znaczy, ze tej wersji nie ma - przekierowuje na strone pakietu."
             exit 1
           }
+          "Wersja $($i.Version) potwierdzona."
 
       - name: Podsumowanie
         run: |
