@@ -89,6 +89,9 @@ rather than trust it.
 > here](docs/ERROR-MESSAGES.md). Three of the four causes are still reversible
 > until the end of December 2026.
 >
+> Want to know the day this changes? [Subscribe to the dated timeline](https://github.com/msgwing/ZeroSMTP/issues/305) —
+> one comment per confirmed change, nothing else.
+>
 > ```bash
 > npx zerosmtp-check --explain "535 5.7.139 Authentication unsuccessful"
 > ```
@@ -158,6 +161,10 @@ scan-to-email · IoT and device notifications · homelabs.
 > tools that can't do OAuth stop sending — and the alerting ones fail
 > *silently*, so you find out during the incident they should have warned
 > you about.
+>
+> **[Dated timeline →](https://github.com/msgwing/ZeroSMTP/issues/305)** — subscribe and you get an email
+> the day Microsoft changes either date. December 2026 is the default being
+> switched off, not the removal; the final date is announced in H2 2027.
 >
 > **[Migration guide →](docs/EXCHANGE-ONLINE-SMTP-AUTH.md)** covers every
 > option (Graph API, Direct Send, on-prem relay, paid services), not just

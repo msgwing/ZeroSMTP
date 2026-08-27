@@ -38,6 +38,11 @@ Direct Send und kostenpflichtige Relays behandelt — nicht nur dieses hier.
 > Das ist Microsoft, das Basic Auth für SMTP AUTH abschaltet — [fangen Sie hier
 > an](docs/ERROR-MESSAGES.md). Drei der vier Ursachen lassen sich bis Ende
 > Dezember 2026 noch rückgängig machen.
+>
+> Wann genau ändert sich das? [Dem datierten Zeitplan folgen](https://github.com/msgwing/ZeroSMTP/issues/305) —
+> eine E-Mail pro bestätigter Änderung, sonst nichts. Dezember 2026 ist die
+> Abschaltung per Voreinstellung, nicht die Entfernung; das endgültige Datum
+> kündigt Microsoft in der zweiten Jahreshälfte 2027 an.
 
 ---
 

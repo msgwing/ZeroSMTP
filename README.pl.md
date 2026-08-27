@@ -41,6 +41,11 @@ API, Direct Send i płatne relaye — nie tylko ten jeden.
 > *po cichu*, więc dowiadujesz się o tym dopiero w trakcie awarii, o której
 > miały ostrzec.
 >
+> **[Datowany harmonogram →](https://github.com/msgwing/ZeroSMTP/issues/305)** — zasubskrybuj, a dostaniesz
+> e-mail w dniu, w którym Microsoft zmieni którąkolwiek datę. Grudzień 2026
+> to wyłączenie domyślne, nie usunięcie; datę ostateczną Microsoft ogłasza
+> w drugiej połowie 2027.
+>
 > **[Przewodnik migracji →](docs/EXCHANGE-ONLINE-SMTP-AUTH.md)** omawia
 > wszystkie opcje (Graph API, Direct Send, własny relay, usługi płatne), nie
 > tylko tę jedną. **[Co się zepsuje →](docs/AFFECTED-SYSTEMS.md)** to lista

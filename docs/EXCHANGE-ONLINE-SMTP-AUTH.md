@@ -37,6 +37,12 @@ too. Per Microsoft's [updated deprecation timeline](https://techcommunity.micros
 | After December 2026 | New tenants get it **unavailable** by default. |
 | Second half of 2027 | Microsoft announces the *final* removal date. |
 
+**Want to be told when this moves?** These dates come from Microsoft and
+Microsoft has moved them before. [Subscribe to the dated timeline](https://github.com/msgwing/ZeroSMTP/issues/305)
+and you get one comment per confirmed change — a Message Center post, a
+roadmap item, the final removal date when it is announced. Nothing else, and
+silence there means nothing changed rather than nobody watching.
+
 So this isn't a cliff you fall off overnight — but the default flips at the
 end of 2026, and re-enabling it is a temporary reprieve, not a fix. See also
 Microsoft's [Deprecation of Basic authentication in Exchange Online](https://learn.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/deprecation-of-basic-authentication-exchange-online).
