@@ -322,3 +322,87 @@ jobs:
               });
               core.notice('Utworzono ' + issue.data.html_url);
             }
+
+  # Praca kontrybutora zostala scalona, a jego zgloszenie zostalo otwarte.
+  #
+  # 2026-08-27: #310 od @TrueFurina dodalo Sophosa do listy zgodnosci OAuth i
+  # zostalo scalone. Zgloszenie #291, ktore o to prosilo, zostalo otwarte przez
+  # kolejne godziny - bo w opisie scalanego wniosku nie bylo `Closes #291`.
+  # Z zewnatrz wyglada to tak, jakby czyjas praca zostala zignorowana, i jest to
+  # dokladnie ten kontrybutor, ktorego nie stac nam stracic.
+  #
+  # Ta kontrola jest CELOWO waska. Pierwsza wersja, sprawdzana recznie tego
+  # samego dnia, dopasowywala sama nazwe producenta - i wskazala Xeroxa, Ricoha
+  # i Canona jako "zrobione", bo ich urzadzenia sa w danych. Tamte zgloszenia
+  # dotycza kodow bledow z paneli, nie listy OAuth: narzedzie odpowiedzialo na
+  # pytanie "czy producent jest w danych" zamiast na "czy ta praca jest
+  # zrobiona". Stad dwa niezalezne zabezpieczenia ponizej - wzorzec tytulu ORAZ
+  # etykieta - a nie jedno.
+  zrobione-a-otwarte:
+    if: github.event_name != 'issues'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            const fs = require('fs');
+            const owner = context.repo.owner, repo = context.repo.repo;
+            const ETYKIETA = 'zrobione-a-otwarte';
+
+            const dane = JSON.parse(
+              fs.readFileSync('data/devices.json', 'utf8')).entries;
+            const wDanych = JSON.stringify(dane).toLowerCase();
+
+            const watki = (await github.rest.issues.listForRepo({
+              owner, repo, state: 'open', per_page: 100,
+            })).data;
+
+            let oznaczonych = 0;
+            for (const w of watki) {
+              if (w.pull_request) continue;
+              const etykiety = (w.labels || []).map(l => l.name);
+
+              // Zabezpieczenie 1: zgloszenia trzymane otwarte swiadomie -
+              // te, ktore czekaja na sprzet - nie sa niczyim przeoczeniem.
+              if (etykiety.includes('stan:celowe')) continue;
+              if (etykiety.includes(ETYKIETA)) continue;
+
+              // Zabezpieczenie 2: wzorzec tytulu. Tylko zgloszenia, ktore
+              // prosza dokladnie o wiersz w liscie zgodnosci - nie o kody
+              // paneli, nie o cokolwiek innego dotyczacego tego producenta.
+              const m = w.title.match(
+                /^Add (.+?) to the OAuth compatibility list/i);
+              if (!m) continue;
+
+              const producent = m[1].trim().toLowerCase();
+              if (producent.length < 3) continue;
+              if (!wDanych.includes(producent)) continue;
+
+              await github.rest.issues.addLabels({
+                owner, repo, issue_number: w.number, labels: [ETYKIETA],
+              });
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: w.number,
+                body: [
+                  '`' + m[1].trim() + '` teraz wystepuje w `data/devices.json`,',
+                  'a to zgloszenie jest nadal otwarte.',
+                  '',
+                  'Zwykle znaczy to, ze scalony wniosek nie mial w opisie',
+                  '`Closes #' + w.number + '`. Jesli praca jest zrobiona -',
+                  'zamknij to zgloszenie i podaj autora. Jesli nie -',
+                  'zdejmij etykietke `' + ETYKIETA + '`.',
+                  '',
+                  'Powod, dla ktorego to nie zamyka sie samo: kontrybutor,',
+                  'ktorego praca zostala scalona, a zgloszenie wisi otwarte,',
+                  'widzi to jako zignorowanie. Zamkniecie ma miec jego',
+                  'nazwisko w tresci.',
+                ].join(' ').replace(/  +/g, ' '),
+              });
+              oznaczonych++;
+            }
+
+            core.info(`oznaczonych jako zrobione-a-otwarte: ${oznaczonych}`);
