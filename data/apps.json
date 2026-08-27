@@ -1,0 +1,92 @@
+{
+  "$comment": "Self-hosted applications that send a small amount of mail to their own operator. Every field name and value here was read off the vendor's own documentation on the date in `updated` - none of it is recalled. `caveat` is not optional: an entry without an honest limit is an advert.",
+  "updated": "2026-08-27",
+  "entries": [
+    {
+      "slug": "immich",
+      "name": "Immich",
+      "repo": "immich-app/immich",
+      "what": "a self-hosted photo and video library, usually run for a household or a small group",
+      "sends": [
+        "a notification when a new user is created",
+        "a notification to a user added to a shared album",
+        "a notification when new assets are added to a shared album"
+      ],
+      "why_it_fits": "Immich mails people you already know, a handful of times a month. It is not sending receipts to strangers, so the sending domain carries no trust that matters here.",
+      "where": "Administration -> Settings -> Notification settings, in the web interface. The fields are the ordinary SMTP ones and are edited in the browser rather than in a file.",
+      "fields": [],
+      "caveat": "Immich's own documentation does not name the individual SMTP fields, so this page does not pretend to quote them. Match the values below to the labelled boxes on that screen.",
+      "source": "https://docs.immich.app/administration/email-notification",
+      "source_title": "Email notifications"
+    },
+    {
+      "slug": "vaultwarden",
+      "name": "Vaultwarden",
+      "repo": "dani-garcia/vaultwarden",
+      "what": "a self-hosted server for the Bitwarden clients, run by one person for a family, a team or themselves",
+      "sends": [
+        "invitations to new users, valid for five days",
+        "verification, password-hint and two-factor mail, when those features are on"
+      ],
+      "why_it_fits": "An invitation is sent once per person, ever. A password vault that stops sending invitations has no other way to add anybody, and the volume never approaches a daily cap.",
+      "where": "Environment variables, usually in the `docker-compose.yml` or `.env` beside it.",
+      "fields": [
+        ["SMTP_HOST", "mx.msgwing.com"],
+        ["SMTP_PORT", "587"],
+        ["SMTP_SECURITY", "starttls"],
+        ["SMTP_FROM", "your @msgwing.com login"],
+        ["SMTP_USERNAME", "your @msgwing.com login"],
+        ["SMTP_PASSWORD", "your @msgwing.com password"]
+      ],
+      "caveat": "`SMTP_FROM` has to be the generated address, not your own domain. Vaultwarden will start with a mismatched one and the mail will be refused or filed as spam, which looks like Vaultwarden failing.",
+      "source": "https://github.com/dani-garcia/vaultwarden/wiki/SMTP-configuration",
+      "source_title": "SMTP configuration"
+    },
+    {
+      "slug": "gitea",
+      "name": "Gitea",
+      "repo": "go-gitea/gitea",
+      "what": "a self-hosted Git service, typically a few users on one machine",
+      "sends": [
+        "registration and account-activation mail",
+        "password resets",
+        "notifications on issues and pull requests people are watching"
+      ],
+      "why_it_fits": "A private instance with a handful of accounts sends a trickle. Registration and resets are what actually matter: without them a locked-out user stays locked out.",
+      "where": "The `[mailer]` section of `app.ini`.",
+      "fields": [
+        ["ENABLED", "true"],
+        ["PROTOCOL", "smtp+starttls"],
+        ["SMTP_ADDR", "mx.msgwing.com"],
+        ["SMTP_PORT", "587"],
+        ["USER", "your @msgwing.com login"],
+        ["PASSWD", "your @msgwing.com password"],
+        ["FROM", "your @msgwing.com login"]
+      ],
+      "caveat": "This is the entry on this page most likely to outgrow the 200-a-day cap. Issue and pull-request notifications multiply by the number of watchers, so a busy instance with a dozen active people can pass it without anybody noticing until mail stops.",
+      "source": "https://docs.gitea.com/administration/config-cheat-sheet",
+      "source_title": "Configuration cheat sheet"
+    },
+    {
+      "slug": "authelia",
+      "name": "Authelia",
+      "repo": "authelia/authelia",
+      "what": "an authentication and two-factor portal sitting in front of everything else somebody self-hosts",
+      "sends": [
+        "identity-verification mail when a user registers a second factor",
+        "password-reset mail"
+      ],
+      "why_it_fits": "Authelia mails a person once, at the moment they set up or recover access. The volume is tiny and the stakes are not: if this mail cannot leave, nobody can enrol a second factor or recover an account.",
+      "where": "The `notifier.smtp` section of `configuration.yml`.",
+      "fields": [
+        ["address", "submission://mx.msgwing.com:587"],
+        ["username", "your @msgwing.com login"],
+        ["password", "your @msgwing.com password"],
+        ["sender", "your @msgwing.com login"]
+      ],
+      "caveat": "Authelia's `address` is a URI with a scheme, not a bare hostname. `submission://` means STARTTLS on 587 and `submissions://` means implicit TLS on 465 - one letter apart, and getting it wrong produces a connection error rather than an authentication one, which sends people looking in the wrong place.",
+      "source": "https://www.authelia.com/configuration/notifications/smtp/",
+      "source_title": "SMTP notifier"
+    }
+  ]
+}

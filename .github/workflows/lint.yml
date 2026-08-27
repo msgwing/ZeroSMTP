@@ -80,6 +80,8 @@ jobs:
         run: python tools/build-error-pages.py --check
       - name: Library error pages match data/clients.json
         run: python tools/build-client-error-pages.py --check
+      - name: Application pages match data/apps.json
+        run: python tools/build-app-pages.py --check
       - name: Blast radius page matches data/blast-radius.json
         run: python tools/build-blast-radius.py --check
       - name: CLI error data matches data/errors.json

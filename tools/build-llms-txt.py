@@ -44,6 +44,7 @@ GRUPY = [
     ("For system administrators", [
         "AFFECTED-SYSTEMS.md",
         "WORDPRESS.md",
+        "SELF-HOSTED.md",
         "WINDOWS-SERVER.md",
         "IIS-SMTP-RELAY.md",
         "LINUX.md",

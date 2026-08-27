@@ -31,6 +31,11 @@ IMAP / POP3 field these applications might also offer.
 
 See [README.md](https://github.com/msgwing/ZeroSMTP#readme) for how to obtain a login and password.
 
+> **Self-hosted applications have their own pages.** Immich, Vaultwarden,
+> Gitea and Authelia each get the exact setting names, quoted from the
+> vendor, plus the one limit most likely to catch you out there:
+> [Self-hosted applications and the Basic auth shutdown](SELF-HOSTED.md).
+
 ## WordPress (contact forms, WooCommerce, password resets)
 
 > **December 2026 changes this section.** Username-and-password SMTP to
