@@ -414,6 +414,99 @@
       #relay-detail .muted { color:var(--muted); }
       #relay-detail a { color:var(--link); }
 
+      /* The panel used to be a paragraph and two bullet lists - a printout of
+         a terminal, on the one surface whose whole job is to say the service
+         is alive right now. Same facts, given a shape. */
+      .rs-head { display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; margin-bottom:.9rem; }
+      .rs-pulse { position:relative; flex:none; width:10px; height:10px; }
+      .rs-pulse i { position:absolute; inset:0; border-radius:50%; background:var(--ok); }
+      .rs-pulse i::after {
+        content:''; position:absolute; inset:-4px; border-radius:50%;
+        border:2px solid var(--ok); opacity:.65; animation:rs-ping 2.4s ease-out infinite;
+      }
+      .rs-down .rs-pulse i, .rs-down .rs-pulse i::after { background:var(--fault); border-color:var(--fault); }
+      @keyframes rs-ping { 0% { transform:scale(.6); opacity:.7; } 70%,100% { transform:scale(1.9); opacity:0; } }
+      @media (prefers-reduced-motion:reduce) { .rs-pulse i::after { animation:none; opacity:.35; } }
+
+      .rs-host { font-family:var(--mono); font-weight:700; font-size:.95rem; color:var(--ink); }
+      .rs-badge {
+        font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase;
+        font-weight:700; padding:.2rem .5rem; border-radius:100px;
+        background:var(--ok); color:var(--paper);
+      }
+      .rs-down .rs-badge { background:var(--fault); }
+      .rs-when { margin-left:auto; font-size:.78rem; color:var(--muted); }
+
+      .rs-ports { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.6rem; margin-bottom:.9rem; }
+      @media (max-width:520px) { .rs-ports { grid-template-columns:minmax(0,1fr); } }
+      .rs-port {
+        display:flex; align-items:baseline; gap:.5rem; padding:.6rem .75rem;
+        border:1px solid var(--line); border-left:3px solid var(--ok); border-radius:8px;
+        background:var(--paper);
+      }
+      .rs-down .rs-port { border-left-color:var(--fault); }
+      .rs-port b { font-family:var(--mono); font-size:1.15rem; font-weight:700; color:var(--ink); line-height:1; }
+      .rs-port span { font-size:.76rem; color:var(--muted); }
+
+      .rs-note { font-size:.8rem; color:var(--muted); margin:0 0 .9rem; }
+      .rs-note strong { color:var(--ink); font-weight:650; }
+
+      .rs-tests { border-top:1px dashed var(--line-strong); padding-top:.8rem; }
+      .rs-tests > p { font-size:.8rem; color:var(--muted); margin:0 0 .55rem; }
+      .rs-cmd { display:flex; align-items:center; gap:.6rem; padding:.35rem 0; }
+      .rs-cmd em { flex:none; width:5.6rem; font-style:normal; font-size:.7rem; letter-spacing:.06em;
+        text-transform:uppercase; color:var(--muted); }
+      .rs-cmd code { flex:1; min-width:0; overflow-x:auto; white-space:nowrap; }
+      .rs-links { margin:.9rem 0 0; font-size:.8rem; }
+
+      /* The uptime strip. One bar per completed check, oldest on the left.
+         A sentence saying the relay is up is a claim; thirty bars are a
+         record, and a record is what makes this look alive rather than
+         asserted. Deliberately a count and not a percentage: "100% uptime"
+         reads as a promise, "30 of the last 30" reads as a measurement, and
+         the window it covers is printed beside it so the denominator is
+         never silent. */
+      .rs-uptime { margin-bottom:.9rem; }
+      .rs-uptime-top {
+        display:flex; align-items:baseline; gap:.5rem; margin-bottom:.4rem;
+        font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted);
+      }
+      .rs-uptime-count { margin-left:auto; font-family:var(--mono); font-size:.8rem;
+        font-weight:700; letter-spacing:0; text-transform:none; color:var(--ink); }
+      .rs-bars { display:flex; gap:2px; height:26px; align-items:stretch; }
+      .rs-bars i {
+        flex:1 1 0; min-width:2px; border-radius:2px; background:var(--ok);
+        transform-origin:bottom; animation:rs-rise .5s cubic-bezier(.2,.9,.3,1) backwards;
+      }
+      .rs-bars i.bad { background:var(--fault); }
+      @keyframes rs-rise { from { transform:scaleY(.15); opacity:0; } to { transform:scaleY(1); opacity:1; } }
+      @media (prefers-reduced-motion:reduce) { .rs-bars i { animation:none; } }
+      .rs-scale { display:flex; justify-content:space-between; margin-top:.35rem;
+        font-size:.72rem; color:var(--muted); }
+
+      /* Shown only when the strip is green. A call to action that replaces a
+         measurement destroys it; one that follows the honest note does not.
+         When the strip is red this is swapped for a warning - inviting
+         somebody to register while our own bar is red is the one version that
+         really does cost trust. */
+      .rs-cta {
+        margin:.9rem 0 0; padding:.7rem .85rem; border-radius:8px;
+        border:1px solid var(--line-strong); background:var(--paper); font-size:.82rem;
+      }
+      .rs-cta a { font-weight:650; }
+      .rs-cta small { display:block; margin-top:.3rem; color:var(--muted); font-size:.76rem; }
+      .rs-down .rs-cta { border-color:var(--fault); }
+
+      /* The pill in the header is the first thing anybody sees and it was a
+         static dot. Same ping as the panel, so the page reads as live before
+         it is clicked. */
+      .relay-status.is-up .dot { position:relative; }
+      .relay-status.is-up .dot::after {
+        content:''; position:absolute; inset:-3px; border-radius:50%;
+        border:1.5px solid var(--ok); animation:rs-ping 2.4s ease-out infinite;
+      }
+      @media (prefers-reduced-motion:reduce) { .relay-status.is-up .dot::after { animation:none; opacity:.4; } }
+
       /* ---------- conversion rail (homepage) ---------- */
       .layout { display:grid; grid-template-columns:minmax(0,1fr); gap:0 clamp(24px,3vw,40px); align-items:start; }
       @media (min-width:1040px) {
@@ -1055,7 +1148,7 @@
       }
 
       var RUNS = 'https://api.github.com/repos/msgwing/ZeroSMTP/actions/workflows/'
-               + 'service-healthcheck.yml/runs?per_page=1&status=completed';
+               + 'service-healthcheck.yml/runs?per_page=30&status=completed';
 
       // `npx zerosmtp-check` is published as of 2026-08-22 and the registry
       // returns 200, so it leads here now: it is the one line a reader can
@@ -1063,15 +1156,53 @@
       // they need no Node at all, and a printer technician on a locked-down
       // Windows box has neither npm nor the rights to get it.
       function selfTest() {
-        return '<p class="muted">To test from your own network rather than ours &mdash; '
-             + 'which is the result that actually decides whether your device can send '
-             + '&mdash; open a terminal:</p>'
-             + '<ul>'
-             + '<li>Anywhere with Node: <code>npx zerosmtp-check</code></li>'
-             + '<li>Windows: <code>Test-NetConnection mx.msgwing.com -Port 587</code></li>'
-             + '<li>Linux or macOS: <code>openssl s_client -starttls smtp -connect mx.msgwing.com:587</code></li>'
-             + '</ul>'
-             + '<p class="muted">All three open the connection and send no mail.</p>';
+        return '<div class="rs-tests">'
+             + '<p>Ours says the relay answers. <strong>Yours</strong> says whether your '
+             + 'network can reach it &mdash; and that is the one that decides:</p>'
+             + '<div class="rs-cmd"><em>Node</em><code>npx zerosmtp-check</code></div>'
+             + '<div class="rs-cmd"><em>Windows</em><code>Test-NetConnection mx.msgwing.com -Port 587</code></div>'
+             + '<div class="rs-cmd"><em>Linux&nbsp;/&nbsp;mac</em><code>openssl s_client -starttls smtp -connect mx.msgwing.com:587</code></div>'
+             + '<p style="margin:.5rem 0 0">All three open the connection and send no mail.</p>'
+             + '</div>';
+      }
+
+      /* Bars carry a title, because colour is the only other thing telling
+         them apart and it is not available to everybody. */
+      function uptime(runs) {
+        var udane = 0, paski = '', i, r, najnowsza = null, najstarsza = null;
+        for (i = runs.length - 1; i >= 0; i--) {
+          r = runs[i];
+          if (r.conclusion === 'success') { udane++; }
+          if (najstarsza === null) { najstarsza = r.updated_at; }
+          najnowsza = r.updated_at;
+          paski += '<i class="' + (r.conclusion === 'success' ? '' : 'bad') + '"'
+                 + ' style="animation-delay:' + ((runs.length - 1 - i) * 18) + 'ms"'
+                 + ' title="' + new Date(r.updated_at).toLocaleString()
+                 + ' \u2014 ' + (r.conclusion || 'unknown') + '"></i>';
+        }
+        var godzin = Math.round(
+          (new Date(najnowsza).getTime() - new Date(najstarsza).getTime()) / 3600000);
+        var okno = godzin >= 48 ? Math.round(godzin / 24) + ' days'
+                 : (godzin >= 2 ? 'about ' + godzin + ' hours' : 'under two hours');
+
+        return '<div class="rs-uptime">'
+             + '<div class="rs-uptime-top"><span>every check on record</span>'
+             + '<span class="rs-uptime-count">' + udane + ' of ' + runs.length + ' passed</span></div>'
+             + '<div class="rs-bars">' + paski + '</div>'
+             + '<div class="rs-scale"><span>' + okno + ' ago</span><span>now</span></div>'
+             + '</div>';
+      }
+
+      /* "checked 3 hours ago" was written once and then aged on the screen. A
+         status panel whose own clock is wrong is the one thing it cannot
+         afford, so it re-reads itself while it is open. */
+      function tykaj(iso) {
+        if (window.rsTick) { clearInterval(window.rsTick); }
+        window.rsTick = setInterval(function () {
+          var w = document.querySelector('.rs-when');
+          if (!w || detail.hidden) { clearInterval(window.rsTick); return; }
+          w.textContent = 'checked ' + ago(iso);
+        }, 30000);
       }
 
       el.addEventListener('click', function(e){
@@ -1098,19 +1229,49 @@
               return;
             }
             var ok = run.conclusion === 'success';
+            detail.className = ok ? '' : 'rs-down';
+
+            /* "operational" is status-page vocabulary. Somebody whose printer
+               stopped is not asking whether we have an incident - they are
+               asking whether port 587 will take a login from that device. The
+               badge says what was measured instead. `operational` stays in
+               status.json, which the README badge and two other widgets read:
+               the wording changes here, the contract does not. */
+            var cta = ok
+              ? '<div class="rs-cta">Pointing a printer at this? '
+                + '<a href="https://msgwing.com">Get a free account</a> &mdash; no card.'
+                + '<small>200 messages a day, sent from a generated @msgwing.com address '
+                + 'rather than your own domain. If mail has to come from your domain this is '
+                + 'the wrong tool &mdash; <a href="ALTERNATIVES.html">see the alternatives</a>.'
+                + '</small></div>'
+              : '<div class="rs-cta">The relay is not answering right now. This panel '
+                + 're-checks every 30 seconds &mdash; wait for it to go green before you '
+                + 'reconfigure a device.</div>';
+
             detail.innerHTML =
-              '<p><strong>' + (ok ? 'mx.msgwing.com answered on both ports.' : 'The last check did not pass.') + '</strong> '
-              + '<span class="muted">Checked ' + ago(run.updated_at) + '.</span></p>'
-              + '<ul>'
-              + '<li>Port <code>587</code> &mdash; TCP connect and STARTTLS handshake</li>'
-              + '<li>Port <code>465</code> &mdash; TCP connect and SSL/TLS handshake</li>'
-              + '</ul>'
-              + '<p class="muted">No credentials are used and no mail is sent, so this proves the '
-              + 'relay is reachable, not that a given account can send. Re-checked every 15 minutes, '
-              + 'and every 30 seconds while it is down.</p>'
+                '<div class="rs-head">'
+              +   '<span class="rs-pulse"><i></i></span>'
+              +   '<span class="rs-host">mx.msgwing.com</span>'
+              +   '<span class="rs-badge">' + (ok ? 'answering on 587 and 465' : 'not answering') + '</span>'
+              +   '<span class="rs-when">checked ' + ago(run.updated_at) + '</span>'
+              + '</div>'
+              + uptime(d.workflow_runs)
+              + '<div class="rs-ports">'
+              +   '<div class="rs-port"><b>587</b><span>STARTTLS handshake</span></div>'
+              +   '<div class="rs-port"><b>465</b><span>SSL/TLS handshake</span></div>'
+              + '</div>'
+              + '<p class="rs-note"><strong>What this checks:</strong> mx.msgwing.com answered on '
+              + 'both ports and completed the TLS handshake, from a network outside ours. '
+              + '<strong>What it does not check:</strong> your username and password &mdash; no '
+              + 'credentials are used here and no mail is sent. One check every 15 minutes, and '
+              + 'every 30 seconds while the relay is down.</p>'
               + selfTest()
-              + '<p><a href="' + run.html_url + '">This run on GitHub</a> &middot; '
-              + '<a href="https://github.com/msgwing/ZeroSMTP/actions/workflows/service-healthcheck.yml">full history</a></p>';
+              + cta
+              + '<p class="rs-links"><a href="' + run.html_url + '">This run on GitHub</a> &middot; '
+              + '<a href="https://github.com/msgwing/ZeroSMTP/actions/workflows/service-healthcheck.yml">full history</a>'
+              + ' &middot; <a href="PRINTERS.html">Settings for your device</a>'
+              + ' &middot; <a href="DEVICE-COMPATIBILITY.html">Compatibility list</a></p>';
+            tykaj(run.updated_at);
           })
           .catch(function(){
             detail.innerHTML =
