@@ -33,6 +33,12 @@ See [README.md](https://github.com/msgwing/ZeroSMTP#readme) for how to obtain a 
 
 ## WordPress (contact forms, WooCommerce, password resets)
 
+> **December 2026 changes this section.** Username-and-password SMTP to
+> Microsoft 365 stops working, and a WordPress site that cannot send looks
+> exactly like one that can. [WordPress email when Basic auth
+> ends](WORDPRESS.md) covers what breaks, which plugins have an OAuth route,
+> and when a relay is the wrong answer.
+
 Install a maintained SMTP plugin — e.g. **WP Mail SMTP** or **Post SMTP** —
 rather than relying on the default `wp_mail()`/PHP `mail()` transport, which
 most hosts throttle or block.
