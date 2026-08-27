@@ -74,9 +74,36 @@ inside your own network that accepts username-and-password from the device
 and speaks OAuth2 to Microsoft on the other side. The device never learns
 that anything changed.
 
-[`oldium/microsoft-smtp-oauth2-proxy`](https://github.com/oldium/microsoft-smtp-oauth2-proxy)
-is the one to look at. It is open source, it is small, and for the case it
-serves it is a better answer than we are.
+There is a whole shelf of these, and for a long time this page named only
+one of them. That was not a judgement — it was the only one we had found.
+Measured on 2026-08-27, with stars and last commit read from GitHub the same
+day:
+
+| Project | Stars | Last commit | Licence | Shape |
+| --- | ---: | --- | --- | --- |
+| [`simonrob/email-oauth2-proxy`](https://github.com/simonrob/email-oauth2-proxy) | 1466 | 2026-07-03 | Apache-2.0 | IMAP/POP/**SMTP** proxy; the largest of these by a wide margin |
+| [`SMTP2Graph/SMTP2Graph`](https://github.com/SMTP2Graph/SMTP2Graph) | 91 | 2026-05-03 | GPL-3.0 | SMTP server that relays over the Microsoft Graph API |
+| [`JustinIven/smtp-oauth-relay`](https://github.com/JustinIven/smtp-oauth-relay) | 48 | **2026-08-24** | Apache-2.0 | small SMTP → Graph relay, the most recently active of the group |
+| [`ggpwnkthx/Microsoft-Graph-SMTP-Relay`](https://github.com/ggpwnkthx/Microsoft-Graph-SMTP-Relay) | 33 | 2026-07-02 | MIT | same idea, Python |
+| [`oldium/microsoft-smtp-oauth2-proxy`](https://github.com/oldium/microsoft-smtp-oauth2-proxy) | 9 | 2026-05-20 | — | SMTP-only, deliberately minimal |
+
+Two things worth saying plainly rather than leaving you to work out.
+
+**The two approaches in that table are not the same thing.** A *proxy* speaks
+SMTP to Microsoft with an OAuth2 token, so your mail leaves through Exchange
+Online exactly as it does today. A *Graph relay* hands the message to the
+Microsoft Graph API instead, which is the direction Microsoft is pushing and
+which sidesteps SMTP AUTH entirely — but it is a different code path, with
+different permissions to grant and different failure modes. Neither is
+obviously better; they fail differently.
+
+**This page previously recommended the 9-star one.** Not out of preference —
+we had not measured the shelf. If you are choosing today and you want the
+option most other people have used and reported bugs against, that is
+`simonrob/email-oauth2-proxy`. If you want something still receiving commits
+this month, that is `JustinIven/smtp-oauth-relay`.
+
+All of them are a better answer than we are for the case below.
 
 | | ZeroSMTP | A proxy you run yourself |
 | --- | --- | --- |
