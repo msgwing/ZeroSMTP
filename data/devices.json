@@ -16,7 +16,7 @@
     "  check-advisory  vendor publishes a per-model list we do not reproduce",
     "  unsupported     the product has no OAuth capability for this purpose"
   ],
-  "updated": "2026-08-28",
+  "updated": "2026-08-27",
   "entries": [
     {
       "vendor": "Konica Minolta / DEVELOP",
@@ -227,7 +227,7 @@
     },
     {
       "vendor": "Sophos",
-      "product": "Sophos Firewall (alerty i raporty e-mail)",
+      "product": "Sophos Firewall (email alerts and reports)",
       "status": "available",
       "models": [
         "Sophos Firewall 22.0",
@@ -235,7 +235,8 @@
       ],
       "evidence": "https://docs.sophos.com/nsg/sophos-firewall/22.0/Help/en-us/webhelp/onlinehelp/AdministratorHelp/Administration/HowToArticles/NotificationsConfigureMicrosoft365/",
       "notes": "Sophos publishes an official guide 'Configure OAuth 2.0 on Microsoft 365' for Sophos Firewall 22.0: register the firewall as an app in Microsoft Entra, add delegated SMTP.Send + offline_access permissions, turn on Authenticated SMTP for the sending user, and configure notifications with client ID / secret / refresh token. Confirms Modern (OAuth 2.0) SMTP AUTH support; availability depends on the firewall version.",
-      "contributor": "TrueFurina"
+      "contributor": "TrueFurina",
+      "contributor_pr": 310
     }
   ]
 }
