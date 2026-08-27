@@ -1180,13 +1180,34 @@
                  + ' title="' + new Date(r.updated_at).toLocaleString()
                  + ' \u2014 ' + (r.conclusion || 'unknown') + '"></i>';
         }
+        /* The cron asks for every 15 minutes. Measured 2026-08-27 against
+           the last 30 runs: median gap 47 minutes, longest 679 - GitHub
+           delays and drops scheduled workflows, and there is nothing on our
+           side that changes that. The panel used to print the number we
+           asked for, which is a claim about our intent rather than about the
+           service. It now prints what actually happened, recomputed from the
+           same runs that draw the bars, so it cannot drift out of date. */
+        var przerwy = [], j;
+        for (j = 0; j < runs.length - 1; j++) {
+          przerwy.push(
+            (new Date(runs[j].updated_at).getTime()
+             - new Date(runs[j + 1].updated_at).getTime()) / 60000);
+        }
+        przerwy.sort(function (a, b) { return a - b; });
+        var mediana = przerwy.length ? Math.round(przerwy[Math.floor(przerwy.length / 2)]) : 0;
+        /* One run has no gap to measure, and "about every 0 minutes" is
+           worse than saying nothing. Found by feeding it a single run. */
+        var rytm = !przerwy.length ? ''
+                 : (mediana >= 90 ? ', about every ' + (mediana / 60).toFixed(1) + ' hours'
+                                  : ', about every ' + mediana + ' minutes');
+
         var godzin = Math.round(
           (new Date(najnowsza).getTime() - new Date(najstarsza).getTime()) / 3600000);
         var okno = godzin >= 48 ? Math.round(godzin / 24) + ' days'
                  : (godzin >= 2 ? 'about ' + godzin + ' hours' : 'under two hours');
 
         return '<div class="rs-uptime">'
-             + '<div class="rs-uptime-top"><span>every check on record</span>'
+             + '<div class="rs-uptime-top"><span>every check on record' + rytm + '</span>'
              + '<span class="rs-uptime-count">' + udane + ' of ' + runs.length + ' passed</span></div>'
              + '<div class="rs-bars">' + paski + '</div>'
              + '<div class="rs-scale"><span>' + okno + ' ago</span><span>now</span></div>'
@@ -1263,8 +1284,10 @@
               + '<p class="rs-note"><strong>What this checks:</strong> mx.msgwing.com answered on '
               + 'both ports and completed the TLS handshake, from a network outside ours. '
               + '<strong>What it does not check:</strong> your username and password &mdash; no '
-              + 'credentials are used here and no mail is sent. One check every 15 minutes, and '
-              + 'every 30 seconds while the relay is down.</p>'
+              + 'credentials are used here and no mail is sent. Checks are scheduled every 15 '
+              + 'minutes, but GitHub delays and drops scheduled runs &mdash; the real spacing is '
+              + 'above the bars, measured from those runs rather than claimed. While the relay is '
+              + 'down the running check re-tests it every 30 seconds.</p>'
               + selfTest()
               + cta
               + '<p class="rs-links"><a href="' + run.html_url + '">This run on GitHub</a> &middot; '
