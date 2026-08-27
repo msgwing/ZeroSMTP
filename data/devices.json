@@ -16,7 +16,7 @@
     "  check-advisory  vendor publishes a per-model list we do not reproduce",
     "  unsupported     the product has no OAuth capability for this purpose"
   ],
-  "updated": "2026-08-16",
+  "updated": "2026-08-28",
   "entries": [
     {
       "vendor": "Konica Minolta / DEVELOP",
@@ -224,6 +224,18 @@
       "notes": "Synology DSM 7 supports Outlook as an email notification service with an interactive Sign In flow rather than manual SMTP credentials. Synology documents OAuth-based authentication for this Outlook integration, but availability and behavior depend on the DSM version. Verify the exact DSM version and current Outlook notification configuration before assuming Microsoft 365 SMTP AUTH OAuth compatibility.",
       "contributor": "Mohitingale13",
       "contributor_pr": 252
+    },
+    {
+      "vendor": "Sophos",
+      "product": "Sophos Firewall (alerty i raporty e-mail)",
+      "status": "available",
+      "models": [
+        "Sophos Firewall 22.0",
+        "Sophos Firewall 20.0"
+      ],
+      "evidence": "https://docs.sophos.com/nsg/sophos-firewall/22.0/Help/en-us/webhelp/onlinehelp/AdministratorHelp/Administration/HowToArticles/NotificationsConfigureMicrosoft365/",
+      "notes": "Sophos publishes an official guide 'Configure OAuth 2.0 on Microsoft 365' for Sophos Firewall 22.0: register the firewall as an app in Microsoft Entra, add delegated SMTP.Send + offline_access permissions, turn on Authenticated SMTP for the sending user, and configure notifications with client ID / secret / refresh token. Confirms Modern (OAuth 2.0) SMTP AUTH support; availability depends on the firewall version.",
+      "contributor": "TrueFurina"
     }
   ]
 }
