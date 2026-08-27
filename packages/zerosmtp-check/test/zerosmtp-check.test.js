@@ -88,7 +88,15 @@ describe('zerosmtp-check', () => {
     test('handles completely unknown error text without throwing', () => {
       const result = explain('some completely unknown error text not in corpus 12345');
       assert.ok(result.startsWith('No match for that one.'));
-      assert.ok(result.includes('https://github.com/msgwing/ZeroSMTP/issues/new'));
+      // Porownanie CALEJ linii, nie fragmentu. Poprzednia wersja sprawdzala
+      // adres bez `?template=error-string.yml`, wiec przeszlaby, gdyby ten
+      // parametr zniknal - a on kieruje zglaszajacego do wlasciwego
+      // formularza. Przy okazji znika ksztalt `X.includes('https://...')`,
+      // ktory CodeQL czyta jako niepelna sanityzacje adresu.
+      const linie = result.split('\n').map((l) => l.trim());
+      assert.ok(linie.includes(
+        'https://github.com/msgwing/ZeroSMTP/issues/new?template=error-string.yml',
+      ));
     });
 
     test('handles empty input without throwing', () => {
