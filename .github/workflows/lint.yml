@@ -80,6 +80,10 @@ jobs:
         run: python tools/build-error-pages.py --check
       - name: Library error pages match data/clients.json
         run: python tools/build-client-error-pages.py --check
+      - name: WordPress plugin - syntax
+        run: for f in wordpress-plugin/zerosmtp/*.php wordpress-plugin/test/*.php; do php -l "$f"; done
+      - name: WordPress plugin - behaviour
+        run: php wordpress-plugin/test/test-zerosmtp.php
       - name: Application pages match data/apps.json
         run: python tools/build-app-pages.py --check
       - name: Blast radius page matches data/blast-radius.json
