@@ -1,0 +1,79 @@
+{
+  "$comment": [
+    "Jeden wpis na parę (klient, doslowny lancuch, ktory ten klient wypisuje).",
+    "Powod istnienia: 43 wlasne tytuly w tym serwisie pokrywaja 17 kodow serwera,",
+    "20 modeli urzadzen i 6 platform - i ANI JEDEN nie zawiera lancucha, ktory",
+    "wypisuje biblioteka. Czlowiek wklejajacy 'SMTP Error: Could not authenticate.'",
+    "nie ma jak trafic na strone zatytulowana '535 5.7.139'.",
+    "",
+    "Potwierdzone danymi z Search Console 2026-08-27: najlepsze zapytanie strony",
+    "PRINTERS to 'smtp server requires authentication hp printer' - 17 wyswietlen",
+    "na pozycji 20, trafiajace na strone OGOLNA mimo istnienia dedykowanej strony",
+    "HP. Strona obejmujaca jeden lancuch bije strone obejmujaca szesc.",
+    "",
+    "server_slug wskazuje istniejaca strone w docs/errors/ - link, nie kopia."
+  ],
+  "updated": "2026-08-27",
+  "entries": [
+    {
+      "slug": "phpmailer-smtp-error-could-not-authenticate",
+      "client": "PHPMailer",
+      "ecosystem": "PHP",
+      "message": "SMTP Error: Could not authenticate.",
+      "server_slug": "535-5-7-139-basic-authentication-is-disabled",
+      "hides": "PHPMailer reports its own summary and does not print what the server said. The server's line is available, but only if debug output is switched on.",
+      "reveal": "Set `$mail->SMTPDebug = 2;` before `send()` and the transcript shows the server's own refusal, including the enhanced status code.",
+      "example": "php-zerosmtp.php"
+    },
+    {
+      "slug": "wordpress-wp-mail-smtp-connect-failed",
+      "client": "WordPress / WP Mail SMTP",
+      "ecosystem": "PHP",
+      "message": "SMTP connect() failed.",
+      "server_slug": "535-5-7-139-basic-authentication-is-disabled",
+      "hides": "WordPress surfaces PHPMailer's message through a plugin, one layer further from the server. The wording suggests a network problem; authentication refusal produces the same line.",
+      "reveal": "The plugin's own Email Log, or `SMTPDebug`, shows the server's answer. A refused login and an unreachable host are different problems with the same message here.",
+      "example": "php-zerosmtp.php"
+    },
+    {
+      "slug": "nodemailer-invalid-login",
+      "client": "Nodemailer",
+      "ecosystem": "Node.js",
+      "message": "Invalid login: 535 5.7.139 Authentication unsuccessful",
+      "server_slug": "535-5-7-139-basic-authentication-is-disabled",
+      "hides": "Nodemailer prefixes the server's line with its own wording. The prefix reads like a wrong password, which is the one thing it usually is not.",
+      "reveal": "The server's text is already there after the prefix - `535 5.7.139` is the part that matters, and it means the method was disabled rather than the credentials rejected.",
+      "example": "node-zerosmtp.mjs"
+    },
+    {
+      "slug": "python-smtplib-smtpauthenticationerror",
+      "client": "Python smtplib",
+      "ecosystem": "Python",
+      "message": "smtplib.SMTPAuthenticationError: (535, b'5.7.139 ...')",
+      "server_slug": "535-5-7-139-basic-authentication-is-disabled",
+      "hides": "Nothing - smtplib passes the server's bytes through. The trap is that the numeric code is split from the text, so searching for the exception name alone finds generic advice about passwords.",
+      "reveal": "Print `e.smtp_error.decode()` to read the server's sentence rather than the exception name.",
+      "example": "python-zerosmtp.py"
+    },
+    {
+      "slug": "curl-67-login-denied",
+      "client": "curl",
+      "ecosystem": "shell",
+      "message": "curl: (67) Login denied",
+      "server_slug": "535-5-7-139-basic-authentication-is-disabled",
+      "hides": "curl discards the server's text entirely and prints its own four-word summary. There is nothing in that line to search for, which is why people spend an afternoon on a password that was never wrong.",
+      "reveal": "Add `-v`. The server's `535 5.7.139` line appears in the transcript, and it says the method was turned off rather than the password refused.",
+      "example": "bash-curl-zerosmtp.sh"
+    },
+    {
+      "slug": "dotnet-smtpexception-secure-connection-or-not-authenticated",
+      "client": ".NET and PowerShell",
+      "ecosystem": ".NET",
+      "message": "SmtpException: The SMTP server requires a secure connection or the client was not authenticated.",
+      "server_slug": "535-5-7-139-basic-authentication-is-disabled",
+      "hides": "The message offers two causes and does not say which one applied. It is the same sentence whether TLS was missing or authentication was refused.",
+      "reveal": "`ex.InnerException` or the server response carries the enhanced code. `Send-MailMessage` is obsolete and cannot do OAuth2 at all, so on Microsoft 365 the fix is a different transport rather than a different setting.",
+      "example": "pwsh-zerosmtp.ps1"
+    }
+  ]
+}

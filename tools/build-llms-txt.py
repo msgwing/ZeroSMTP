@@ -53,6 +53,7 @@ GRUPY = [
     ]),
     ("For developers", [
         "CODE-EXAMPLES.md",
+        "LIBRARY-ERRORS.md",
         "APPS.md",
         "RELIABILITY.md",
     ]),
