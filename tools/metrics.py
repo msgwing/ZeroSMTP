@@ -84,7 +84,16 @@ def npm(pakiet):
         # publikacji od braku odpowiedzi.
         kod = getattr(e, "code", None)
         if kod == 404:
-            return None, "jeszcze nieopublikowany"
+            # 404 z API pobran nie rozstrzyga. Nowy pakiet jest w rejestrze
+            # od razu, a licznik pobran rusza dopiero po dobie - wiec o zywym
+            # pakiecie miernik mowilby "nieopublikowany", co jest falszem
+            # i trafiloby do odczytu celu 4.
+            try:
+                with urllib.request.urlopen(
+                        f"https://registry.npmjs.org/{pakiet}", timeout=20):
+                    return None, "opublikowany, licznik pobran jeszcze milczy"
+            except Exception:
+                return None, "nieopublikowany"
         return None, f"nie odczytano ({type(e).__name__})"
 
     dni = [x["downloads"] for x in d.get("downloads", [])]
