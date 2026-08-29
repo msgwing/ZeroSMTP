@@ -353,6 +353,24 @@ jobs:
       - name: Type-check TypeScript example
         run: npm run typecheck
 
+  zerosmtp-mcp:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      # No dependencies here either - node's standard library and nothing else,
+      # which is the whole point of a server that runs on other people's
+      # machines with their mail settings in front of it.
+      - name: Protocol and tool tests
+        run: node --test packages/zerosmtp-mcp/test/*.test.js
+      # The reachability tool opens a real socket, so it is exercised locally
+      # rather than here: a runner with 587 blocked would turn a working tool
+      # into a red build, which is the wrong direction for a false alarm.
+
   zerosmtp-check:
     needs: changes
     if: needs.changes.outputs.code == 'true'

@@ -1,0 +1,36 @@
+{
+  "name": "zerosmtp-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for the Microsoft 365 SMTP AUTH shutdown: identify an error string, check whether a device has OAuth firmware, and test whether port 587 is reachable from this machine.",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "smtp",
+    "office365",
+    "exchange-online",
+    "smtp-auth",
+    "5.7.139"
+  ],
+  "bin": {
+    "zerosmtp-mcp": "index.js"
+  },
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "data/",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/msgwing/ZeroSMTP.git",
+    "directory": "packages/zerosmtp-mcp"
+  },
+  "homepage": "https://docs.msgwing.com/"
+}

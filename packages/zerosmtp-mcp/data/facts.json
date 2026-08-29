@@ -1,0 +1,66 @@
+{
+  "$comment": "Claims this project makes on more than one page. Each one has a single agreed wording and a set of phrasings that contradict it. tools/check-facts.py refuses a build where any page says the opposite. Born on 2026-08-29, when sixteen generated pages were found contradicting docs/EXCHANGE-ONLINE-SMTP-AUTH.md about the one date this whole project is built around - and on the same day, an assistant asked to assess the project called it doubtful. A reader who finds two of our pages disagreeing stops trusting both, and that reader is now often a machine.",
+  "updated": "2026-08-29",
+  "facts": [
+    {
+      "key": "grudzien-2026-odwracalny",
+      "claim": "At the end of December 2026 SMTP AUTH Basic authentication is disabled by default for existing tenants, and an administrator can still re-enable it. The final removal date is to be announced in the second half of 2027.",
+      "source": "https://techcommunity.microsoft.com/blog/exchange/updated-exchange-online-smtp-auth-basic-authentication-deprecation-timeline/4489835",
+      "verified": "2026-08-29",
+      "contradictions": [
+        "no setting brings it back",
+        "december 2026[^.]{0,160}?\\b(not reversible|cannot be undone|cannot be reversed|permanently disabled)",
+        "\\b(not reversible|cannot be undone|cannot be reversed)\\b[^.]{0,160}?december 2026",
+        "default change[^.]{0,80}?\\bnot reversible"
+      ],
+      "$note": "Wzorce sa wyrazeniami regularnymi. Sam zwrot \"not reversible\" jest poprawny w zdaniu o ostatecznym usunieciu w 2027, wiec liczy sie tylko obok grudnia 2026 - inaczej bramka odrzucalaby wlasne, poprawne zdanie."
+    },
+    {
+      "key": "limit-dzienny",
+      "claim": "The free tier is 200 messages a day, with no paid tier that lifts it.",
+      "source": "https://msgwing.com",
+      "verified": "2026-08-29",
+      "contradictions": [
+        "500 messages a day",
+        "1000 messages a day",
+        "1,000 messages a day",
+        "unlimited messages",
+        "no sending limit",
+        "no daily limit"
+      ]
+    },
+    {
+      "key": "adres-nadawcy",
+      "claim": "Mail leaves from a generated @msgwing.com address. Sending from your own domain is not supported.",
+      "source": "docs/APPS.md",
+      "verified": "2026-08-29",
+      "contradictions": [
+        "send from your own domain",
+        "use your own domain as the sender",
+        "keeps your domain in the From"
+      ]
+    },
+    {
+      "key": "czestotliwosc-kontroli",
+      "claim": "The healthcheck is scheduled every 15 minutes, but GitHub delays scheduled runs, so the measured median gap is roughly 45 minutes. Any page stating a real-world cadence must say the measured one, not the cron.",
+      "source": "tools/build-uptime-card.py",
+      "verified": "2026-08-29",
+      "contradictions": [
+        "runs every 15 minutes, not a static image",
+        "checked every 15 minutes",
+        "a real check that runs against"
+      ]
+    },
+    {
+      "key": "dkim-nie-szyfruje",
+      "claim": "DKIM is a signature - authenticity and integrity. It does not encrypt anything. Confidentiality in transit comes from TLS.",
+      "source": "https://www.rfc-editor.org/rfc/rfc6376",
+      "verified": "2026-08-29",
+      "contradictions": [
+        "encrypted with DKIM",
+        "DKIM encryption",
+        "DKIM encrypts"
+      ]
+    }
+  ]
+}

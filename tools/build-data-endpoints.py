@@ -23,7 +23,15 @@ import sys
 
 KORZEN = pathlib.Path(__file__).resolve().parent.parent
 ZRODLO = KORZEN / "data"
-CEL = KORZEN / "docs" / "data"
+# Dwa cele, nie jeden: strona publikuje te pliki pod adresem, a serwer MCP
+# wozi je ze soba, zeby dzialac bez sieci. Kopia, ktora sie rozjedzie ze
+# zrodlem, jest gorsza niz jej brak - asystent cytowalby wtedy nieaktualna
+# liste urzadzen z pelna pewnoscia siebie.
+CELE = [
+    KORZEN / "docs" / "data",
+    KORZEN / "packages" / "zerosmtp-mcp" / "data",
+]
+CEL = CELE[0]
 # facts.json dolaczone 2026-08-29: to jedyny plik, ktory mowi wprost, ktore
 # twierdzenia sa uzgodnione - a asystent cytujacy nas bez tego cytuje wersje,
 # ktora sam sobie zlozyl.
@@ -35,30 +43,31 @@ def main() -> int:
     ap.add_argument("--check", action="store_true")
     a = ap.parse_args()
 
-    CEL.mkdir(parents=True, exist_ok=True)
     rozne = []
-    for nazwa in PLIKI:
-        zr = ZRODLO / nazwa
-        if not zr.exists():
-            print(f"::error::{zr.relative_to(KORZEN)} is missing", file=sys.stderr)
-            return 1
-        # Round-tripped through json so a stray formatting difference in the
-        # source cannot make the published copy look changed when it is not.
-        tresc = json.dumps(json.loads(zr.read_text(encoding="utf-8")),
-                           indent=2, ensure_ascii=False) + "\n"
-        do = CEL / nazwa
-        stary = do.read_text(encoding="utf-8") if do.exists() else None
-        if stary != tresc:
-            rozne.append(nazwa)
-            if not a.check:
-                do.write_text(tresc, encoding="utf-8", newline="\n")
+    for cel in CELE:
+        cel.mkdir(parents=True, exist_ok=True)
+        for nazwa in PLIKI:
+            zr = ZRODLO / nazwa
+            if not zr.exists():
+                print(f"::error::{zr.relative_to(KORZEN)} is missing", file=sys.stderr)
+                return 1
+            # Round-tripped through json so a stray formatting difference in the
+            # source cannot make the published copy look changed when it is not.
+            tresc = json.dumps(json.loads(zr.read_text(encoding="utf-8")),
+                               indent=2, ensure_ascii=False) + "\n"
+            do = cel / nazwa
+            stary = do.read_text(encoding="utf-8") if do.exists() else None
+            if stary != tresc:
+                rozne.append(f"{cel.relative_to(KORZEN).as_posix()}/{nazwa}")
+                if not a.check:
+                    do.write_text(tresc, encoding="utf-8", newline="\n")
 
     if a.check:
         if rozne:
-            print(f"::error::docs/data is out of date ({', '.join(rozne)}). "
+            print(f"::error::published data is out of date ({', '.join(rozne)}). "
                   f"Run: python tools/build-data-endpoints.py", file=sys.stderr)
             return 1
-        print(f"docs/data matches data/ ({len(PLIKI)} files)")
+        print(f"published data matches data/ ({len(PLIKI)} files x {len(CELE)} targets)")
         return 0
 
     print(f"wrote docs/data - {len(PLIKI)} files, "
