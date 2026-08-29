@@ -189,8 +189,29 @@ def buduj(dane):
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--sync", action="store_true",
+                    help="pull the accumulated series from the status branch first")
     ap.add_argument("--check", action="store_true")
     args = ap.parse_args()
+
+    if args.sync:
+        # Seria rosnie na galezi `status`, bo `main` jest chroniony i workflow
+        # nie moze do niego pisac - to jest opisane w blast-radius.yml i jest
+        # celowe. Skutek uboczny nie byl celowy: strona buduje sie z ziarna na
+        # `main`, wiec pokazywala jedna probke z 2026-08-16, podczas gdy seria
+        # miala juz dwie i druga byla ciekawsza - 24 960 -> 25 728 w osiem dni.
+        # Jedyny unikalny zbior danych tego projektu byl niewidoczny.
+        import urllib.request
+        adres = ("https://raw.githubusercontent.com/msgwing/ZeroSMTP/"
+                 "status/blast-radius-samples.json")
+        with urllib.request.urlopen(adres, timeout=25) as o:
+            zdalne = json.load(o)
+        lokalne = json.loads(DANE.read_text(encoding="utf-8"))
+        stare = len(lokalne.get("samples", []))
+        lokalne["samples"] = sorted(zdalne["samples"], key=lambda s: s["date"])
+        DANE.write_text(json.dumps(lokalne, indent=2, ensure_ascii=False) + chr(10),
+                        encoding="utf-8", newline=chr(10))
+        print(f"synced samples from status: {stare} -> {len(lokalne['samples'])}")
 
     dane = json.loads(DANE.read_text(encoding="utf-8"))
 
