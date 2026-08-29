@@ -8,16 +8,16 @@ description: "A weekly count of public files on GitHub that still point at Micro
 
 # How much public code breaks in December 2026
 
-At least **24,960 public files on GitHub** still contain a Microsoft 365 SMTP hostname. Every one of them is a place where somebody wrote down a setting that stops working when Basic authentication is switched off by default at the end of December 2026.
+At least **25,728 public files on GitHub** still contain a Microsoft 365 SMTP hostname. Every one of them is a place where somebody wrote down a setting that stops working when Basic authentication is switched off by default at the end of December 2026.
 
-Measured 2026-08-16. The measurement runs every Monday, and the series below has 1 sample so far: a single number says the problem is large, a series says whether anyone is fixing it.
+Measured 2026-08-24. The measurement runs every Monday, and the series below has 2 samples so far: a single number says the problem is large, a series says whether anyone is fixing it.
 
 ## Current count
 
 | Hostname | Public files | Change since first measurement |
 | --- | --- | --- |
-| `smtp.office365.com` | 24,960 | no meaningful change |
-| `smtp-mail.outlook.com` | 22,080 | no meaningful change |
+| `smtp.office365.com` | 25,728 | +3.1% |
+| `smtp-mail.outlook.com` | 22,208 | +0.6% |
 
 The two are **not added together**: a single file can contain both hostnames, so a total would double-count.
 
@@ -51,6 +51,7 @@ The raw data is [`data/blast-radius.json`](https://github.com/msgwing/ZeroSMTP/b
 
 | Date | `smtp.office365.com` | `smtp-mail.outlook.com` |
 | --- | --- | --- |
+| 2026-08-24 | 25,728 | 22,208 |
 | 2026-08-16 | 24,960 | 22,080 |
 
 ## Reusing this
