@@ -86,6 +86,14 @@ jobs:
       - uses: actions/upload-pages-artifact@v5
         with:
           path: docs/_site
+          # The real cause of the security.txt 404, found by re-reading a
+          # build log line that was there the whole time: this action's
+          # tar step excludes anything dot-prefixed by default
+          # (`--exclude=.[^/]*`), so docs/_site/.well-known/security.txt was
+          # stripped out here regardless of what Jekyll built or what the
+          # previous workflow step placed on disk. `.git` and `.github` are
+          # still excluded even with this on.
+          include-hidden-files: true
 
   deploy:
     environment:
