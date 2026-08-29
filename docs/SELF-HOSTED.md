@@ -20,6 +20,7 @@ An invitation to your own photo library, a password reset for your own Git serve
 | [Authelia](apps/authelia.md) | identity-verification mail when a user registers a second factor |
 | [Paperless-ngx](apps/paperless-ngx.md) | password resets and account mail for the people who use it |
 | [changedetection.io](apps/changedetection.md) | a notification when a watched page changes, to whoever set up the watch |
+| [n8n](apps/n8n.md) | whatever a workflow is built to send - failure alerts, status digests, form-submission notices - through its Send Email node, to whoever the workflow author configured |
 
 Each page names the exact settings, quotes where they came from, and states the one limit most likely to catch you out on that particular application.
 

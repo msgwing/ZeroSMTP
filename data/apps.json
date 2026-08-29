@@ -199,6 +199,46 @@
       "caveat": "The part after @ in an Apprise mailto URL is read as the mail server unless smtp= overrides it - our sender address and our relay host are two different names (msgwing.com vs mx.msgwing.com), so leaving out smtp= sends it to the wrong place with no error until the alert never arrives. mailtos:// defaults to port 587 with TLS; do not add a port unless you need 465.",
       "source": "https://github.com/caronc/apprise/wiki/Notify_email",
       "source_title": "Apprise: Email Notifications"
+    },
+    {
+      "slug": "n8n",
+      "name": "n8n",
+      "repo": "n8n-io/n8n",
+      "what": "a self-hosted workflow automation platform - the free alternative to Zapier, used to wire alerts and notifications between other self-hosted tools",
+      "sends": [
+        "whatever a workflow is built to send - failure alerts, status digests, form-submission notices - through its Send Email node, to whoever the workflow author configured"
+      ],
+      "why_it_fits": "The volume is whatever the workflows generate, decided by the person who built them, and n8n itself imposes no floor. A homelab running a handful of alert workflows never approaches 200 a day; a business running high-volume campaigns through n8n is the wrong audience for this regardless of the limit.",
+      "where": "Credentials -> New -> Send Email, in the web UI.",
+      "fields": [
+        [
+          "User",
+          "your @msgwing.com login"
+        ],
+        [
+          "Password",
+          "your @msgwing.com password"
+        ],
+        [
+          "Host",
+          "mx.msgwing.com"
+        ],
+        [
+          "Port",
+          "587"
+        ],
+        [
+          "SSL/TLS",
+          "on"
+        ],
+        [
+          "Disable STARTTLS",
+          "off"
+        ]
+      ],
+      "caveat": "n8n exposes SSL/TLS as one toggle rather than a STARTTLS-vs-implicit-TLS choice. Leave SSL/TLS on and Disable STARTTLS off for port 587 - the two settings sound like opposites and are not: the second only matters when the first is off, and toggling both off at once sends the password unencrypted.",
+      "source": "https://docs.n8n.io/integrations/builtin/credentials/send-email.md",
+      "source_title": "Send Email credentials"
     }
   ],
   "$not_covered_comment": "Kandydaci zmierzeni 2026-08-27 jako zerowe pokrycie. Generator odejmuje od tej listy wszystko, co ma juz wpis - inaczej strona wymienia jako brakujaca aplikacje, ktorej strona stoi akapit wyzej. Tak wlasnie bylo z Paperless-ngx.",
