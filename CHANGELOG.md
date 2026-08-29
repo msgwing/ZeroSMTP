@@ -1,5 +1,32 @@
 # Changelog
 
+## [1.8.0] - 2026-08-29
+
+Competitive review, measured rather than recalled: the nearest comparable
+project is referenced in 73 files across other people's repositories and this
+one in 0 - not from lack of use, but because a config holding our hostname also
+holds a password, so nobody commits it. A workflow file is the exception, which
+makes the action the one artefact of ours that can travel. It needed a reason to
+be in a stranger's pipeline, and checking our host was not one.
+
+### Added
+- **The action scans the caller's own repository.** `scan:` takes a path and
+  reports which files point at a Microsoft 365 SMTP endpoint that stops
+  accepting a username and password at the end of December 2026. It uses the
+  same three endpoints `data/blast-radius.json` counts across public GitHub, so
+  a caller's number and the number on the site mean the same thing - currently
+  25,728 files, up 3.1% in eight days.
+- `fail-on-findings:` for pipelines that want the build to stop. Off by
+  default: failing a stranger's build on the first run is how an action gets
+  removed the same afternoon.
+
+### Changed
+- **A moving `v1` tag.** Until now the documentation pinned `@v1.7.0`, so
+  everyone told to use it would have stayed on a version without the scan
+  unless they read a changelog. `msgwing/send-email-action` already used a
+  moving tag; this repository did not, and the inconsistency was an oversight
+  rather than a decision.
+
 ## [1.7.0] - 2026-08-22
 
 The project's own tool became worth installing, and the one GitHub surface it

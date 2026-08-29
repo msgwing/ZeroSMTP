@@ -128,7 +128,7 @@ retries, no alert threshold is crossed. It works on Saturday and on Sunday it
 does not, and the first report is somebody saying scanning stopped working.
 
 ```yaml
-- uses: msgwing/ZeroSMTP@v1.7.0
+- uses: msgwing/ZeroSMTP@v1
   with:
     host: smtp.office365.com
     cert-expiry-days: '14'
