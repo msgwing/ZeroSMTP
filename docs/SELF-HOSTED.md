@@ -19,12 +19,13 @@ An invitation to your own photo library, a password reset for your own Git serve
 | [Gitea](apps/gitea.md) | registration and account-activation mail |
 | [Authelia](apps/authelia.md) | identity-verification mail when a user registers a second factor |
 | [Paperless-ngx](apps/paperless-ngx.md) | password resets and account mail for the people who use it |
+| [changedetection.io](apps/changedetection.md) | a notification when a watched page changes, to whoever set up the watch |
 
 Each page names the exact settings, quotes where they came from, and states the one limit most likely to catch you out on that particular application.
 
 ## What is not here
 
-Netdata, Jellyfin, Portainer, changedetection.io and Wiki.js are all in the same position and are not covered yet. They are missing because nobody has read their documentation carefully enough to name the settings without guessing, not because they do not fit.
+Netdata, Jellyfin, Portainer and Wiki.js are all in the same position and are not covered yet. They are missing because nobody has read their documentation carefully enough to name the settings without guessing, not because they do not fit.
 
 [Tell us which one you run](https://github.com/msgwing/ZeroSMTP/issues/new/choose) and it moves up the list.
 
