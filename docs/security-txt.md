@@ -1,3 +1,7 @@
+---
+permalink: /.well-known/security.txt
+layout: null
+---
 # Security contact information for msgwing.com and docs.msgwing.com
 # https://www.rfc-editor.org/rfc/rfc9116
 
