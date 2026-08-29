@@ -37,6 +37,21 @@ jobs:
         with:
           python-version: '3.13'
 
+      # Found 2026-08-29, after the trend line had gone missing from the page
+      # for over a week: the Publish step below always copies whatever is in
+      # data/blast-radius.json at that moment onto the status branch,
+      # *overwriting* it rather than merging. That file only ever holds
+      # main's seed sample plus this run's new one, because main's copy is
+      # never updated automatically - so the series that accumulates on
+      # status was actually being erased and restarted every single week.
+      # 08-16's sample survived past 08-24 only because that first sync was
+      # done by hand, once. This step makes the accumulation real: pull
+      # whatever the status branch already holds before adding today's point,
+      # using the same --sync path that was already tested against the live
+      # series.
+      - name: Sync the accumulated series from status before adding today's point
+        run: python tools/build-blast-radius.py --sync
+
       - name: Measure
         env:
           GH_TOKEN: ${{ github.token }}

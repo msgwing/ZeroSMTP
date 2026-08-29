@@ -179,6 +179,26 @@
       "caveat": "The defaults are `localhost` on port 25 with `PAPERLESS_EMAIL_USE_TLS` set to false. All six values have to be set: leaving TLS off sends the password in the clear and the relay refuses it, which surfaces as a connection error rather than an authentication one and sends people looking at the wrong thing. `PAPERLESS_EMAIL_FROM` falls back to `PAPERLESS_EMAIL_HOST_USER`, so setting the user correctly fixes both - but set it anyway rather than relying on a default that may change.",
       "source": "https://docs.paperless-ngx.com/configuration/",
       "source_title": "Configuration"
+    },
+    {
+      "slug": "changedetection",
+      "name": "changedetection.io",
+      "repo": "dgtlmoon/changedetection.io",
+      "what": "a self-hosted tool that watches a webpage or a JSON API and alerts when it changes",
+      "sends": [
+        "a notification when a watched page changes, to whoever set up the watch"
+      ],
+      "why_it_fits": "One alert per change, to the person who configured the watch. Nobody outside that person ever sees the sender address, so the generated one costs nothing here.",
+      "where": "Settings -> Notifications, as an Apprise URL - the app itself does not have SMTP fields; it hands the string straight to the Apprise library, so the syntax is Apprise's, not changedetection's.",
+      "fields": [
+        [
+          "Notification URL",
+          "mailtos://your_login:your_password@msgwing.com?smtp=mx.msgwing.com&from=your_login@msgwing.com&to=you@example.com"
+        ]
+      ],
+      "caveat": "The part after @ in an Apprise mailto URL is read as the mail server unless smtp= overrides it - our sender address and our relay host are two different names (msgwing.com vs mx.msgwing.com), so leaving out smtp= sends it to the wrong place with no error until the alert never arrives. mailtos:// defaults to port 587 with TLS; do not add a port unless you need 465.",
+      "source": "https://github.com/caronc/apprise/wiki/Notify_email",
+      "source_title": "Apprise: Email Notifications"
     }
   ],
   "$not_covered_comment": "Kandydaci zmierzeni 2026-08-27 jako zerowe pokrycie. Generator odejmuje od tej listy wszystko, co ma juz wpis - inaczej strona wymienia jako brakujaca aplikacje, ktorej strona stoi akapit wyzej. Tak wlasnie bylo z Paperless-ngx.",
