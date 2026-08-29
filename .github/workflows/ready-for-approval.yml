@@ -406,3 +406,94 @@ jobs:
             }
 
             core.info(`oznaczonych jako zrobione-a-otwarte: ${oznaczonych}`);
+
+  # Wnioski wyslane do cudzych repozytoriow, ktorych nikt nie pilnuje.
+  #
+  # 2026-08-29 ten brak wyprodukowal dwie pomylki w jednej godzinie. Zgloszenie
+  # #216 zostalo zamkniete jako "nie kwalifikujemy sie", podczas gdy wniosek do
+  # tej listy byl otwarty od szesciu dni. Godzine wczesniej o maly wlos nie
+  # powstal drugi wniosek do `linsa-io`, bo zgloszenie nie wiedzialo o
+  # pierwszym.
+  #
+  # Wpisy w katalogach sa zmierzonym kanalem tego projektu: free-for.dev daje
+  # 20 unikalnych odwiedzajacych na 14 dni, a wszystkie nasze pozycje w
+  # wyszukiwarce GitHuba razem - 18. Niepilnowana kolejka wnioskow to
+  # niepilnowany kanal.
+  wnioski-na-zewnatrz:
+    if: github.event_name != 'issues'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            const owner = context.repo.owner, repo = context.repo.repo;
+            const PROG_DNI = 21;
+
+            const wnioski = (await github.rest.search.issuesAndPullRequests({
+              q: `is:pr is:open author:${owner} -repo:${owner}/${repo}`,
+              per_page: 50,
+            })).data.items;
+
+            if (!wnioski.length) {
+              core.info('brak otwartych wnioskow na zewnatrz');
+              return;
+            }
+
+            // Zgloszenia sledzace, po numerze wniosku w tresci lub komentarzu.
+            const zgloszenia = (await github.rest.issues.listForRepo({
+              owner, repo, state: 'all', labels: 'listing', per_page: 100,
+            })).data;
+
+            const dzis = Date.now();
+            const stare = [], sieroty = [], zamkniete = [];
+
+            for (const w of wnioski) {
+              const gdzie = w.repository_url.split('/').slice(-2).join('/');
+              const dni = Math.floor((dzis - new Date(w.created_at)) / 86400000);
+              const opis = `${gdzie}#${w.number} (${dni} dni)`;
+
+              // Ktore zgloszenie sledzi ten wniosek?
+              const sledzi = zgloszenia.filter((z) =>
+                (z.body || '').includes(gdzie) || (z.title || '').includes(gdzie));
+
+              if (!sledzi.length) { sieroty.push(opis); continue; }
+              // To jest przypadek, ktory kosztowal nas dzis pomylke: wniosek
+              // otwarty, a zgloszenie zamkniete jako zalatwione albo odrzucone.
+              if (sledzi.every((z) => z.state === 'closed')) {
+                zamkniete.push(`${opis} - a zgloszenie #${sledzi[0].number} jest zamkniete`);
+              }
+              if (dni >= PROG_DNI) stare.push(opis);
+            }
+
+            core.info(`otwartych wnioskow: ${wnioski.length}`);
+            for (const z of zamkniete) core.warning(`sprzecznosc: ${z}`);
+            for (const s of sieroty) core.notice(`bez zgloszenia sledzacego: ${s}`);
+            for (const s of stare) core.notice(`bez odpowiedzi >= ${PROG_DNI} dni: ${s}`);
+
+            // Zamkniete zgloszenie przy otwartym wniosku jest sprzecznoscia,
+            // nie przypomnieniem - dlatego tylko ono zaklada zgloszenie.
+            if (!zamkniete.length) return;
+
+            const TYTUL = 'Wniosek otwarty, zgloszenie zamkniete';
+            const istnieje = (await github.rest.issues.listForRepo({
+              owner, repo, state: 'open', per_page: 100,
+            })).data.find((i) => i.title === TYTUL);
+            if (istnieje) {
+              core.info(`juz zgloszone: #${istnieje.number}`);
+              return;
+            }
+
+            await github.rest.issues.create({
+              owner, repo, title: TYTUL,
+              body: [
+                'Te wnioski sa otwarte w cudzych repozytoriach, a zgloszenia,',
+                'ktore je sledza, sa u nas zamkniete:', '',
+                ...zamkniete.map((z) => `- ${z}`), '',
+                'Jedno z dwojga jest nieprawda. Albo wniosek trzeba wycofac,',
+                'albo zgloszenie otworzyc z powrotem - i to drugie zdarzylo sie',
+                '2026-08-29, gdy #216 zamknieto jako "nie kwalifikujemy sie",',
+                'a wniosek do tej samej listy czekal otwarty od szesciu dni.',
+              ].join('\n'),
+            });
