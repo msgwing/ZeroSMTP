@@ -180,5 +180,32 @@
       "source": "https://docs.paperless-ngx.com/configuration/",
       "source_title": "Configuration"
     }
+  ],
+  "$not_covered_comment": "Kandydaci zmierzeni 2026-08-27 jako zerowe pokrycie. Generator odejmuje od tej listy wszystko, co ma juz wpis - inaczej strona wymienia jako brakujaca aplikacje, ktorej strona stoi akapit wyzej. Tak wlasnie bylo z Paperless-ngx.",
+  "not_covered": [
+    {
+      "name": "Netdata",
+      "slug": "netdata"
+    },
+    {
+      "name": "Jellyfin",
+      "slug": "jellyfin"
+    },
+    {
+      "name": "Paperless-ngx",
+      "slug": "paperless-ngx"
+    },
+    {
+      "name": "Portainer",
+      "slug": "portainer"
+    },
+    {
+      "name": "changedetection.io",
+      "slug": "changedetection"
+    },
+    {
+      "name": "Wiki.js",
+      "slug": "wikijs"
+    }
   ]
 }

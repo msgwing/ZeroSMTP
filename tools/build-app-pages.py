@@ -146,7 +146,18 @@ def zbuduj(wpis, aktualizacja, t):
     return "\n".join(czesci)
 
 
-def zbuduj_indeks(wpisy, aktualizacja):
+def przecinki(nazwy):
+    """Angielska lista z "and" przed ostatnim elementem.
+
+    Bez tego strona konczy sie "Portainer, changedetection.io, Wiki.js are all",
+    co czyta sie jak urwane zdanie - a te strony sa produktem, nie notatka.
+    """
+    if len(nazwy) == 1:
+        return nazwy[0]
+    return ", ".join(nazwy[:-1]) + " and " + nazwy[-1]
+
+
+def zbuduj_indeks(wpisy, aktualizacja, nieobjete=()):
     w = [
         "---",
         'title: "Self-hosted apps after the SMTP AUTH shutdown"',
@@ -187,11 +198,13 @@ def zbuduj_indeks(wpisy, aktualizacja):
         "",
         "## What is not here",
         "",
-        "Netdata, Jellyfin, Paperless-ngx, Portainer, changedetection.io and "
-        "Wiki.js are all in the same position and are not covered yet. They "
-        "are missing because nobody has read their documentation carefully "
-        "enough to name the settings without guessing, not because they do "
-        "not fit.",
+        (przecinki([n["name"] for n in nieobjete]) +
+         " are all in the same position and are not covered yet. They "
+         "are missing because nobody has read their documentation carefully "
+         "enough to name the settings without guessing, not because they do "
+         "not fit.") if nieobjete else
+        "Every application measured as a candidate now has a page. Tell us "
+        "which one you run and it goes on the list.",
         "",
         "[Tell us which one you run](https://github.com/msgwing/ZeroSMTP/"
         "issues/new/choose) and it moves up the list.",
@@ -271,7 +284,11 @@ def main():
         KATALOG / f"{w['slug']}.md": zbuduj(w, dane["updated"], tytuly[w["slug"]])
         for w in wpisy
     }
-    wyjscia[INDEKS] = zbuduj_indeks(wpisy, dane["updated"])
+    # Lista "czego tu nie ma" musi odejmowac to, co juz jest. Wpisana na sztywno
+    # wymienila Paperless-ngx jako brakujacy akapit pod tabela, w ktorej stal.
+    objete = {w["slug"] for w in wpisy}
+    nieobjete = [n for n in dane.get("not_covered", []) if n["slug"] not in objete]
+    wyjscia[INDEKS] = zbuduj_indeks(wpisy, dane["updated"], nieobjete)
 
     # Bramka postawiona po tym, jak pierwszy przebieg wypuscil cztery
     # odnosniki do ERROR-MESSAGES.md z katalogu docs/apps/, gdzie tego pliku
