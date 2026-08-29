@@ -50,7 +50,7 @@ from a shared `@msgwing.com` address rather than your own
 > the action you came for is below the fold. Here it is:
 >
 > ```yaml
-> - uses: msgwing/ZeroSMTP@v1.7.0
+> - uses: msgwing/ZeroSMTP@v1
 >   with:
 >     host: smtp.office365.com
 >     cert-expiry-days: '14'
@@ -248,7 +248,7 @@ certificate; it expires on a Sunday and the first report is a user saying
 scanning stopped working. No credentials and no mail sent.
 
 ```yaml
-- uses: msgwing/ZeroSMTP@v1.7.0
+- uses: msgwing/ZeroSMTP@v1
   with:
     host: smtp.office365.com
     cert-expiry-days: '14'
