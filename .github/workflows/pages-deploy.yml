@@ -46,6 +46,25 @@ jobs:
         env:
           JEKYLL_ENV: production
 
+      # docs/security-txt.md sets `permalink: /.well-known/security.txt` and
+      # was verified twice as merged, and the address still 404s on the live
+      # site - the build log never mentions the file at all, while an
+      # ordinary page added the same week (PRIVACY.html) builds fine. Jekyll
+      # is silently dropping this one page rather than failing loudly, and
+      # guessing a third cause without seeing it happen is how the first two
+      # "fixes" shipped unverified.
+      #
+      # So the file stops depending on Jekyll's permalink handling for a
+      # dot-prefixed destination. The front matter is stripped here and the
+      # plain RFC 9116 body is written straight into the built site.
+      - name: Place .well-known/security.txt directly (bypasses Jekyll permalinks)
+        run: |
+          mkdir -p docs/_site/.well-known
+          awk 'BEGIN{n=0} /^---$/{n++; next} n>=2' docs/security-txt.md \
+            > docs/_site/.well-known/security.txt
+          test -s docs/_site/.well-known/security.txt
+          echo "Wrote $(wc -l < docs/_site/.well-known/security.txt) lines to _site/.well-known/security.txt"
+
       - uses: actions/setup-node@v7
         with:
           node-version: '22'
@@ -67,6 +86,14 @@ jobs:
       - uses: actions/upload-pages-artifact@v5
         with:
           path: docs/_site
+          # The real cause of the security.txt 404, found by re-reading a
+          # build log line that was there the whole time: this action's
+          # tar step excludes anything dot-prefixed by default
+          # (`--exclude=.[^/]*`), so docs/_site/.well-known/security.txt was
+          # stripped out here regardless of what Jekyll built or what the
+          # previous workflow step placed on disk. `.git` and `.github` are
+          # still excluded even with this on.
+          include-hidden-files: true
 
   deploy:
     environment:
