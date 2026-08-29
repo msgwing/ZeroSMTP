@@ -54,3 +54,6 @@ free-for-dev/
 
 # Coordinator scratch, swept into main by a `git add -A` on 2026-08-22.
 .pr-body.md
+
+# Python bytecode from tools/
+tools/__pycache__/
