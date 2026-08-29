@@ -76,14 +76,40 @@ Limitations worth knowing before you commit: Direct Send only delivers to
 your own tenant's domains, needs a static IP with correct SPF, and is
 subject to its own throttling.
 
-### 3. A dedicated on-prem relay (Postfix, IIS SMTP, etc.)
+### 3. High Volume Email (HVE) — what Microsoft's own notice points you at
+
+When Microsoft's documentation tells you client SMTP submission is going away,
+the first replacement it names is
+[High Volume Email](https://learn.microsoft.com/en-us/exchange/mail-flow-best-practices/high-volume-mails-m365):
+a dedicated account type on its own endpoint, `smtp.hve.mx.microsoft` on port
+587, which **accepts a username and password** and keeps working even where
+`SMTPClientAuthenticationDisabled` is `True` for the tenant.
+
+That sounds like the whole problem solved, and for internal scan-to-email it
+often is. Three things decide whether it is solved for you, and all three are
+easy to read past:
+
+- **Internal recipients only.** HVE cannot deliver outside your tenant. If a
+  scanner mails a document to a client, an accountant or anyone at another
+  company, HVE is not the answer.
+- **It is no longer free.** HVE bills pay-as-you-go at **$0.000042 per
+  delivered recipient** ($42 per million) against an Azure subscription, and
+  an account without a billing policy assigned **cannot send at all**. Older
+  write-ups describing HVE as a free preview are out of date.
+- **10 MB per message, 50 recipients per message, 100 accounts per tenant.**
+  A scanner set to 600 dpi will exceed 10 MB on a long document.
+
+Also worth knowing: if **Security Defaults** are on in Microsoft Entra ID,
+basic authentication is disabled for HVE too, and it can only use OAuth.
+
+### 4. A dedicated on-prem relay (Postfix, IIS SMTP, etc.)
 
 Point the devices at an internal relay, and let *that* relay handle modern
 auth upstream. This keeps your domain as the sender and requires no device
 changes, but it's another server to run, patch, and monitor. Our
 [SYSTEM-MTA.md](SYSTEM-MTA.md) covers the Postfix side of this pattern.
 
-### 4. A third-party SMTP service that still accepts username/password
+### 5. A third-party SMTP service that still accepts username/password
 
 Commercial relays (SendGrid, Mailgun, Brevo, SMTP2GO, Amazon SES…) accept
 plain SMTP AUTH and let you verify your own domain, so devices keep working
@@ -92,7 +118,7 @@ business sending on its own domain it's typically the right one — see
 [ZeroSMTP vs. other free relays](ALTERNATIVES.md) for exactly what that
 verification step involves.
 
-### 5. ZeroSMTP — where it actually fits
+### 6. ZeroSMTP — where it actually fits
 
 This project is a free relay that accepts ordinary SMTP AUTH
 (username + password, TLS) on `mx.msgwing.com`. For a device that can't do
@@ -117,7 +143,7 @@ So:
 - ❌ **Bad fit:** customer-facing mail, anything that must come from your
   company domain, anything above a couple hundred messages a day, or a
   regulated environment where the sending identity matters. Use option 1, 2,
-  or 4 for those.
+  or 5 for those.
 
 If that trade-off works for your case, the [Quickstart](https://github.com/msgwing/ZeroSMTP#quickstart)
 takes about a minute, and [PRINTERS.md](PRINTERS.md) has per-brand settings
@@ -143,12 +169,12 @@ Does the mail have to come FROM your own domain?
 │           ├── Yes ──► OAuth 2.0 / Graph API            (option 1)
 │           └── No  ──► Static IP available?
 │                       ├── Yes ──► Direct Send / relay connector  (option 2)
-│                       └── No  ──► On-prem relay (option 3) or paid SMTP (option 4)
+│                       └── No  ──► On-prem relay (option 4) or paid SMTP (option 5)
 └── No  ──► Low volume, non-critical (scans, device alerts)?
-            ├── No  ──► Paid SMTP service                 (option 4)
+            ├── No  ──► Paid SMTP service                 (option 5)
             └── Yes ──► Has the vendor shipped OAuth firmware for your model?
                         ├── Yes ──► Apply the firmware. Nothing else needed.
-                        ├── No  ──► ZeroSMTP                          (option 5)
+                        ├── No  ──► ZeroSMTP                          (option 6)
                         └── Don't know ──► Check the compatibility list first
 ```
 

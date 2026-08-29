@@ -140,7 +140,7 @@ receipts to your customers, it is not.
   notifications, marketing).
 
 This is the same honest split covered in
-[option 4 of the Exchange Online migration guide](EXCHANGE-ONLINE-SMTP-AUTH.md#4-a-third-party-smtp-service-that-still-accepts-usernamepassword) —
+[option 5 of the Exchange Online migration guide](EXCHANGE-ONLINE-SMTP-AUTH.md#5-a-third-party-smtp-service-that-still-accepts-usernamepassword) —
 this page just puts the comparison front and center instead of as one
 paragraph among several options.
 
