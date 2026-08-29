@@ -917,7 +917,7 @@
     (function(){
       var el = document.getElementById('zc-quiz');
       if (!el) return;
-      el.style.cssText = 'background:#f6f8fa;border:1px solid #d0d7de;border-radius:6px;padding:20px;margin:20px 0;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Helvetica,Arial,sans-serif;max-width:520px;';
+      el.style.cssText = 'background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px;margin:20px 0;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Helvetica,Arial,sans-serif;max-width:520px;';
 
       var steps = {
         start: {
@@ -993,7 +993,7 @@
         var step = steps[key];
         var html = '<div style="font-weight:600;margin-bottom:10px;">' + step.q + '</div>';
         step.options.forEach(function(opt){
-          html += '<button data-next="' + opt.next + '" style="display:block;width:100%;text-align:left;background:#fff;border:1px solid #d0d7de;border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer;font-size:14px;">' + opt.label + '</button>';
+          html += '<button data-next="' + opt.next + '" style="display:block;width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 12px;margin:6px 0;cursor:pointer;font-size:14px;">' + opt.label + '</button>';
         });
         el.innerHTML = html;
         Array.prototype.forEach.call(el.querySelectorAll('button'), function(btn){
@@ -1015,10 +1015,10 @@
         }
         el.innerHTML =
           '<div style="font-weight:600;margin-bottom:8px;">Recommendation</div>' +
-          '<div style="background:#dafbe1;border:1px solid #2ea043;border-radius:6px;padding:12px 14px;"><strong>' + r.title + '</strong><p style="margin:8px 0 0;">' + r.body + '</p></div>' +
+          '<div style="background:var(--tint);border:1px solid var(--ok);border-radius:6px;padding:12px 14px;"><strong>' + r.title + '</strong><p style="margin:8px 0 0;">' + r.body + '</p></div>' +
           '<div style="margin-top:10px;font-size:13px;">' +
           '<a href="#" id="zc-restart">&larr; start over</a>' +
-          '<span style="color:#57606a;"> · this recommendation has its own link &mdash; copy the address bar to share it</span>' +
+          '<span style="color:var(--muted);"> · this recommendation has its own link &mdash; copy the address bar to share it</span>' +
           '</div>';
         document.getElementById('zc-restart').addEventListener('click', function(e){
           e.preventDefault();
@@ -1043,10 +1043,10 @@
       var mount = document.getElementById('zc-brand-picker-mount');
       if (!mount) return;
 
-      mount.style.cssText = 'background:#f6f8fa;border:1px solid #d0d7de;border-radius:6px;padding:16px 20px;margin:16px 0;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Helvetica,Arial,sans-serif;max-width:640px;';
+      mount.style.cssText = 'background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px 20px;margin:16px 0;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Helvetica,Arial,sans-serif;max-width:640px;';
       mount.innerHTML =
         '<label for="zc-brand-picker" style="font-weight:600;display:block;margin-bottom:8px;">Printer brand</label>' +
-        '<select id="zc-brand-picker" style="width:100%;padding:8px;border:1px solid #d0d7de;border-radius:6px;font-size:14px;margin-bottom:12px;">' +
+        '<select id="zc-brand-picker" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;font-size:14px;margin-bottom:12px;">' +
         '<option value="">Select a brand…</option></select>' +
         '<div id="zc-brand-output" style="font-size:14px;"></div>';
 
@@ -1078,7 +1078,7 @@
         var b = brands[parseInt(select.value, 10)];
         output.innerHTML =
           '<p>' + b.path + '</p>' +
-          '<p style="color:#57606a;">Server: <code>mx.msgwing.com</code> &middot; Port: <code>587</code> (STARTTLS) or <code>465</code> (SSL/TLS) &middot; full settings table above.</p>';
+          '<p style="color:var(--muted);">Server: <code>mx.msgwing.com</code> &middot; Port: <code>587</code> (STARTTLS) or <code>465</code> (SSL/TLS) &middot; full settings table above.</p>';
       });
     })();
     </script>
