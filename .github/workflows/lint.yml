@@ -80,6 +80,8 @@ jobs:
         run: python tools/build-error-pages.py --check
       - name: Library error pages match data/clients.json
         run: python tools/build-client-error-pages.py --check
+      - name: No page contradicts a shared claim
+        run: python tools/check-facts.py
       - name: No colour literals in runtime styles
         run: python tools/check-theme-colors.py
       - name: Application pages match data/apps.json
