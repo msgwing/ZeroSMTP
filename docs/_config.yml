@@ -251,6 +251,11 @@ defaults:
         How ZeroSMTP compares to SMTP2GO, Brevo and MailerSend: no DNS
         setup vs. sending from your own verified domain.
 
+# Jekyll skips dot-prefixed paths, so RFC 9116 needs this line or
+# .well-known/security.txt is never published.
+include:
+  - ".well-known"
+
 exclude:
   - assets/*.py
 

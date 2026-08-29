@@ -151,8 +151,15 @@ with anything that already speaks SMTP.
 - **21 copy-paste examples** across 19 languages, all reading the same
   environment variables, plus Ansible and Docker Compose recipes and setup
   guides for Windows Server, Linux, and printers by brand.
-- **Verifiably up** — the status badge above is a real check that runs against
-  `mx.msgwing.com` every 15 minutes, not a static image.
+- **Verifiably up** — the card above is a real check against `mx.msgwing.com`,
+  not a static image: every completed run is drawn, and the spacing printed on
+  it is measured from those runs rather than copied from the schedule. GitHub
+  delays scheduled workflows, so the cron asks for 15 minutes and the median
+  gap is closer to 45.
+- **Auditable handling** — where mail is processed, what is kept and for how
+  long, and the TLS versions the relay actually accepts and refuses, measured
+  rather than claimed: [What happens to mail sent through this
+  relay](https://docs.msgwing.com/PRIVACY.html).
 
 Good for: contact forms · password resets · CI/CD and monitoring alerts ·
 scan-to-email · IoT and device notifications · homelabs.

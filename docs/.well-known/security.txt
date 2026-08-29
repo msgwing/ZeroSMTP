@@ -1,0 +1,12 @@
+# Security contact information for msgwing.com and docs.msgwing.com
+# https://www.rfc-editor.org/rfc/rfc9116
+
+Contact: mailto:abuse@msgwing.com
+Contact: https://github.com/msgwing/ZeroSMTP/security/advisories/new
+Expires: 2027-08-29T00:00:00.000Z
+Preferred-Languages: en, pl
+Canonical: https://docs.msgwing.com/.well-known/security.txt
+Policy: https://github.com/msgwing/ZeroSMTP/blob/main/SECURITY.md
+
+# How data is handled, including where it is processed and what is kept:
+# https://docs.msgwing.com/PRIVACY.html
