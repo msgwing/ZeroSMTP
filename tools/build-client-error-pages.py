@@ -127,14 +127,21 @@ def zbuduj(wpis, blad, aktualizacja, t):
         "turned SMTP AUTH off.** Reversible today, and it is a tenant "
         "setting, not a code change. Nothing in "
         f"{wpis['client']} needs touching.",
-        "- **It is the end-of-December-2026 default change.** Not reversible. "
-        "Basic authentication for SMTP AUTH stops working in Exchange Online "
-        "and no setting brings it back.",
+        # Corrected 2026-08-29 against Microsoft's own post of 2026-01-27:
+        # "SMTP AUTH Basic Authentication will be disabled by default for
+        # existing tenants. Administrators will still be able to enable it if
+        # needed." Calling that irreversible was wrong, and it contradicted
+        # docs/EXCHANGE-ONLINE-SMTP-AUTH.md, which had it right all along.
+        "- **It is the end-of-December-2026 default change.** Switched off by "
+        "default on existing tenants. An administrator can re-enable it, so "
+        "this is a reprieve rather than a fix — and Microsoft announces the "
+        "*final* removal date in the second half of 2027. If you do not "
+        "administer the tenant, that reprieve is not yours to take.",
         "",
         f"[Which one you are looking at]({plik}) is decided by the exact "
         "string, which is why getting it printed comes first.",
         "",
-        "## If it is the one that cannot be reversed",
+        "## If re-enabling it is not something you can do",
         "",
         f"ZeroSMTP is a free SMTP relay that accepts the credentials "
         f"{wpis['client']} already sends. It is a host, a port and a "
@@ -207,9 +214,11 @@ def zbuduj_indeks(wpisy, bledy, aktualizacja):
         "",
         "## Why this is worth a table",
         "",
-        "Three of the four things that produce these errors are still "
-        "reversible. The fourth is the end-of-December-2026 default change in "
-        "Exchange Online, and it is not.",
+        "Three of the four things that produce these errors are reversible "
+        "by anybody with tenant rights. The fourth is the "
+        "end-of-December-2026 default change, and an administrator can undo "
+        "that one too — until Microsoft names the final removal date, which "
+        "it says it will do in the second half of 2027.",
         "",
         "The library's message cannot tell them apart. The server's line "
         "always can. Every page above starts with how to make your library "

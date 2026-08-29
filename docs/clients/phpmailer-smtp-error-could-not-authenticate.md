@@ -35,11 +35,11 @@ Set `$mail->SMTPDebug = 2;` before `send()` and the transcript shows the server'
 The server's line decides, not the library's. Two cases, and they are not close:
 
 - **An admin, Security Defaults or a Conditional Access policy turned SMTP AUTH off.** Reversible today, and it is a tenant setting, not a code change. Nothing in PHPMailer needs touching.
-- **It is the end-of-December-2026 default change.** Not reversible. Basic authentication for SMTP AUTH stops working in Exchange Online and no setting brings it back.
+- **It is the end-of-December-2026 default change.** Switched off by default on existing tenants. An administrator can re-enable it, so this is a reprieve rather than a fix — and Microsoft announces the *final* removal date in the second half of 2027. If you do not administer the tenant, that reprieve is not yours to take.
 
 [Which one you are looking at](../errors/535-5-7-139-basic-authentication-is-disabled.md) is decided by the exact string, which is why getting it printed comes first.
 
-## If it is the one that cannot be reversed
+## If re-enabling it is not something you can do
 
 ZeroSMTP is a free SMTP relay that accepts the credentials PHPMailer already sends. It is a host, a port and a username — no OAuth flow, no app registration, no code path that does not exist yet in the version you are running.
 

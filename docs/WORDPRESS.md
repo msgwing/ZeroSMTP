@@ -21,7 +21,14 @@ that was never answered because it was never seen.
 
 If your site authenticates to Microsoft 365 with a username and password —
 which is what every plugin's **Other SMTP** option does — then at the end of
-December 2026 Exchange Online stops accepting it. Not throttles: refuses.
+December 2026 Exchange Online stops accepting it by default. Not throttles:
+refuses.
+
+An administrator can switch it back on; Microsoft's own announcement says so.
+That is a reprieve, not a fix — the final removal date gets announced in the
+second half of 2027, and tenants created after December 2026 never get the
+option. And if you are maintaining somebody else's site, the person who can
+grant that reprieve is not you.
 
 That covers, in rough order of how much it hurts:
 
@@ -53,8 +60,8 @@ not.
 
 [What WordPress prints, and what the server said](clients/wordpress-wp-mail-smtp-connect-failed.md)
 covers how to make the plugin show you the real line, which is the only thing
-that tells you whether this is a setting somebody can switch back on or the
-change that cannot be undone.
+that tells you whether somebody with tenant rights can switch this back on —
+and whether that somebody is you.
 
 ## Your three routes, honestly
 

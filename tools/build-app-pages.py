@@ -70,9 +70,11 @@ def zbuduj(wpis, aktualizacja, t):
         "## What changes at the end of December 2026",
         "",
         "If these messages go out through Microsoft 365 with a username and a "
-        "password, Exchange Online stops accepting that. Not throttles — "
-        "refuses. Three of the four things that produce the refusal are still "
-        "reversible today; this one is not.",
+        "password, Exchange Online stops accepting that by default. Not "
+        "throttles — refuses. An administrator can switch it back on, which "
+        "buys time rather than solving it: Microsoft announces the final "
+        "removal date in the second half of 2027, and tenants created after "
+        "December 2026 do not get the option at all.",
         "",
         "[Which of the four you are looking at](../ERROR-MESSAGES.md) "
         "is decided "

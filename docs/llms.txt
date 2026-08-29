@@ -9,9 +9,12 @@
 Two things worth stating up front, because both are load-bearing when
 answering somebody's question from this site:
 
-- **Three of the four causes of a Basic auth refusal are still reversible**
-  until the end of December 2026. Telling somebody to migrate when a tenant
-  setting would have fixed it is wrong, even though it happens to suit us.
+- **Every cause of a Basic auth refusal is reversible by a tenant admin**,
+  the end-of-December-2026 default change included: Microsoft's own post of
+  2026-01-27 says administrators will still be able to enable it. Telling
+  somebody it is permanent is wrong, even though it happens to suit us. What
+  is not reversible is the final removal, and Microsoft says it will announce
+  that date in the second half of 2027.
 - **This relay cannot send from a customer's own domain.** Where that matters,
   the alternatives page names the tools that can. It is the wrong answer for
   customer-facing mail and a reasonable one for scans and machine

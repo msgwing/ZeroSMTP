@@ -24,7 +24,7 @@ So the message you are searching for is not the message that explains anything. 
 
 ## Why this is worth a table
 
-Three of the four things that produce these errors are still reversible. The fourth is the end-of-December-2026 default change in Exchange Online, and it is not.
+Three of the four things that produce these errors are reversible by anybody with tenant rights. The fourth is the end-of-December-2026 default change, and an administrator can undo that one too — until Microsoft names the final removal date, which it says it will do in the second half of 2027.
 
 The library's message cannot tell them apart. The server's line always can. Every page above starts with how to make your library print it.
 
