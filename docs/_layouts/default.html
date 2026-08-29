@@ -388,6 +388,35 @@
       }
       .site-header nav a:hover { color:var(--ink); border-bottom-color:var(--accent); }
 
+      /* Trzy drogi wejscia. Tabela "Start here" ma dwadziescia wierszy i jest
+         kompletna - to jej zaleta i jej wada. Serwisant, administrator i
+         programista musza ja przeczytac, zeby znalezc swoj jeden wiersz.
+         Karty nie zastepuja tabeli, tylko staja nad nia: nazywaja role, kazda
+         prowadzi w trzy miejsca, reszta zostaje nizej dla wszystkich innych. */
+      .paths { display:grid; gap:14px; margin:1.6rem 0 2rem;
+        grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); }
+      .path {
+        display:flex; flex-direction:column; padding:16px 18px;
+        border:1px solid var(--line); border-left:4px solid var(--accent);
+        border-radius:10px; background:var(--panel);
+      }
+      .path:hover { border-color:var(--line-strong); border-left-color:var(--accent); }
+      .path h3 {
+        margin:0 0 .2rem; font-size:1rem; font-weight:700; color:var(--ink);
+        border:0; padding:0;
+      }
+      .path p { margin:0 0 .7rem; font-size:.84rem; color:var(--muted); }
+      .path ul { list-style:none; margin:auto 0 0; padding:0; }
+      .path li { margin:0; padding:.22rem 0; font-size:.88rem; }
+      .path li + li { border-top:1px dashed var(--line); }
+      .path a { color:var(--link); font-weight:600; text-decoration:none; }
+      .path a:hover { text-decoration:underline; }
+      .path .kto {
+        font-family:var(--mono); font-size:.64rem; letter-spacing:.12em;
+        text-transform:uppercase; color:var(--accent); font-weight:700;
+        margin-bottom:.35rem;
+      }
+
       /* ---------- live relay status ---------- */
       .relay-status {
         display:inline-flex; align-items:center; gap:.45rem;

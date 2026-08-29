@@ -45,6 +45,41 @@ tool and [the alternatives page](ALTERNATIVES.md) says which one is right.
 
 ## Start here
 
+<div class="paths">
+  <div class="path">
+    <span class="kto">Serwis i drukarki</span>
+    <h3>A printer or scanner stopped emailing</h3>
+    <p>Scan-to-email died, the panel shows an authentication error, or the device refuses the certificate.</p>
+    <ul>
+      <li><a href="PRINTERS.html">Setup by brand</a> — Canon, Epson, Brother, HP, Ricoh, Kyocera, Xerox</li>
+      <li><a href="DEVICE-COMPATIBILITY.html">Does my model have OAuth firmware?</a></li>
+      <li><a href="PRINTER-CERTIFICATE-ERROR.html">It will not trust the certificate</a></li>
+    </ul>
+  </div>
+  <div class="path">
+    <span class="kto">Administracja</span>
+    <h3>You run the servers this breaks</h3>
+    <p>Find out what else in the environment sends mail with a password before December finds it for you.</p>
+    <ul>
+      <li><a href="AFFECTED-SYSTEMS.html">What breaks, and when</a></li>
+      <li><a href="WINDOWS-SERVER.html">Windows Server / IIS</a> · <a href="LINUX.html">Linux</a></li>
+      <li><a href="SELF-HOSTED.html">Gitea, Vaultwarden, Immich, Authelia, Paperless</a></li>
+    </ul>
+  </div>
+  <div class="path">
+    <span class="kto">Programowanie</span>
+    <h3>Your code or app cannot send</h3>
+    <p>The library printed a summary of the error rather than the error. Start from the string you actually have.</p>
+    <ul>
+      <li><a href="LIBRARY-ERRORS.html">What your library said vs. what the server said</a></li>
+      <li><a href="CODE-EXAMPLES.html">21 runnable examples, 19 languages</a></li>
+      <li><a href="WORDPRESS.html">WordPress and WooCommerce</a></li>
+    </ul>
+  </div>
+</div>
+
+Everything else is in the table further down — these three cover most of it.
+
 **If you have an error in front of you right now, skip the table:**
 
 ```bash
