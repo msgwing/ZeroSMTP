@@ -58,6 +58,11 @@ jobs:
     # a runner for the default six hours.
     timeout-minutes: 20
     steps:
+      # tools/build-uptime-card.py is read from here; the publishing step
+      # itself works in a temporary clone of the orphan `status` branch, which
+      # does not contain it.
+      - uses: actions/checkout@v5
+
       - name: Check TCP + TLS connectivity
         id: check
         env:
@@ -208,9 +213,30 @@ jobs:
           {"schemaVersion":1,"label":"mx.msgwing.com","message":"${MESSAGE}","color":"${COLOR}","cacheSeconds":300}
           JSON
 
+          # The badge says a word. github.com is where most people meet this
+          # project first, and a word is not a record - so the same strip the
+          # docs site draws in the browser is drawn here as an image, because
+          # a README cannot run scripts. Same numbers, same derivation: a
+          # count rather than a percentage, and a cadence measured from the
+          # runs rather than copied from the cron, which asks for 15 minutes
+          # and gets a median of 47.
+          #
+          # A failure here must not fail the healthcheck. The card going stale
+          # is a cosmetic problem; a red run for a relay that is answering is
+          # a false alarm, and false alarms are how a status page stops being
+          # read.
+          if gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/service-healthcheck.yml/runs?per_page=30&status=completed" > runs.json 2>/dev/null \
+             && python3 "${GITHUB_WORKSPACE}/tools/build-uptime-card.py" runs.json > uptime-card.svg 2>/dev/null; then
+            rm -f runs.json
+          else
+            echo "::warning::Could not rebuild uptime-card.svg; leaving the previous one in place."
+            rm -f runs.json
+            git checkout -- uptime-card.svg 2>/dev/null || true
+          fi
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add status.json
+          git add status.json uptime-card.svg 2>/dev/null || git add status.json
           if git diff --cached --quiet; then
             echo "Status unchanged (${MESSAGE}), nothing to push"
             exit 0

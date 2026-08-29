@@ -17,6 +17,8 @@ from a shared `@msgwing.com` address rather than your own
 [![GitHub stars](https://img.shields.io/github/stars/msgwing/ZeroSMTP)](https://github.com/msgwing/ZeroSMTP/stargazers)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
+[![mx.msgwing.com uptime, every check on record](https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/uptime-card.svg)](https://github.com/msgwing/ZeroSMTP/actions/workflows/service-healthcheck.yml)
+
 [![Exchange Online Basic auth (SMTP AUTH) countdown](https://raw.githubusercontent.com/msgwing/ZeroSMTP/status/countdown-card.svg)](docs/EXCHANGE-ONLINE-SMTP-AUTH.md)
 
 [**Get a free account →**](https://msgwing.com) · [**Exchange Online migration →**](docs/EXCHANGE-ONLINE-SMTP-AUTH.md) · [Documentation site](https://docs.msgwing.com/) · [Quickstart](#quickstart) · [Code examples](#code-examples) · [FAQ](docs/FAQ.md) · [Deutsch](README.de.md) · [Polski](README.pl.md)
