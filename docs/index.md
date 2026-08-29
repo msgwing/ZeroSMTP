@@ -47,7 +47,7 @@ tool and [the alternatives page](ALTERNATIVES.md) says which one is right.
 
 <div class="paths">
   <div class="path">
-    <span class="kto">Serwis i drukarki</span>
+    <span class="kto">Service &amp; printers</span>
     <h3>A printer or scanner stopped emailing</h3>
     <p>Scan-to-email died, the panel shows an authentication error, or the device refuses the certificate.</p>
     <ul>
@@ -57,7 +57,7 @@ tool and [the alternatives page](ALTERNATIVES.md) says which one is right.
     </ul>
   </div>
   <div class="path">
-    <span class="kto">Administracja</span>
+    <span class="kto">Systems administration</span>
     <h3>You run the servers this breaks</h3>
     <p>Find out what else in the environment sends mail with a password before December finds it for you.</p>
     <ul>
@@ -67,7 +67,7 @@ tool and [the alternatives page](ALTERNATIVES.md) says which one is right.
     </ul>
   </div>
   <div class="path">
-    <span class="kto">Programowanie</span>
+    <span class="kto">Development</span>
     <h3>Your code or app cannot send</h3>
     <p>The library printed a summary of the error rather than the error. Start from the string you actually have.</p>
     <ul>
