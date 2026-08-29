@@ -393,8 +393,15 @@
          programista musza ja przeczytac, zeby znalezc swoj jeden wiersz.
          Karty nie zastepuja tabeli, tylko staja nad nia: nazywaja role, kazda
          prowadzi w trzy miejsca, reszta zostaje nizej dla wszystkich innych. */
+      /* auto-fit zostawialo dziure: trzy karty w dwoch kolumnach daja pusty
+         slot w prawym dolnym rogu, i wlasciciel zobaczyl go pierwszy. Czwarta
+         karta usuwa go przy dwoch kolumnach, a jawne progi zamiast auto-fit
+         gwarantuja, ze na kazdej szerokosci liczba kolumn dzieli sie przez
+         liczbe kart - jedna, dwie albo cztery, nigdy trzy. */
       .paths { display:grid; gap:14px; margin:1.6rem 0 2rem;
-        grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); }
+        grid-template-columns:minmax(0,1fr); }
+      @media (min-width:560px) { .paths { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+      @media (min-width:1180px) { .paths { grid-template-columns:repeat(4,minmax(0,1fr)); } }
       .path {
         display:flex; flex-direction:column; padding:16px 18px;
         border:1px solid var(--line); border-left:4px solid var(--accent);

@@ -76,6 +76,16 @@ tool and [the alternatives page](ALTERNATIVES.md) says which one is right.
       <li><a href="WORDPRESS.html">WordPress and WooCommerce</a></li>
     </ul>
   </div>
+  <div class="path">
+    <span class="kto">Evaluation</span>
+    <h3>You are deciding whether to trust this</h3>
+    <p>Free, and that always deserves the question. Where the data goes, what the limits are, and when something else is the better answer.</p>
+    <ul>
+      <li><a href="PRIVACY.html">Where mail is processed and what is kept</a></li>
+      <li><a href="ALTERNATIVES.html">Tools that beat this one, and when</a></li>
+      <li><a href="EXCHANGE-ONLINE-SMTP-AUTH.html">The dated Microsoft timeline</a></li>
+    </ul>
+  </div>
 </div>
 
 Everything else is in the table further down — these three cover most of it.
