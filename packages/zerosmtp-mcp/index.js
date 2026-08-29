@@ -25,6 +25,10 @@ const tls = require('tls');
 const path = require('path');
 const readline = require('readline');
 
+// Zapisany przez String.fromCharCode, bo ten plik byl juz raz zepsuty przez
+// znak nowej linii, ktory wszedl do literalu przy laceniu przez powloke.
+const NL = String.fromCharCode(10);
+
 const WERSJA = require('./package.json').version;
 const KATALOG = path.join(__dirname, 'data');
 const HOST = 'mx.msgwing.com';
@@ -204,12 +208,16 @@ function osiagalnosc({ port, host }) {
 
       if (etap === 'starttls') {
         if (!bufor.startsWith('220')) return koniec('STARTTLS refused: ' + bufor.trim());
-        const bezpieczne = tls.connect({ socket: gniazdo, servername: h,
-                                         rejectUnauthorized: false }, () => {
+        // Certyfikat jest sprawdzany, nie pomijany. Pierwsza wersja miala
+        // rejectUnauthorized:false i raportowala wynik walidacji - CodeQL
+        // slusznie oznaczyl to jako wysokie ryzyko. Narzedzie diagnostyczne,
+        // ktore po cichu przyjmuje zly certyfikat, potrafi powiedziec
+        // "osiagalne" o polaczeniu, ktoremu nie wolno ufac. Nieudana
+        // walidacja jest rozpoznaniem samym w sobie i tak jest zglaszana.
+        const bezpieczne = tls.connect({ socket: gniazdo, servername: h }, () => {
           const wersja = bezpieczne.getProtocol();
           const szyfr = (bezpieczne.getCipher() || {}).name;
           const cert = bezpieczne.getPeerCertificate();
-          const wazny = bezpieczne.authorized;
           try { bezpieczne.end(); } catch (e) { /* nic */ }
           koniec([
             'Reachable from this machine.',
@@ -217,15 +225,33 @@ function osiagalnosc({ port, host }) {
             '  host        ' + h + ':' + p,
             '  round trip  ' + (Date.now() - start) + ' ms',
             '  TLS         ' + wersja + ' (' + szyfr + ')',
-            '  certificate ' + (wazny ? 'validates' : 'not validated in this check') +
-              (cert && cert.subject ? ', CN=' + (cert.subject.CN || '?') : ''),
+            '  certificate validates' +
+              (cert && cert.subject ? ', CN=' + (cert.subject.CN || '?') : '') +
+              (cert && cert.valid_to ? ', until ' + cert.valid_to : ''),
             '',
             'This proves the network path and the TLS handshake. It sends no',
             'credentials and no mail, so it does not prove a given account can',
             'send - only that nothing between here and the relay is blocking it.',
           ].join('\n'));
         });
-        bezpieczne.on('error', (e) => koniec('TLS handshake failed: ' + e.message));
+        bezpieczne.on('error', (e) => {
+          const certowe = [
+            'UNABLE_TO_VERIFY_LEAF_SIGNATURE', 'CERT_HAS_EXPIRED',
+            'DEPTH_ZERO_SELF_SIGNED_CERT', 'SELF_SIGNED_CERT_IN_CHAIN',
+            'ERR_TLS_CERT_ALTNAME_INVALID', 'UNABLE_TO_GET_ISSUER_CERT_LOCALLY',
+          ].includes(e.code);
+          if (certowe) {
+            return koniec(
+              'Reached ' + h + ':' + p + ', but the certificate did not verify: ' +
+              e.code + '.' + NL + NL +
+              'That is a finding, not a limitation of this check. ' +
+              'A relay whose certificate does not verify should not be given a ' +
+              'password. If you are behind a TLS-inspecting proxy that is the ' +
+              'usual cause; if you are not, report it: ' +
+              'https://github.com/msgwing/ZeroSMTP/issues/new/choose');
+          }
+          koniec('TLS handshake failed: ' + e.code + ' - ' + e.message);
+        });
         return;
       }
     });

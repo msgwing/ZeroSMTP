@@ -1,6 +1,11 @@
-name: Publish zerosmtp-check to npm
+name: Publish a package to npm
 
-# Publishes packages/zerosmtp-check to the PUBLIC npm registry.
+# Publishes one package from packages/ to the PUBLIC npm registry.
+#
+# Parameterised 2026-08-29 rather than copied. Two workflows publishing to
+# the same registry with the same secret drift apart, and the one used less
+# often is the one that rots - which would be the MCP server, the package
+# whose download count is the only measurement the AI channel has.
 #
 # Not GitHub Packages. npm.pkg.github.com requires the person installing to
 # authenticate with a GitHub token even for a public package, which makes it
@@ -18,6 +23,13 @@ name: Publish zerosmtp-check to npm
 on:
   workflow_dispatch:
     inputs:
+      package:
+        description: 'Which package under packages/ to publish'
+        type: choice
+        options:
+          - zerosmtp-check
+          - zerosmtp-mcp
+        default: zerosmtp-check
       dry_run:
         description: 'Pack and validate without publishing'
         type: boolean
@@ -32,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: packages/zerosmtp-check
+        working-directory: packages/${{ inputs.package }}
     steps:
       - uses: actions/checkout@v7
 
@@ -89,6 +101,6 @@ jobs:
             echo "Dry run only - nothing was published." >> "$GITHUB_STEP_SUMMARY"
           else
             v=$(node -p "require('./package.json').version")
-            echo "Published zerosmtp-check@$v" >> "$GITHUB_STEP_SUMMARY"
-            echo "https://www.npmjs.com/package/zerosmtp-check" >> "$GITHUB_STEP_SUMMARY"
+            echo "Published ${{ inputs.package }}@$v" >> "$GITHUB_STEP_SUMMARY"
+            echo "https://www.npmjs.com/package/${{ inputs.package }}" >> "$GITHUB_STEP_SUMMARY"
           fi
