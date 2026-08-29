@@ -60,4 +60,4 @@ Every field above was read off [Configuration cheat sheet](https://docs.gitea.co
 - [All SMTP AUTH error messages](../ERROR-MESSAGES.md)
 - [Tools that are a better fit than this one](../ALTERNATIVES.md)
 
-*Last reviewed 2026-08-27.*
+*Last reviewed 2026-08-29.*

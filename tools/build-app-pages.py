@@ -278,10 +278,16 @@ def main():
     # nie ma. Sciezki wzgledne w generatorze pisza sie z perspektywy pliku
     # wyjsciowego, a ta perspektywa jest inna dla strony i dla indeksu.
     import re as _re
+    # Pliki, ktore ta sama uruchomienie wlasnie zapisze, licza sie jako
+    # istniejace. Bez tego dodanie nowej aplikacji nie przechodzi nigdy:
+    # indeks linkuje do strony, ktorej na dysku jeszcze nie ma, bo zapis
+    # nastepuje po kontroli. Znalezione przy dodawaniu Paperless-ngx.
+    powstana = {q.resolve() for q in wyjscia}
     martwe = []
     for p, t in wyjscia.items():
         for cel in _re.findall(r"\]\(([^)#:]+\.md)\)", t):
-            if not (p.parent / cel).exists():
+            docelowy = (p.parent / cel)
+            if not docelowy.exists() and docelowy.resolve() not in powstana:
                 martwe.append(
                     f"{p.relative_to(KORZEN).as_posix()} -> {cel}")
     if martwe:
