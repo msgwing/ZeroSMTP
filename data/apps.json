@@ -239,6 +239,54 @@
       "caveat": "n8n exposes SSL/TLS as one toggle rather than a STARTTLS-vs-implicit-TLS choice. Leave SSL/TLS on and Disable STARTTLS off for port 587 - the two settings sound like opposites and are not: the second only matters when the first is off, and toggling both off at once sends the password unencrypted.",
       "source": "https://docs.n8n.io/integrations/builtin/credentials/send-email.md",
       "source_title": "Send Email credentials"
+    },
+    {
+      "slug": "netdata",
+      "name": "Netdata",
+      "repo": "netdata/netdata",
+      "what": "a self-hosted, real-time monitoring agent for a server or a fleet of them",
+      "sends": [
+        "health alerts when a monitored metric crosses a threshold - disk full, CPU pinned, a service down"
+      ],
+      "why_it_fits": "An alert fires only when something is actually wrong, to the person running the server. Volume is naturally low unless something is badly broken, and nobody outside that person sees the sender address.",
+      "where": "Netdata itself has no SMTP fields - health_alarm_notify.conf only turns email on and sets the sender/recipient. The actual relay is delegated to the sendmail command on the host, or - the common case in Docker - to msmtp, configured in msmtprc.",
+      "fields": [
+        [
+          "host",
+          "mx.msgwing.com"
+        ],
+        [
+          "port",
+          "587"
+        ],
+        [
+          "tls",
+          "on"
+        ],
+        [
+          "tls_starttls",
+          "on"
+        ],
+        [
+          "auth",
+          "on"
+        ],
+        [
+          "user",
+          "your @msgwing.com login"
+        ],
+        [
+          "password",
+          "your @msgwing.com password"
+        ],
+        [
+          "from",
+          "your @msgwing.com login"
+        ]
+      ],
+      "caveat": "These are msmtp directives, not Netdata's own configuration - Netdata calls whatever sendmail-compatible binary is on the PATH and has no visibility into whether it works. A misconfigured msmtprc fails silently from Netdata's side: the alert fires, Netdata believes it sent, and nothing arrives. Test with the command \"echo test | msmtp your@address\" before trusting an alert to reach anyone.",
+      "source": "https://learn.netdata.cloud/docs/alerts-&-notifications/notifications/agent-dispatched-notifications/email",
+      "source_title": "Email alert notifications"
     }
   ],
   "$not_covered_comment": "Kandydaci zmierzeni 2026-08-27 jako zerowe pokrycie. Generator odejmuje od tej listy wszystko, co ma juz wpis - inaczej strona wymienia jako brakujaca aplikacje, ktorej strona stoi akapit wyzej. Tak wlasnie bylo z Paperless-ngx.",
