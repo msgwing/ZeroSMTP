@@ -22,6 +22,14 @@ branding:
   color: 'purple'
 
 inputs:
+  scan:
+    description: 'Path to scan for Microsoft 365 SMTP endpoints that stop accepting a password. Empty disables the scan.'
+    required: false
+    default: ''
+  fail-on-findings:
+    description: 'Fail the job when the scan finds something. Warns only by default.'
+    required: false
+    default: 'false'
   host:
     description: 'SMTP host to check.'
     required: false
@@ -69,6 +77,69 @@ runs:
     # the one thing this project has that nothing else does, and until now it
     # existed only in the CLI - a workflow that captured an error from a
     # sending step had nowhere to take it.
+    # Scan the caller's own repository, which is the question 25,728 public
+    # files have and no action in the Marketplace answers.
+    #
+    # Measured 2026-08-29 against the competitor with 1,467 stars to our 4:
+    # they are referenced in 73 files across other people's repositories, we
+    # are in 0. Not because nobody uses this - a config with our hostname also
+    # holds a password, so nobody commits it. Our footprint is invisible by
+    # construction, and copying "be referenced in code" was never available.
+    #
+    # A workflow file is the exception: public, credential-free, and committed.
+    # So the artefact that can travel is an action with a reason to be in
+    # somebody's pipeline, and "tell me which of my files stop working in
+    # December" is that reason.
+    #
+    # Warns rather than fails by default. Failing a stranger's build on the
+    # first run is how an action gets removed the same afternoon.
+    - id: scan
+      if: inputs.scan != ''
+      shell: bash
+      run: |
+        set +e
+        ROOT="${{ inputs.scan }}"
+        # Endpoints that stop accepting a password. Kept in step with
+        # data/blast-radius.json, which counts the same strings across public
+        # GitHub - so the number a caller sees here and the number on the site
+        # mean the same thing.
+        PATTERNS='smtp\.office365\.com|smtp-mail\.outlook\.com|outlook\.office365\.com'
+        hits=$(grep -rInE "$PATTERNS" "$ROOT" \
+                 --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=vendor \
+                 2>/dev/null | head -200)
+        n=$(printf '%s' "$hits" | grep -c . )
+        echo "affected=$n" >> "$GITHUB_OUTPUT"
+        {
+          echo "### Microsoft 365 SMTP endpoints in this repository"
+          echo ""
+          if [ "$n" = "0" ]; then
+            echo "None found. Nothing here points at an endpoint that stops"
+            echo "accepting a username and password."
+          else
+            echo "**$n line(s)** point at a Microsoft 365 SMTP endpoint."
+            echo ""
+            echo "At the end of December 2026 Exchange Online stops accepting a"
+            echo "username and password there by default. An administrator can"
+            echo "switch it back on, so this is a deadline rather than a wall -"
+            echo "and Microsoft announces the final removal date in the second"
+            echo "half of 2027."
+            echo ""
+            echo '```'
+            printf '%s\n' "$hits" | head -50
+            echo '```'
+            echo ""
+            echo "[What breaks and when](https://docs.msgwing.com/AFFECTED-SYSTEMS.html)"
+            echo " | [The dated timeline](https://docs.msgwing.com/EXCHANGE-ONLINE-SMTP-AUTH.html)"
+          fi
+        } >> "$GITHUB_STEP_SUMMARY"
+        if [ "$n" != "0" ]; then
+          echo "::warning::$n line(s) use a Microsoft 365 SMTP endpoint that stops accepting a password at the end of December 2026"
+          if [ "${{ inputs.fail-on-findings }}" = "true" ]; then
+            echo "::error::failing because fail-on-findings is set"
+            exit 1
+          fi
+        fi
+
     - id: explain
       if: inputs.explain != ''
       shell: bash
@@ -92,7 +163,7 @@ runs:
         fi
 
     - id: check
-      if: inputs.explain == ''
+      if: inputs.explain == '' && inputs.scan == ''
       shell: bash
       run: |
         set +e
