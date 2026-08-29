@@ -1,6 +1,6 @@
 {
   "$comment": "Self-hosted applications that send a small amount of mail to their own operator. Every field name and value here was read off the vendor's own documentation on the date in `updated` - none of it is recalled. `caveat` is not optional: an entry without an honest limit is an advert.",
-  "updated": "2026-08-27",
+  "updated": "2026-08-29",
   "entries": [
     {
       "slug": "immich",
@@ -31,12 +31,30 @@
       "why_it_fits": "An invitation is sent once per person, ever. A password vault that stops sending invitations has no other way to add anybody, and the volume never approaches a daily cap.",
       "where": "Environment variables, usually in the `docker-compose.yml` or `.env` beside it.",
       "fields": [
-        ["SMTP_HOST", "mx.msgwing.com"],
-        ["SMTP_PORT", "587"],
-        ["SMTP_SECURITY", "starttls"],
-        ["SMTP_FROM", "your @msgwing.com login"],
-        ["SMTP_USERNAME", "your @msgwing.com login"],
-        ["SMTP_PASSWORD", "your @msgwing.com password"]
+        [
+          "SMTP_HOST",
+          "mx.msgwing.com"
+        ],
+        [
+          "SMTP_PORT",
+          "587"
+        ],
+        [
+          "SMTP_SECURITY",
+          "starttls"
+        ],
+        [
+          "SMTP_FROM",
+          "your @msgwing.com login"
+        ],
+        [
+          "SMTP_USERNAME",
+          "your @msgwing.com login"
+        ],
+        [
+          "SMTP_PASSWORD",
+          "your @msgwing.com password"
+        ]
       ],
       "caveat": "`SMTP_FROM` has to be the generated address, not your own domain. Vaultwarden will start with a mismatched one and the mail will be refused or filed as spam, which looks like Vaultwarden failing.",
       "source": "https://github.com/dani-garcia/vaultwarden/wiki/SMTP-configuration",
@@ -55,13 +73,34 @@
       "why_it_fits": "A private instance with a handful of accounts sends a trickle. Registration and resets are what actually matter: without them a locked-out user stays locked out.",
       "where": "The `[mailer]` section of `app.ini`.",
       "fields": [
-        ["ENABLED", "true"],
-        ["PROTOCOL", "smtp+starttls"],
-        ["SMTP_ADDR", "mx.msgwing.com"],
-        ["SMTP_PORT", "587"],
-        ["USER", "your @msgwing.com login"],
-        ["PASSWD", "your @msgwing.com password"],
-        ["FROM", "your @msgwing.com login"]
+        [
+          "ENABLED",
+          "true"
+        ],
+        [
+          "PROTOCOL",
+          "smtp+starttls"
+        ],
+        [
+          "SMTP_ADDR",
+          "mx.msgwing.com"
+        ],
+        [
+          "SMTP_PORT",
+          "587"
+        ],
+        [
+          "USER",
+          "your @msgwing.com login"
+        ],
+        [
+          "PASSWD",
+          "your @msgwing.com password"
+        ],
+        [
+          "FROM",
+          "your @msgwing.com login"
+        ]
       ],
       "caveat": "This is the entry on this page most likely to outgrow the 200-a-day cap. Issue and pull-request notifications multiply by the number of watchers, so a busy instance with a dozen active people can pass it without anybody noticing until mail stops.",
       "source": "https://docs.gitea.com/administration/config-cheat-sheet",
@@ -79,14 +118,67 @@
       "why_it_fits": "Authelia mails a person once, at the moment they set up or recover access. The volume is tiny and the stakes are not: if this mail cannot leave, nobody can enrol a second factor or recover an account.",
       "where": "The `notifier.smtp` section of `configuration.yml`.",
       "fields": [
-        ["address", "submission://mx.msgwing.com:587"],
-        ["username", "your @msgwing.com login"],
-        ["password", "your @msgwing.com password"],
-        ["sender", "your @msgwing.com login"]
+        [
+          "address",
+          "submission://mx.msgwing.com:587"
+        ],
+        [
+          "username",
+          "your @msgwing.com login"
+        ],
+        [
+          "password",
+          "your @msgwing.com password"
+        ],
+        [
+          "sender",
+          "your @msgwing.com login"
+        ]
       ],
       "caveat": "Authelia's `address` is a URI with a scheme, not a bare hostname. `submission://` means STARTTLS on 587 and `submissions://` means implicit TLS on 465 - one letter apart, and getting it wrong produces a connection error rather than an authentication one, which sends people looking in the wrong place.",
       "source": "https://www.authelia.com/configuration/notifications/smtp/",
       "source_title": "SMTP notifier"
+    },
+    {
+      "slug": "paperless-ngx",
+      "name": "Paperless-ngx",
+      "repo": "paperless-ngx/paperless-ngx",
+      "what": "a self-hosted document archive that scans, indexes and stores paperwork for a household or a small office",
+      "sends": [
+        "password resets and account mail for the people who use it",
+        "notifications about documents shared by link"
+      ],
+      "why_it_fits": "Paperless mostly reads mail rather than sending it - its headline feature is pulling documents out of a mailbox. The outgoing side is small and internal: resets and share notices, to people who already have an account on your server.",
+      "where": "Environment variables, usually in `docker-compose.env` beside the compose file.",
+      "fields": [
+        [
+          "PAPERLESS_EMAIL_HOST",
+          "mx.msgwing.com"
+        ],
+        [
+          "PAPERLESS_EMAIL_PORT",
+          "587"
+        ],
+        [
+          "PAPERLESS_EMAIL_USE_TLS",
+          "true"
+        ],
+        [
+          "PAPERLESS_EMAIL_HOST_USER",
+          "your @msgwing.com login"
+        ],
+        [
+          "PAPERLESS_EMAIL_HOST_PASSWORD",
+          "your @msgwing.com password"
+        ],
+        [
+          "PAPERLESS_EMAIL_FROM",
+          "your @msgwing.com login"
+        ]
+      ],
+      "caveat": "The defaults are `localhost` on port 25 with `PAPERLESS_EMAIL_USE_TLS` set to false. All six values have to be set: leaving TLS off sends the password in the clear and the relay refuses it, which surfaces as a connection error rather than an authentication one and sends people looking at the wrong thing. `PAPERLESS_EMAIL_FROM` falls back to `PAPERLESS_EMAIL_HOST_USER`, so setting the user correctly fixes both - but set it anyway rather than relying on a default that may change.",
+      "source": "https://docs.paperless-ngx.com/configuration/",
+      "source_title": "Configuration"
     }
   ]
 }

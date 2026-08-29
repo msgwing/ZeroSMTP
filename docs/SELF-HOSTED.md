@@ -18,6 +18,7 @@ An invitation to your own photo library, a password reset for your own Git serve
 | [Vaultwarden](apps/vaultwarden.md) | invitations to new users, valid for five days |
 | [Gitea](apps/gitea.md) | registration and account-activation mail |
 | [Authelia](apps/authelia.md) | identity-verification mail when a user registers a second factor |
+| [Paperless-ngx](apps/paperless-ngx.md) | password resets and account mail for the people who use it |
 
 Each page names the exact settings, quotes where they came from, and states the one limit most likely to catch you out on that particular application.
 
@@ -34,4 +35,4 @@ Netdata, Jellyfin, Paperless-ngx, Portainer, changedetection.io and Wiki.js are 
 - [What breaks at the end of December 2026](AFFECTED-SYSTEMS.md)
 - [Tools that are a better fit than this one](ALTERNATIVES.md)
 
-*Last reviewed 2026-08-27.*
+*Last reviewed 2026-08-29.*

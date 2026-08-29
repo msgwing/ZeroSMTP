@@ -57,6 +57,51 @@ LICZNIKI = [
 ]
 
 
+def npm(pakiet):
+    """Daily download series for one npm package, and an honest reading of it.
+
+    Added 2026-08-29 after "594 downloads a week" was nearly written into a
+    board goal. The series behind it was:
+
+        0 0 0 0 0 0 0 496 22 23 36 12 2 3
+
+    One day of 496 and a tail in single figures. The weekly total is the
+    496 - a mirror or a scanner picking the package up once - and reporting
+    it as reach would have repeated exactly the mistake traffic/clones cost
+    this company three decisions ago.
+
+    So the weekly total is shown as contaminated and the median of the days
+    that actually had downloads is shown as the number to use.
+    """
+    import urllib.request
+    adres = f"https://api.npmjs.org/downloads/range/last-month/{pakiet}"
+    try:
+        with urllib.request.urlopen(adres, timeout=20) as o:
+            d = json.load(o)
+    except Exception as e:
+        # 404 z rejestru npm znaczy "pakiet nie jest opublikowany", a nie
+        # awarie. Cel 4 wisi na tym odczycie, wiec musi odrozniac brak
+        # publikacji od braku odpowiedzi.
+        kod = getattr(e, "code", None)
+        if kod == 404:
+            return None, "jeszcze nieopublikowany"
+        return None, f"nie odczytano ({type(e).__name__})"
+
+    dni = [x["downloads"] for x in d.get("downloads", [])]
+    if not dni:
+        return None, "brak danych"
+
+    ostatnie = dni[-14:]
+    niezerowe = sorted(x for x in ostatnie if x)
+    if not niezerowe:
+        return {"mediana": 0, "suma7": sum(dni[-7:]), "szczyt": 0, "dni": ostatnie}, None
+
+    mediana = niezerowe[len(niezerowe) // 2]
+    szczyt = max(ostatnie)
+    return {"mediana": mediana, "suma7": sum(dni[-7:]), "szczyt": szczyt,
+            "dni": ostatnie}, None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--all", action="store_true",
@@ -99,6 +144,21 @@ def main():
         print("   skad ludzie (unikalnych, 14 dni)")
         for r in ref:
             print(f"      {r['uniques']:>4}  {r['referrer']}")
+
+    for pakiet in ("zerosmtp-check", "zerosmtp-mcp"):
+        w, blad = npm(pakiet)
+        print()
+        if blad:
+            print(f"   npm {pakiet}: {blad}")
+            continue
+        print(f"   npm {pakiet} (14 dni)")
+        print(f"      mediana dnia z pobraniami       {w['mediana']:>6}   <- ta liczba")
+        print(f"      najwiekszy pojedynczy dzien     {w['szczyt']:>6}")
+        print(f"    ! suma 7 dni                      {w['suma7']:>6}   "
+              f"zanieczyszczona przez szczyt, NIE uzywac")
+        print(f"      szereg: {' '.join(str(x) for x in w['dni'])}")
+        brudne.append(f"npm {pakiet}: suma tygodniowa - jeden dzien potrafi byc "
+                      f"lustrem, patrz na mediane")
 
     if brudne:
         print()
