@@ -24,7 +24,10 @@ import sys
 KORZEN = pathlib.Path(__file__).resolve().parent.parent
 ZRODLO = KORZEN / "data"
 CEL = KORZEN / "docs" / "data"
-PLIKI = ["devices.json", "errors.json"]
+# facts.json dolaczone 2026-08-29: to jedyny plik, ktory mowi wprost, ktore
+# twierdzenia sa uzgodnione - a asystent cytujacy nas bez tego cytuje wersje,
+# ktora sam sobie zlozyl.
+PLIKI = ["devices.json", "errors.json", "facts.json"]
 
 
 def main() -> int:
