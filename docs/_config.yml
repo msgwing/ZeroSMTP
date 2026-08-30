@@ -132,7 +132,6 @@ defaults:
         Fix scan-to-email after Microsoft 365 disables Basic auth. Per-brand
         SMTP settings for Ricoh, Canon, Xerox, HP, Kyocera, Konica Minolta,
         Sharp and more.
-      schema: printers-howto
       widget: printers
   - scope:
       path: "TROUBLESHOOTING.md"

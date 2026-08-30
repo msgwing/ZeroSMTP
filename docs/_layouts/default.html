@@ -139,41 +139,6 @@
       ]
     }
     </script>
-    {% elsif page.schema == "printers-howto" %}
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "HowTo",
-      "name": "Configure a network printer to send scan-to-email through ZeroSMTP",
-      "description": "Set up scan-to-email on a network printer or multifunction device using a free SMTP relay that still accepts plain username and password authentication.",
-      "supply": [
-        { "@type": "HowToSupply", "name": "A free ZeroSMTP account (msgwing.com)" },
-        { "@type": "HowToSupply", "name": "Network access to the printer's web admin interface" }
-      ],
-      "step": [
-        {
-          "@type": "HowToStep",
-          "name": "Get credentials",
-          "text": "Register a free account at msgwing.com and activate it, then copy the randomly generated @msgwing.com username and password."
-        },
-        {
-          "@type": "HowToStep",
-          "name": "Enter the connection settings",
-          "text": "In the printer's SMTP or outgoing-email settings, enter server mx.msgwing.com, port 587 with STARTTLS (or 465 with SSL/TLS), enable authentication, and enter the @msgwing.com username and password."
-        },
-        {
-          "@type": "HowToStep",
-          "name": "Find the setting in your printer's menu",
-          "text": "The exact menu path varies by brand: HP, Canon, Ricoh, Kyocera, Xerox, Konica Minolta, Sharp, Brother, Epson and Lexmark are each documented with their vendor's own current instructions."
-        },
-        {
-          "@type": "HowToStep",
-          "name": "Send a test scan-to-email",
-          "text": "Send a test scan to your own inbox. If it fails, check the printer's event log for an authentication or TLS error and re-verify the connection settings."
-        }
-      ]
-    }
-    </script>
     {% elsif page.schema == "dataset" %}
     {%- comment -%}
       The compatibility list and the error corpus are the only things here that
