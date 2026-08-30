@@ -1339,7 +1339,7 @@ part is standard. What differs is what happens *before* you can use them.
 | **Time to first email** | ~2 minutes | Minutes to 48 hours (DNS propagation) |
 | **DNS records to configure** | None | SPF + DKIM (and DMARC, recommended) |
 | **Sends from your own domain** | ❌ shared `@msgwing.com` address | ✅ once verified |
-| **Sender reputation** | Managed for you — shared domain, actively monitored for abuse | Yours to build and protect — a fresh domain/IP has no reputation yet, and one bad list wrecks it |
+| **Sender reputation** | Shared — actively monitored for abuse, but no single account controls the whole pool's reputation | Yours alone to build and protect — a fresh domain/IP has no reputation yet, but you're the only one who can wreck it |
 | **Free tier** | 200/day, permanent | 100/month to 12,000/month — [the numbers are below](#what-the-free-tiers-actually-allow) |
 | **Credit card required** | No | Usually no |
 | **Best fit** | Printers, NAS units, scripts, legacy devices — anything that just needs mail to leave, from anyone | Apps and products sending under your own brand |
