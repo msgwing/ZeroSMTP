@@ -41,14 +41,9 @@ gap:
   whether one already exists, and creating one is not something this task can
   do on its own. `"private": true` is set so a stray `vsce publish` can't ship
   this by accident.
-- **The `zerosmtp-check` dependency is `file:../zerosmtp-check`**, not a
-  published npm version. As of this writing, the npm registry's
-  `zerosmtp-check@1.2.1` predates the `explain`/`explainJson` exports this
-  extension calls — they exist in this repository's copy of `index.js` but
-  were never published under a new version. Before this extension is packaged
-  for real, `zerosmtp-check` needs a version bump and a publish
-  (`.github/workflows/publish-npm.yml`), and this dependency needs to switch
-  from the `file:` reference to that published semver range.
+- ~~The `zerosmtp-check` dependency is `file:../zerosmtp-check`~~ — resolved
+  2026-08-30: `zerosmtp-check@1.3.0` (with `explain`/`explainJson` exported)
+  is now published, and the dependency is a real semver range (`^1.3.0`).
 - **The scanner is a heuristic, deliberately.** It has no test against every
   config format in the wild (only `appsettings.json`, `web.config`, and
   `.env` shapes are covered by `test/scanner.test.js`), and it does not parse
