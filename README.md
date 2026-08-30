@@ -212,6 +212,11 @@ second best thing you can do — it takes 30 seconds and it means the next
 person who lands here finds a healthy, active service rather than a
 side-project graveyard.
 
+Have a question first? Browse
+[Discussions](https://github.com/msgwing/ZeroSMTP/discussions) — the same
+questions most people ask before trusting a free relay are already answered
+there.
+
 ## How does this compare to other options?
 
 |  | ZeroSMTP | Gmail SMTP relay | Amazon SES | Mailgun / SendGrid / Brevo (typical free tier) |

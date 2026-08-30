@@ -121,6 +121,7 @@ no mail sent.
 | Want to look up one device or product | [OAuth compatibility list](DEVICE-COMPATIBILITY.md) |
 | Have a printer whose vendor says no OAuth firmware is coming | [Devices that will never get OAuth firmware](NO-OAUTH-FIRMWARE.md) |
 | Are sending from an app or script | [21 code examples across 19 languages](CODE-EXAMPLES.md) |
+| Are deploying to Cloudflare Workers, Vercel, Netlify or AWS Lambda | [Can I send SMTP from a serverless platform?](PLATFORMS.md) |
 | Want to know how big this actually is | [How much public code breaks in December 2026](BLAST-RADIUS.md) — measured weekly |
 | Deploy with Ansible or Docker Compose | [Deployment recipes](CODE-EXAMPLES.md#deployment-recipes) |
 | Have an error message to look up | [535 5.7.139 and other SMTP AUTH errors](ERROR-MESSAGES.md) |
@@ -189,5 +190,6 @@ Full quickstart, 15 language examples and setup guides are in the
 <p><small>
 Service status is checked automatically every 15 minutes —
 <a href="https://github.com/msgwing/ZeroSMTP/actions/workflows/service-healthcheck.yml">see the live check</a>.
-Questions or corrections: <a href="https://github.com/msgwing/ZeroSMTP/issues/new/choose">open an issue</a>.
+Questions or corrections: <a href="https://github.com/msgwing/ZeroSMTP/issues/new/choose">open an issue</a>,
+or browse existing questions in <a href="https://github.com/msgwing/ZeroSMTP/discussions">Discussions</a>.
 </small></p>
