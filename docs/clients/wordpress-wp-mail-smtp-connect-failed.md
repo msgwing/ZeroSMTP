@@ -1,6 +1,6 @@
 ---
 title: "WordPress / WP Mail SMTP: SMTP connect() failed."
-description: "WordPress / WP Mail SMTP reports 'SMTP connect() failed.' when Microsoft 365 refuses SMTP AUTH. What the server actually sent, how to make WordPress / WP Mail SMTP print it, and what to do about it."
+description: "WordPress / WP Mail SMTP reports `SMTP connect() failed.` when Microsoft 365 refuses SMTP AUTH. What the server actually sent, how to make WordPress / WP Mail SMTP print it, and what to do about it."
 ---
 
 <!-- BEGIN GENERATED PAGE -->

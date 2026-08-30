@@ -1,6 +1,6 @@
 ---
 title: "PHPMailer: SMTP Error: Could not authenticate."
-description: "PHPMailer reports 'SMTP Error: Could not authenticate.' when Microsoft 365 refuses SMTP AUTH. What the server actually sent, how to make PHPMailer print it, and what to do about it."
+description: "PHPMailer reports `SMTP Error: Could not authenticate.` when Microsoft 365 refuses SMTP AUTH. What the server actually sent, how to make PHPMailer print it, and what to do about it."
 ---
 
 <!-- BEGIN GENERATED PAGE -->

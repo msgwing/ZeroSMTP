@@ -75,8 +75,14 @@ def tytul(wpis):
 
 def zbuduj(wpis, blad, aktualizacja, t):
     plik = f"../errors/{wpis['server_slug']}.md"
+    # Backticks, not !r: Python's repr() picks its quote character based on
+    # what the string itself contains, so a message holding a single quote
+    # (python-smtplib's does, from its own b'...' byte-string repr) comes back
+    # wrapped in *double* quotes - which then broke the YAML front matter
+    # below, since that quote landed unescaped inside another double-quoted
+    # scalar. Every message here is checked clean of backticks already.
     opis = (
-        f"{wpis['client']} reports {wpis['message']!r} when Microsoft 365 "
+        f"{wpis['client']} reports `{wpis['message']}` when Microsoft 365 "
         f"refuses SMTP AUTH. What the server actually sent, how to make "
         f"{wpis['client']} print it, and what to do about it."
     )

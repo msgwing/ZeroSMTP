@@ -1,6 +1,6 @@
 ---
 title: ".NET and PowerShell: SmtpException"
-description: ".NET and PowerShell reports 'SmtpException: The SMTP server requires a secure connection or the client was not authenticated.' when Microsoft 365 refuses SMTP AUTH. What the server actually sent, how to make .NET and PowerShell print it, and what to do about it."
+description: ".NET and PowerShell reports `SmtpException: The SMTP server requires a secure connection or the client was not authenticated.` when Microsoft 365 refuses SMTP AUTH. What the server actually sent, how to make .NET and PowerShell print it, and what to do about it."
 ---
 
 <!-- BEGIN GENERATED PAGE -->

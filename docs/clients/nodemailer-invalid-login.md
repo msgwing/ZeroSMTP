@@ -1,6 +1,6 @@
 ---
 title: "Nodemailer: Invalid login"
-description: "Nodemailer reports 'Invalid login: 535 5.7.139 Authentication unsuccessful' when Microsoft 365 refuses SMTP AUTH. What the server actually sent, how to make Nodemailer print it, and what to do about it."
+description: "Nodemailer reports `Invalid login: 535 5.7.139 Authentication unsuccessful` when Microsoft 365 refuses SMTP AUTH. What the server actually sent, how to make Nodemailer print it, and what to do about it."
 ---
 
 <!-- BEGIN GENERATED PAGE -->

@@ -1,6 +1,6 @@
 ---
 title: "curl: (67) Login denied"
-description: "curl reports 'curl: (67) Login denied' when Microsoft 365 refuses SMTP AUTH. What the server actually sent, how to make curl print it, and what to do about it."
+description: "curl reports `curl: (67) Login denied` when Microsoft 365 refuses SMTP AUTH. What the server actually sent, how to make curl print it, and what to do about it."
 ---
 
 <!-- BEGIN GENERATED PAGE -->
