@@ -355,6 +355,24 @@ jobs:
       - name: Type-check TypeScript example
         run: npm run typecheck
 
+  # Logika decydujaca, czy ostatni komentarz na jakims otwartym watku jest
+  # nasz - uzywana przez `czeka-czlowiek` i `zalegle-zewnetrzne` w
+  # ready-for-approval.yml. Wydzielona i testowana tutaj zamiast wewnatrz
+  # YAML, bo #265 pokazal, jak drogo kosztuje logika, ktorej nikt nie
+  # przetestowal na przypadku, ktory ma ja wywolac - patrz
+  # tools/unanswered-external.test.js, ktory zawiera dokladnie te dane.
+  unanswered-external:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: "Ostatni komentarz nie nasz: bramka i test na przypadku #265"
+        run: node --test tools/unanswered-external.test.js
+
   zerosmtp-mcp:
     needs: changes
     if: needs.changes.outputs.code == 'true'

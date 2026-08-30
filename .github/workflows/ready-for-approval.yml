@@ -166,73 +166,247 @@ jobs:
   #
   # Przypisanie wlasciciela jest tu calym mechanizmem: GitHub wysyla list
   # tylko do przypisanego. Etykieta pilnuje, zeby zrobic to raz.
+  #
+  # NAPRAWIONE 2026-08-30, patrz #265. Ta kontrola pytala dotad "czy AUTOR
+  # ZGLOSZENIA jest czlowiekiem z zewnatrz, i czy KIEDYKOLWIEK odpowiedzielismy
+  # gdziekolwiek w watku". #265 zostalo otwarte przez wlasciciela (`msgwing`),
+  # wiec nie przechodzilo nawet pierwszego warunku - mimo ze ostatni komentarz,
+  # od prawdziwego czlowieka z zewnatrz (`k4its1t`, association: none), czekal
+  # SZESC DNI bez odpowiedzi. Znalezione przypadkiem, przy okazji zupelnie
+  # innego zadania - dokladnie taka cisza mogla trwac w nieskonczonosc.
+  #
+  # Wlasciwe pytanie: kto napisal OSTATNIA rzecz w watku, niezaleznie od tego,
+  # kto go otworzyl i czy odpowiadalismy wczesniej. Logika jest w
+  # `tools/unanswered-external.js`, testowana na prawdziwych danych #265 w
+  # `tools/unanswered-external.test.js` - wydzielona z YAML zeby dalo sie ja
+  # przetestowac raz, zamiast ufac skladni sklejonej w kroku workflow.
   czeka-czlowiek:
     if: github.event_name != 'issues'
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       issues: write
       pull-requests: write
     steps:
+      - uses: actions/checkout@v7
       - uses: actions/github-script@v9
         with:
           script: |
+            const { ocenWatek } = await import(
+              `${process.env.GITHUB_WORKSPACE}/tools/unanswered-external.js`);
+
             const owner = context.repo.owner, repo = context.repo.repo;
             const PROG_H = 4;
             const ETYKIETA = 'czeka-czlowiek';
+            const ACK = 'Ten komentarz zostal dodany automatycznie';
             const granica = Date.now() - PROG_H * 3600 * 1000;
 
             const watki = (await github.rest.issues.listForRepo({
               owner, repo, state: 'open', per_page: 100, sort: 'created',
             })).data;
 
-            let oznaczonych = 0;
+            let oznaczonych = 0, odznaczonych = 0;
             for (const w of watki) {
-              const autor = w.user && w.user.login;
-              // Nasze wlasne zgloszenia i boty nie sa "czlowiekiem z zewnatrz".
-              if (!autor || autor === owner) continue;
-              if (w.user.type === 'Bot' || /\[bot\]$/.test(autor)) continue;
-              if ((w.labels || []).some(l => l.name === ETYKIETA)) continue;
-              if (new Date(w.created_at).getTime() > granica) continue;
-
-              // Czy ktokolwiek z naszej strony juz sie odezwal?
               const kom = (await github.rest.issues.listComments({
                 owner, repo, issue_number: w.number, per_page: 100,
               })).data;
-              let odpowiedziano = kom.some(k => k.user && k.user.login === owner);
 
-              if (!odpowiedziano && w.pull_request) {
-                const rec = (await github.rest.pulls.listReviews({
+              let rec = [];
+              if (w.pull_request) {
+                rec = (await github.rest.pulls.listReviews({
                   owner, repo, pull_number: w.number, per_page: 100,
                 })).data;
-                odpowiedziano = rec.some(r => r.user && r.user.login === owner);
               }
-              if (odpowiedziano) continue;
 
-              const godzin = Math.round((Date.now() - new Date(w.created_at).getTime()) / 3600000);
+              const { czeka, ostatniZewnetrzny, jujAcked } =
+                ocenWatek(w, kom, rec, owner, ACK);
+              const maEtykiete = (w.labels || []).some(l => l.name === ETYKIETA);
+
+              if (!czeka) {
+                // Ostatnie slowo jest teraz nasze - jesli bylo oznaczone
+                // wczesniej, przestalo to byc prawda i etykieta ma to
+                // odzwierciedlac, zeby liczyla sie do biezacego stanu, a nie
+                // do historii.
+                if (maEtykiete) {
+                  await github.rest.issues.removeLabel({
+                    owner, repo, issue_number: w.number, name: ETYKIETA,
+                  });
+                  core.notice('Zdjeto etykiete #' + w.number + ' - odpowiedziano.');
+                  odznaczonych++;
+                }
+                continue;
+              }
+
+              if (new Date(ostatniZewnetrzny.at).getTime() > granica) continue;
+
+              if (!maEtykiete) {
+                try {
+                  await github.rest.issues.createLabel({
+                    owner, repo, name: ETYKIETA, color: 'D93F0B',
+                    description: 'Ostatni komentarz jest od kogos z zewnatrz - czeka na nasza odpowiedz.',
+                  });
+                } catch (e) { /* juz istnieje */ }
+                await github.rest.issues.addLabels({
+                  owner, repo, issue_number: w.number, labels: [ETYKIETA],
+                });
+                await github.rest.issues.addAssignees({
+                  owner, repo, issue_number: w.number, assignees: [owner],
+                });
+              }
+
+              // Juz raz potwierdzone dla tego samego ostatniego komentarza -
+              // nie dublowac "dziekujemy" przy kazdym przebiegu co dwie godziny.
+              if (jujAcked) continue;
+
+              const godzin = Math.round(
+                (Date.now() - new Date(ostatniZewnetrzny.at).getTime()) / 3600000);
               const NL = String.fromCharCode(10);
 
-              await github.rest.issues.addLabels({
-                owner, repo, issue_number: w.number, labels: [ETYKIETA],
-              });
-              await github.rest.issues.addAssignees({
-                owner, repo, issue_number: w.number, assignees: [owner],
-              });
               await github.rest.issues.createComment({
                 owner, repo, issue_number: w.number,
                 body: [
-                  '@' + autor + ' - dziekujemy, widzimy to i odpowiemy.',
+                  '@' + ostatniZewnetrzny.autor + ' - dziekujemy, widzimy to i odpowiemy.',
                   '',
-                  'Ten komentarz zostal dodany automatycznie po ' + godzin
+                  ACK + ' po ' + godzin
                     + ' godzinach bez odpowiedzi z naszej strony. Nie zastepuje',
                   'odpowiedzi - jest po to, zeby watek nie utknal niezauwazony.',
                 ].join(NL),
               });
-              core.notice('Oznaczono #' + w.number + ' od @' + autor + ' - czeka ' + godzin + 'h');
+              core.notice('Oznaczono #' + w.number + ' od @' + ostatniZewnetrzny.autor + ' - czeka ' + godzin + 'h');
               oznaczonych++;
             }
 
-            if (oznaczonych === 0) {
-              core.info('Nikt z zewnatrz nie czeka dluzej niz ' + PROG_H + 'h.');
+            if (oznaczonych === 0 && odznaczonych === 0) {
+              core.info('Nikt z zewnatrz nie czeka dluzej niz ' + PROG_H + 'h, nic sie nie zmienilo.');
+            }
+
+  # `czeka-czlowiek` powyzej powiadamia natychmiast (4h) o pojedynczym watku.
+  # To jest druga polowa zadania wlasciciela z 2026-08-30: jeden zbiorczy
+  # widok, zeby nie trzeba bylo pamietac o przegladaniu 17 osobnych zgloszen,
+  # i eskalacja dla tych, ktore mimo powiadomienia stoja dluzej niz cykl
+  # pracy (3 dni) - dokladnie tak dlugo stalo #265, zanim ktos je znalazl.
+  #
+  # Jedna, samoaktualizujaca sie pozycja - ten sam wzorzec co dashboard
+  # kolejki CI w jobie `waiting` ponizej: tytul jest markerem, wiec kolejny
+  # przebieg edytuje te sama pozycje zamiast mnozyc zgloszenia, i zamyka ja
+  # sama, gdy kolejka jest pusta.
+  zalegle-zewnetrzne:
+    if: github.event_name != 'issues'
+    needs: czeka-czlowiek
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            const { ocenWatek } = await import(
+              `${process.env.GITHUB_WORKSPACE}/tools/unanswered-external.js`);
+
+            const owner = context.repo.owner, repo = context.repo.repo;
+            const ETYKIETA = 'czeka-czlowiek';
+            const ACK = 'Ten komentarz zostal dodany automatycznie';
+            const PROG_DNI = 3;
+            const granica = Date.now() - PROG_DNI * 86400_000;
+            const TYTUL = 'Zewnetrzne komentarze bez odpowiedzi';
+            const ZALEGLE = 'stan:zalegle';
+            const NL = String.fromCharCode(10);
+            const TICK = String.fromCharCode(96);
+
+            // `czeka-czlowiek` juz odfiltrowal - kazdy wpis tutaj naprawde
+            // ma ostatnie slowo od kogos z zewnatrz. Wiek liczymy jednak z
+            // TEGO SAMEGO zrodla co tamten job (data ostatniego zewnetrznego
+            // komentarza), a nie z `updated_at` zgloszenia - `updated_at`
+            // zmienia sie przy kazdym dodaniu/zdjeciu etykiety, wiec sam nic
+            // nie mowi o tym, jak dawno ktos naprawde napisal.
+            const watki = (await github.rest.issues.listForRepo({
+              owner, repo, state: 'open', labels: ETYKIETA, per_page: 100,
+            })).data;
+
+            const ocenione = [];
+            for (const w of watki) {
+              const kom = (await github.rest.issues.listComments({
+                owner, repo, issue_number: w.number, per_page: 100,
+              })).data;
+              let rec = [];
+              if (w.pull_request) {
+                rec = (await github.rest.pulls.listReviews({
+                  owner, repo, pull_number: w.number, per_page: 100,
+                })).data;
+              }
+              const wynik = ocenWatek(w, kom, rec, owner, ACK);
+              if (wynik.czeka) ocenione.push({ w, ostatni: wynik.ostatniZewnetrzny });
+            }
+
+            let dotknietych = 0;
+            for (const { w, ostatni } of ocenione) {
+              if (new Date(ostatni.at).getTime() > granica) continue;
+              if ((w.labels || []).some(l => l.name === ZALEGLE)) continue;
+              await github.rest.issues.addLabels({
+                owner, repo, issue_number: w.number, labels: [ZALEGLE],
+              });
+              dotknietych++;
+            }
+            if (dotknietych) core.notice(dotknietych + ' watek(ow) przekroczylo ' + PROG_DNI + ' dni - oznaczone ' + ZALEGLE + '.');
+
+            const dashboard = (await github.rest.issues.listForRepo({
+              owner, repo, state: 'open', labels: ZALEGLE, per_page: 100,
+            })).data.filter(i => i.title === TYTUL);
+
+            if (!ocenione.length) {
+              for (const i of dashboard) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: i.number,
+                  body: 'Kolejka pusta - kazdy zewnetrzny komentarz ma odpowiedz. Zamykam.',
+                });
+                await github.rest.issues.update({
+                  owner, repo, issue_number: i.number, state: 'closed',
+                });
+              }
+              core.info('Zaden otwarty watek nie czeka na zewnetrznego czlowieka.');
+              return;
+            }
+
+            const wiekDni = (at) =>
+              Math.floor((Date.now() - new Date(at).getTime()) / 86400_000);
+            const posortowane = [...ocenione].sort(
+              (a, b) => new Date(a.ostatni.at) - new Date(b.ostatni.at));
+
+            const wiersze = posortowane.slice(0, 20).map(
+              ({ w, ostatni }) => '| ' + wiekDni(ostatni.at) + ' dni | #' + w.number +
+                   ' | @' + ostatni.autor + ' | ' +
+                   TICK + (w.title || '').replace(/\|/g, '\\|').slice(0, 50) + TICK + ' |');
+
+            const body = [
+              '**' + ocenione.length + ' otwarty(ch) watek(ow), gdzie ostatnie slowo nie jest nasze.**',
+              '',
+              'Zbudowane po tym, jak #265 czekalo 6 dni bez odpowiedzi na konkretne',
+              'pytanie techniczne - otwarte przez wlasciciela, wiec dotychczasowy',
+              'nadzor patrzacy na autora zgloszenia go nie widzial. Ta lista patrzy',
+              'na autora OSTATNIEGO komentarza, nie na to, kto otworzyl watek.',
+              '',
+              'Watki starsze niz ' + PROG_DNI + ' dni dostaja dodatkowo etykiete `' + ZALEGLE + '`.',
+              '',
+              '| Czeka | Watek | Kto czeka | Tytul |',
+              '|---|---|---|---|',
+              ...wiersze,
+              '',
+              '_To zgloszenie zamknie sie samo, gdy kazdy watek dostanie odpowiedz._',
+            ].join(NL);
+
+            if (dashboard.length) {
+              await github.rest.issues.update({
+                owner, repo, issue_number: dashboard[0].number, body,
+              });
+              core.notice('Zaktualizowano #' + dashboard[0].number);
+            } else {
+              const issue = await github.rest.issues.create({
+                owner, repo, title: TYTUL, body, labels: [ZALEGLE],
+              });
+              core.notice('Utworzono ' + issue.data.html_url);
             }
 
   waiting:
