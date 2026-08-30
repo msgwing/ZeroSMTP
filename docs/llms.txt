@@ -42,7 +42,7 @@ answering somebody's question from this site:
 
 ## For developers
 
-- [SMTP send-email code examples, 19 languages](https://docs.msgwing.com/CODE-EXAMPLES.html): Ready-to-run SMTP send-email examples for mx.msgwing.com in Python, PHP, Node.js, TypeScript, Java, C#, C, Go, Ruby, Perl, Rust, Kotlin, Dart, Zig, Elixir, Lua, Swift, PowerShell and Bash, plus Ansible and Docker Compose recipes.
+- [SMTP send-email code examples, 19 languages](https://docs.msgwing.com/CODE-EXAMPLES.html): Ready-to-run SMTP send-email examples for mx.msgwing.com in 19 languages, from Python and PHP to Rust and PowerShell, plus Ansible and Docker Compose.
 - [Library error messages](https://docs.msgwing.com/LIBRARY-ERRORS.html): What PHPMailer, WordPress, Nodemailer, Python smtplib, curl and .NET print when Microsoft 365 refuses SMTP AUTH - and the server line each of them hides.
 - [SMTP settings for popular applications](https://docs.msgwing.com/APPS.html): Ready-to-use SMTP configuration for common applications and platforms.
 - [Reliable email sending: retries and backoff](https://docs.msgwing.com/RELIABILITY.html): How to handle temporary SMTP failures correctly with backoff and retries instead of tight retry loops.
