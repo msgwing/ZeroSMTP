@@ -183,11 +183,13 @@ defaults:
       path: "CODE-EXAMPLES.md"
     values:
       title: "SMTP send-email code examples, 19 languages"
+      # Trimmed 2026-08-30 from 229 to 150 characters: Bing's URL Inspection
+      # flagged the full 19-language list as "too long" for a meta
+      # description. The page itself still names every language.
       description: >-
-        Ready-to-run SMTP send-email examples for mx.msgwing.com in Python,
-        PHP, Node.js, TypeScript, Java, C#, C, Go, Ruby, Perl, Rust, Kotlin, Dart,
-        Zig, Elixir, Lua, Swift, PowerShell and Bash, plus Ansible and Docker
-        Compose recipes.
+        Ready-to-run SMTP send-email examples for mx.msgwing.com in 19
+        languages, from Python and PHP to Rust and PowerShell, plus Ansible
+        and Docker Compose.
   - scope:
       path: "RELIABILITY.md"
     values:
