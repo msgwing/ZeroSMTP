@@ -341,26 +341,35 @@ We respect your privacy - your data is not processed for any marketing or commer
 
 ## Security & Deliverability
 
-**✓ Domain Reputation Enhanced**: The msgwing.com domain reputation has been improved, with strict anti-spam measures enforced. All spam accounts have been blocked and removed to ensure optimal email deliverability for legitimate users.
+**What we do:**
+- SPF, DKIM and DMARC (`p=reject`) are aligned on `msgwing.com` — check it
+  yourself: `dig txt msgwing.com`, `dig txt _dmarc.msgwing.com`.
+- Accounts that abuse the relay are actively removed (see
+  [FAQ](docs/FAQ.md#why-is-zerosmtp-free-whats-the-catch)).
+- Sending is rate-limited per account to keep the shared domain's reputation
+  good for everyone (see
+  [sending limits](docs/TROUBLESHOOTING.md#sending-limits-rate-limiting)).
 
-### Verify Your Domain Reputation
+**What we don't promise:** a shared domain means shared risk. No single
+account controls the reputation of the whole pool, unlike your own domain,
+where you're the only one who can damage it. If mail must come from your own
+domain, ZeroSMTP is the wrong tool — see [Alternatives](docs/ALTERNATIVES.md).
 
-Interested in checking the reputation of msgwing.com? You can test this yourself using [mail-tester.com](https://mail-tester.com/):
+**What we don't disclose, and why:** see
+[SECURITY.md](SECURITY.md#infrastructure-and-third-party-integration-inquiries).
+
+### Test it yourself
+
+Don't take our word for it — check with [mail-tester.com](https://mail-tester.com/):
 
 1. Create a free SMTP account at [msgwing.com](https://msgwing.com)
 2. Use our PowerShell test script: [SendEmailTest_mail-tester.com.ps1](SendEmailTest_mail-tester.com.ps1)
 3. Generate a random email at mail-tester.com and send a test message from your @msgwing.com address
-4. Check the reputation score and detailed analysis
-
-**✓ Security Improvements**: We have implemented comprehensive security enhancements to the msgwing.com service, including improved authentication protocols, enhanced abuse monitoring, and strengthened infrastructure security measures.
+4. Read the score and the detailed analysis
 
 ---
 
 If you have any questions, feel free to contact us: abuse@msgwing.com
-
-Great deliverability • Random high-reputation account • No costs • Full privacy • Works with everything
-
-Start sending emails today - completely free and with no hidden rules!
 
 Registration is available at: https://msgwing.com
 

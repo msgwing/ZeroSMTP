@@ -243,26 +243,37 @@ Dbamy o Twoją prywatność - Twoje dane nie są przetwarzane w żadnych celach 
 
 ## Bezpieczeństwo i Dostarczalność
 
-**✓ Poprawa Reputacji Domeny**: Reputacja domeny msgwing.com została znacznie poprawiona, a wszystkie konta spamowe zostały zablokowane i usunięte. Gwarantujemy optymalną dostarczalność dla wszystkich legytymnych użytkowników.
+**Co robimy:**
+- SPF, DKIM i DMARC (`p=reject`) są skonfigurowane spójnie na `msgwing.com` —
+  sprawdź sam: `dig txt msgwing.com`, `dig txt _dmarc.msgwing.com`.
+- Konta nadużywające relay są aktywnie usuwane (zobacz
+  [FAQ](docs/FAQ.md#why-is-zerosmtp-free-whats-the-catch)).
+- Wysyłka jest limitowana per konto, żeby reputacja współdzielonej domeny
+  pozostała dobra dla wszystkich (zobacz
+  [limity wysyłki](docs/TROUBLESHOOTING.md#sending-limits-rate-limiting)).
 
-### Sprawdź Reputację Domeny Samodzielnie
+**Czego nie obiecujemy:** współdzielona domena to współdzielone ryzyko.
+Żadne pojedyncze konto nie kontroluje reputacji całej puli — inaczej niż przy
+własnej domenie, gdzie tylko Ty możesz ją zepsuć. Jeśli poczta musi wychodzić
+z Twojej własnej domeny, ZeroSMTP jest złym wyborem — zobacz
+[Alternatywy](docs/ALTERNATIVES.md).
 
-Chcesz zweryfikować reputację msgwing.com? Możesz to zrobić samodzielnie za pomocą [mail-tester.com](https://mail-tester.com/):
+**Czego nie ujawniamy i dlaczego:** zobacz
+[SECURITY.md](SECURITY.md#infrastructure-and-third-party-integration-inquiries).
+
+### Sprawdź to sam
+
+Nie musisz wierzyć nam na słowo — zweryfikuj to za pomocą
+[mail-tester.com](https://mail-tester.com/):
 
 1. Utwórz darmowe konto SMTP na stronie [msgwing.com](https://msgwing.com)
 2. Użyj naszego skryptu PowerShell: [SendEmailTest_mail-tester.com.ps1](SendEmailTest_mail-tester.com.ps1)
 3. Wygeneruj losowy email na mail-tester.com i wyślij wiadomość testową z Twojego adresu @msgwing.com
-4. Sprawdź wynik reputacji i szczegółową analizę
-
-**✓ Poprawki Bezpieczeństwa**: Wdrożyliśmy kompleksowe ulepszeń bezpieczeństwa usługi msgwing.com, w tym ulepszony protokół autoryzacji, wzmocnione monitorowanie nadużyć i ulepszony bezpieczeństwo infrastruktury.
+4. Sprawdź wynik i szczegółową analizę
 
 ---
 
 Jeśli masz pytania, napisz do nas: abuse@msgwing.com
-
-Dobra dostarczalność • Losowa reputacja konta • Zero kosztów • Pełna prywatność • Działa z wszystkim
-
-Zacznij wysyłać maile już dziś - całkowicie za darmo i bez żadnych ukrytych zasad!
 
 Rejestracja odbywa się na stronie: https://msgwing.com
 

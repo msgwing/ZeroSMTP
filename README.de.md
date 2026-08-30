@@ -243,34 +243,38 @@ sonstige kommerzielle Zwecke verarbeitet.
 
 ## Sicherheit und Zustellbarkeit
 
-**✓ Verbesserte Domain-Reputation**: Die Reputation der Domain msgwing.com wurde
-verbessert, strenge Anti-Spam-Maßnahmen sind in Kraft. Alle Spam-Konten wurden
-gesperrt und entfernt, damit die Zustellbarkeit für rechtmäßige Nutzer optimal
-bleibt.
+**Was wir tun:**
+- SPF, DKIM und DMARC (`p=reject`) sind für `msgwing.com` korrekt ausgerichtet
+  — prüfen Sie es selbst: `dig txt msgwing.com`, `dig txt _dmarc.msgwing.com`.
+- Konten, die den Relay missbrauchen, werden aktiv entfernt (siehe
+  [FAQ](docs/FAQ.md#why-is-zerosmtp-free-whats-the-catch)).
+- Der Versand ist pro Konto ratenbegrenzt, damit die Reputation der
+  gemeinsamen Domain für alle gut bleibt (siehe
+  [Versandlimits](docs/TROUBLESHOOTING.md#sending-limits-rate-limiting)).
 
-### Domain-Reputation selbst prüfen
+**Was wir nicht versprechen:** eine gemeinsame Domain bedeutet ein
+gemeinsames Risiko. Kein einzelnes Konto kontrolliert die Reputation des
+gesamten Pools — anders als bei einer eigenen Domain, wo nur Sie sie
+beschädigen können. Muss die Post von Ihrer eigenen Domain kommen, ist
+ZeroSMTP das falsche Werkzeug — siehe
+[Alternativen](docs/ALTERNATIVES.md).
 
-Sie möchten die Reputation von msgwing.com nachprüfen? Das können Sie selbst
-über [mail-tester.com](https://mail-tester.com/) tun:
+**Was wir nicht offenlegen, und warum:** siehe
+[SECURITY.md](SECURITY.md#infrastructure-and-third-party-integration-inquiries).
+
+### Selbst nachprüfen
+
+Glauben Sie uns nicht einfach — testen Sie es mit
+[mail-tester.com](https://mail-tester.com/):
 
 1. Legen Sie auf [msgwing.com](https://msgwing.com) ein kostenloses SMTP-Konto an
 2. Verwenden Sie unser PowerShell-Testskript: [SendEmailTest_mail-tester.com.ps1](SendEmailTest_mail-tester.com.ps1)
 3. Lassen Sie sich auf mail-tester.com eine zufällige Adresse erzeugen und senden Sie eine Testnachricht von Ihrer @msgwing.com-Adresse
 4. Sehen Sie sich die Bewertung und die ausführliche Analyse an
 
-**✓ Sicherheitsverbesserungen**: Wir haben den Dienst msgwing.com umfassend
-abgesichert — darunter verbesserte Authentifizierungsverfahren, erweiterte
-Missbrauchsüberwachung und gehärtete Infrastruktur.
-
 ---
 
 Bei Fragen erreichen Sie uns unter: abuse@msgwing.com
-
-Gute Zustellbarkeit • Zufälliges Konto mit guter Reputation • Keine Kosten •
-Volle Privatsphäre • Funktioniert mit allem
-
-Fangen Sie noch heute an zu versenden — vollständig kostenlos und ohne
-versteckte Regeln!
 
 Die Registrierung finden Sie unter: https://msgwing.com
 
