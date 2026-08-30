@@ -1,0 +1,64 @@
+{
+  "name": "zerosmtp-vscode",
+  "displayName": "ZeroSMTP: Basic Auth SMTP Scanner",
+  "description": "Finds SMTP config in your workspace that authenticates to Microsoft 365 (smtp.office365.com) with a plain username and password, and decodes the 535 5.7.139 error when it starts happening. Basic Auth for SMTP AUTH is being retired in December 2026.",
+  "version": "0.1.0",
+  "publisher": "msgwing",
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "vscode": "^1.85.0",
+    "node": ">=18"
+  },
+  "categories": [
+    "Linters",
+    "Other"
+  ],
+  "keywords": [
+    "smtp",
+    "smtp-relay",
+    "office365",
+    "exchange-online",
+    "microsoft365",
+    "oauth",
+    "oauth2",
+    "basic-authentication",
+    "5.7.139",
+    "printer",
+    "scan-to-email"
+  ],
+  "homepage": "https://docs.msgwing.com/EXCHANGE-ONLINE-SMTP-AUTH.html",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/msgwing/ZeroSMTP.git",
+    "directory": "packages/zerosmtp-vscode"
+  },
+  "bugs": {
+    "url": "https://github.com/msgwing/ZeroSMTP/issues"
+  },
+  "main": "./extension.js",
+  "activationEvents": [
+    "onCommand:zerosmtp.scanWorkspace",
+    "onCommand:zerosmtp.explainError"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "zerosmtp.scanWorkspace",
+        "title": "ZeroSMTP: Scan workspace for Basic Auth SMTP config",
+        "category": "ZeroSMTP"
+      },
+      {
+        "command": "zerosmtp.explainError",
+        "title": "ZeroSMTP: Explain this SMTP error",
+        "category": "ZeroSMTP"
+      }
+    ]
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "zerosmtp-check": "file:../zerosmtp-check"
+  }
+}
