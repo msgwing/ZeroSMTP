@@ -111,6 +111,29 @@ jobs:
       - name: Workflow files parse, and carry no control characters
         run: python .github/check-workflows.py
 
+  # Found 2026-08-30, during review of #366: pages-deploy.yml only builds
+  # Jekyll on push to main, so a broken Liquid template (an unclosed
+  # {% if %}/{% elsif %}, a bad include) in a pull request passes every other
+  # check here and only breaks once it has already reached production. That
+  # PR was verified by hand (grepping the if/elsif/endif chain) instead of by
+  # a gate - which worked once, but doesn't scale to every future change in
+  # docs/_layouts/ or docs/_config.yml. This job runs the same build
+  # pages-deploy.yml runs, without the deploy steps, on every push and PR.
+  jekyll-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # jekyll-last-modified-at needs real per-file git log, same reason pages-deploy.yml uses it
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+          working-directory: docs
+      - name: Build with Jekyll
+        working-directory: docs
+        run: bundle exec jekyll build --destination _site --config _config.yml,_config_actions.yml
+
   bash:
     needs: changes
     if: needs.changes.outputs.code == 'true'
