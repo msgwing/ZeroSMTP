@@ -1,0 +1,54 @@
+{
+  "$comment": "SMTP/raw-TCP capability by serverless/edge platform. Every claim here was read off the vendor's own current documentation on the date in 'checked', not recalled or inferred from general reputation - two claims below (Netlify's actual runtime networking support, and AWS's port-25 anti-spam throttle) could NOT be confirmed from a working primary source in this pass and are marked unconfirmed rather than asserted.",
+  "updated": "2026-08-30",
+  "entries": [
+    {
+      "slug": "cloudflare-workers",
+      "name": "Cloudflare Workers",
+      "runtime": "V8 isolate (edge)",
+      "verdict": "works",
+      "summary": "Raw TCP is supported through a dedicated `connect()` API, with one exception: port 25 is blocked outright.",
+      "detail": "Workers run in a V8 isolate with no OS-level sockets by default, but Cloudflare added `connect()` specifically so Workers could speak arbitrary TCP protocols including SMTP. `startTls()` upgrades an existing plain connection to TLS in place, which is exactly the STARTTLS-on-587 pattern ZeroSMTP uses.",
+      "caveat": "A TCP socket \"cannot be created in global scope and shared across requests\" - open the connection inside the request handler itself, the same way the Node.js examples in CODE-EXAMPLES.md already do, rather than trying to reuse one across invocations.",
+      "source": "https://developers.cloudflare.com/workers/runtime-apis/tcp-sockets/",
+      "source_title": "TCP Sockets",
+      "checked": "2026-08-30"
+    },
+    {
+      "slug": "vercel",
+      "name": "Vercel",
+      "runtime": "Node.js Functions (default) or Edge Runtime (opt-in)",
+      "verdict": "depends on which runtime you picked",
+      "summary": "Works on the default Node.js runtime (full net/tls). The separate Edge Runtime has no socket API at all - only fetch.",
+      "detail": "Vercel's own Edge Runtime docs list every supported API by name, and `net`/`tls`/any raw-socket API is absent from that list; the only networking primitives offered are `fetch`, `Request` and `Response`. The Node.js runtime carries no such restriction - it is a real Node.js process. Vercel's own knowledge base has a dedicated article, \"Sending Emails from an application on Vercel\", that opens by calling SMTP \"the harder path\" specifically inside Vercel Functions on the Edge runtime.",
+      "caveat": "Vercel's own docs now recommend migrating away from the Edge runtime to Node.js entirely (\"We recommend migrating from edge to Node.js for improved performance and reliability\") - so the practical answer for a new project is simply: don't pick Edge if you need SMTP, use the default Node.js runtime and follow the same setup as any other Node.js host.",
+      "source": "https://vercel.com/docs/functions/runtimes/edge",
+      "source_title": "Edge Runtime",
+      "checked": "2026-08-30"
+    },
+    {
+      "slug": "netlify",
+      "name": "Netlify Functions",
+      "runtime": "Netlify's own Functions runtime (AWS Lambda compatibility mode is deprecated)",
+      "verdict": "unconfirmed",
+      "summary": "The old Lambda-compatibility mode is being retired, and whether its replacement supports raw outbound TCP isn't documented either way.",
+      "detail": "A common assumption is that Netlify inherits AWS Lambda's exact networking behaviour, because Netlify Functions used to run in an explicit Lambda-compatibility mode. That mode is now deprecated in Netlify's own documentation, with migration pointed at a new, non-Lambda Functions API (`@netlify/aws-lambda-compat` exists only as a backward-compatible shim for the old handler signature, run on the new runtime). Neither the Functions overview nor the API reference pages state whether that new runtime supports raw sockets.",
+      "caveat": "Treat this one as unverified rather than working or blocked. If you're deploying an SMTP send from Netlify, test the actual connection in a real deployment before relying on it - do not assume Lambda's behaviour carries over, since the underlying runtime has changed.",
+      "source": "https://docs.netlify.com/build/functions/lambda-compatibility/",
+      "source_title": "Lambda compatibility",
+      "checked": "2026-08-30"
+    },
+    {
+      "slug": "aws-lambda",
+      "name": "AWS Lambda",
+      "runtime": "Lambda execution environment (container-based, full Node.js)",
+      "verdict": "works",
+      "summary": "A Lambda function has full outbound internet access by default and runs a real Node.js runtime, so `net`/`tls` and nodemailer work unmodified on ports 587/465.",
+      "detail": "AWS's own Lambda networking documentation states plainly: \"By default, Lambda functions have access to the public internet.\" That only changes if you deliberately attach the function to a VPC without configured internet egress - the default, un-configured case (the one most people are in) has no such restriction.",
+      "caveat": "AWS is widely reported to throttle or block outbound port 25 by default across its compute services as an anti-spam measure - this would not affect ZeroSMTP either way, since it only ever uses 587 (STARTTLS) or 465 (SSL/TLS), never port 25. That specific port-25 policy could not be confirmed against AWS's own knowledge-center pages in this pass (they block automated fetches) and is stated here as commonly reported, not as independently verified fact.",
+      "source": "https://docs.aws.amazon.com/lambda/latest/dg/foundation-networking.html",
+      "source_title": "Giving Lambda functions access to resources in an Amazon VPC",
+      "checked": "2026-08-30"
+    }
+  ]
+}
