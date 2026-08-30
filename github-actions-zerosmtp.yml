@@ -1,0 +1,67 @@
+# github-actions-zerosmtp.yml
+# GitHub Actions - email a workflow's own failures through ZeroSMTP
+#
+# Copy this into .github/workflows/ in the repository whose failures you want
+# to hear about. It watches another workflow (named "CI" below - rename to
+# match the workflow you actually want watched, as it appears in your repo's
+# Actions tab) and, the moment a run of it fails, sends one message through
+# mx.msgwing.com:587 (STARTTLS) using dawidd6/action-send-mail. This is the
+# shape a deploy failure, a broken scheduled backup, or a nightly job that
+# stopped running quietly all take: nobody is watching the Actions tab, so
+# the mail has to come to them instead.
+#
+# Setup, once per repository:
+#   1. Get a login and password by registering and activating an account at
+#      https://msgwing.com.
+#   2. Add them as repository secrets (Settings > Secrets and variables >
+#      Actions): ZEROSMTP_USERNAME and ZEROSMTP_PASSWORD. Never put them
+#      directly in this file.
+#   3. Replace the "workflows:" name below with the workflow you want
+#      watched, and "to:" with a real recipient.
+#
+# Test it without waiting for a real failure: this workflow also runs on
+# workflow_dispatch, from the Actions tab's "Run workflow" button.
+
+name: Notify on CI failure
+
+on:
+  workflow_run:
+    workflows: ["CI"]   # rename to the workflow this should watch
+    types: [completed]
+  workflow_dispatch: {} # lets you trigger a real send manually, to test the recipe
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    # workflow_dispatch has no workflow_run event to read a conclusion from,
+    # so it always sends; workflow_run only sends when the watched run failed.
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Email the failure through ZeroSMTP
+        uses: dawidd6/action-send-mail@v18
+        with:
+          server_address: mx.msgwing.com
+          server_port: 587
+          # false selects STARTTLS on 587. The action's own default is TLS
+          # only when server_port is 465, so this is written out rather than
+          # relied on - a reader who copies just the port and drops this line
+          # would silently fall back to a plaintext attempt.
+          secure: false
+          username: ${{ secrets.ZEROSMTP_USERNAME }}
+          password: ${{ secrets.ZEROSMTP_PASSWORD }}
+          from: ${{ secrets.ZEROSMTP_USERNAME }}
+          to: you@example.com
+          # github.event.workflow_run is absent on workflow_dispatch, and a
+          # missing property reads as null rather than an error - so `||`
+          # falls back to a fixed test message instead of sending a blank one.
+          subject: "${{ github.event.workflow_run.name || 'ZeroSMTP recipe' }} - ${{ github.event.workflow_run.conclusion || 'manual test' }}"
+          body: |
+            Workflow: ${{ github.event.workflow_run.name || 'manual test (workflow_dispatch)' }}
+            Conclusion: ${{ github.event.workflow_run.conclusion || 'n/a - this was a manual send' }}
+            Branch: ${{ github.event.workflow_run.head_branch || github.ref_name }}
+            Commit: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+            https://github.com/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id || github.run_id }}

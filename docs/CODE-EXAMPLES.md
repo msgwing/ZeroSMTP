@@ -48,6 +48,7 @@ configuration management tool or a container definition instead:
 | --- | --- | --- |
 | Ansible | [ansible-zerosmtp.yml](https://github.com/msgwing/ZeroSMTP/blob/main/ansible-zerosmtp.yml) | Points a fleet's system mailer (cron, unattended-upgrades, `systemd OnFailure=`) at the relay via msmtp. See [Linux setup](LINUX.md) for the manual equivalent. |
 | Docker Compose | [docker-compose-zerosmtp.yml](https://github.com/msgwing/ZeroSMTP/blob/main/docker-compose-zerosmtp.yml) | Sends one message from a container, reading credentials from `.env`. |
+| GitHub Actions | [github-actions-zerosmtp.yml](https://github.com/msgwing/ZeroSMTP/blob/main/github-actions-zerosmtp.yml) | Emails a workflow's own failures through the relay via `dawidd6/action-send-mail`, so a broken deploy or a quietly-stopped scheduled job doesn't go unnoticed. Testable on demand via `workflow_dispatch`, without waiting for a real failure. |
 
 Each example reads credentials from `ZEROSMTP_*` environment variables
 (`ZEROSMTP_USERNAME`, `ZEROSMTP_PASSWORD`, `ZEROSMTP_FROM`, `ZEROSMTP_TO`,
