@@ -199,7 +199,7 @@ def zbuduj_indeks(wpisy, aktualizacja, nieobjete=()):
         "## What is not here",
         "",
         (przecinki([n["name"] for n in nieobjete]) +
-         " are all in the same position and are not covered yet. They "
+         " are in the same position and are not covered yet. They "
          "are missing because nobody has read their documentation carefully "
          "enough to name the settings without guessing, not because they do "
          "not fit.") if nieobjete else

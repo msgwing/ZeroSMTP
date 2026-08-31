@@ -287,6 +287,56 @@
       "caveat": "These are msmtp directives, not Netdata's own configuration - Netdata calls whatever sendmail-compatible binary is on the PATH and has no visibility into whether it works. A misconfigured msmtprc fails silently from Netdata's side: the alert fires, Netdata believes it sent, and nothing arrives. Test with the command \"echo test | msmtp your@address\" before trusting an alert to reach anyone.",
       "source": "https://learn.netdata.cloud/docs/alerts-&-notifications/notifications/agent-dispatched-notifications/email",
       "source_title": "Email alert notifications"
+    },
+    {
+      "slug": "jellyfin",
+      "name": "Jellyfin",
+      "repo": "jellyfin/jellyfin",
+      "what": "a self-hosted media server for films, television and music, usually run for one household",
+      "sends": [
+        "a message when an item is added to the library, to whoever runs the server",
+        "authentication failures, successful logins and a user being locked out",
+        "scheduled-task completions, plugin installs and pending-restart notices"
+      ],
+      "why_it_fits": "Jellyfin's notifications go to whoever runs the server, not to the people watching, and the SMTP destination takes exactly one Receiver Address - so there is no audience deciding whether to trust the sender. Whether it stays under 200 a day is a choice you make when you tick the notification types rather than a property of Jellyfin: Item Added on a library that imports a season at a time, or Playback Progress on any library at all, will pass the cap in an afternoon.",
+      "where": "Jellyfin does not send email itself. Its own documentation says notifications appear on the dashboard and that anything else goes [through the Webhook plugin](https://jellyfin.org/docs/general/server/notifications/) - so mail exists only there. Install it from Dashboard -> Plugins -> Catalog, where it is filed under **Administration** rather than under notifications, restart the server, then open Dashboard -> Plugins -> Webhook and use Add SMTP Destination. These are the labels on that form.",
+      "fields": [
+        [
+          "Sender Address",
+          "your @msgwing.com login"
+        ],
+        [
+          "Receiver Address",
+          "your own inbox, where you want the alerts"
+        ],
+        [
+          "SMTP Server Address",
+          "mx.msgwing.com"
+        ],
+        [
+          "SMTP Port",
+          "465"
+        ],
+        [
+          "Use Credentials",
+          "ticked"
+        ],
+        [
+          "Username",
+          "your @msgwing.com login"
+        ],
+        [
+          "Password",
+          "your @msgwing.com password"
+        ],
+        [
+          "Use SSL",
+          "ticked"
+        ]
+      ],
+      "caveat": "465 is not a typo and 587 will not work here. Use SSL is not a STARTTLS toggle: the plugin passes SslOnConnect when it is ticked and no encryption whatsoever when it is not, and it offers no third option - so 587 either meets a client expecting implicit TLS or sends your password in the clear for the relay to refuse. Both mistakes are invisible from Jellyfin. Every send failure is caught and written as a single warning line to the server log, so the notification looks delivered and nothing arrives. Turn on debug logging for Jellyfin.Plugin.Webhook in logging.json before you trust an alert to reach you. Jellyfin's prose documentation never names an SMTP field, so the labels above are read off the configuration form the plugin itself ships, linked below - not quoted from a manual page that does not exist.",
+      "source": "https://github.com/jellyfin/jellyfin-plugin-webhook/blob/master/Jellyfin.Plugin.Webhook/Configuration/Web/config.html",
+      "source_title": "Webhook plugin: the SMTP destination form"
     }
   ],
   "$not_covered_comment": "Kandydaci zmierzeni 2026-08-27 jako zerowe pokrycie. Generator odejmuje od tej listy wszystko, co ma juz wpis - inaczej strona wymienia jako brakujaca aplikacje, ktorej strona stoi akapit wyzej. Tak wlasnie bylo z Paperless-ngx.",
