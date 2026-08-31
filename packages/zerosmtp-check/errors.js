@@ -162,5 +162,10 @@ export const DEVICE_CODES = {
     "vendor": "Kyocera",
     "note": "Kyocera MFPs report an SMTP AUTH refusal as send error 1102 (also shown as 0x1102). It looks like a hardware fault and is not one - the device is being refused by the mail server.",
     "kind": "auth-refused"
+  },
+  "027-779": {
+    "vendor": "Xerox",
+    "note": "Xerox WorkCentre 7328/7335/7345/7346 devices report fault code 027-779 when SMTP authentication fails. Check the Scan to E-mail login and SMTP server settings before treating it as a hardware fault.",
+    "kind": "auth-refused"
   }
 };

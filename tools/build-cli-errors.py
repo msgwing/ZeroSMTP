@@ -43,6 +43,14 @@ KODY_URZADZEN = {
                 "not one - the device is being refused by the mail server.",
         "kind": "auth-refused",
     },
+    "027-779": {
+        "vendor": "Xerox",
+        "note": "Xerox WorkCentre 7328/7335/7345/7346 devices report fault "
+                "code 027-779 when SMTP authentication fails. Check the Scan "
+                "to E-mail login and SMTP server settings before treating it "
+                "as a hardware fault.",
+        "kind": "auth-refused",
+    },
 }
 
 
