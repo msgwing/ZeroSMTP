@@ -70,6 +70,10 @@ def tytul(wpis, wyrozniki=None):
     skrocony = None
     while slowa:
         slowa.pop()
+        # To samo obciecie co w galezi kolizji: slowo funkcyjne na koncu
+        # czyta sie jak urwane zdanie - "Sender was not authenticated by".
+        while slowa and slowa[-1].lower() in SPOJNIKI:
+            slowa.pop()
         kandydat = f"{wpis['code']} {' '.join(slowa)}"
         if slowa and len(kandydat) <= LIMIT_TYTULU:
             skrocony = kandydat

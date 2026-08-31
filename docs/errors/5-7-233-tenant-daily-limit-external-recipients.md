@@ -1,5 +1,5 @@
 ---
-title: "5.7.233 Tenant exceeded its daily limit for"
+title: "5.7.233 Tenant exceeded its daily limit"
 description: "What 5.7.233 Tenant exceeded its daily limit for sending email to external recipients means, whether it can still be turned back on, and what to do if it cannot."
 ---
 

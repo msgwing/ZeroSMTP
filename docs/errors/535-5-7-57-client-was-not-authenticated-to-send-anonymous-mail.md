@@ -1,5 +1,5 @@
 ---
-title: "535 5.7.57 SMTP; Client was not authenticated to"
+title: "535 5.7.57 SMTP; Client was not authenticated"
 description: "What 535 5.7.57 SMTP; Client was not authenticated to send anonymous mail means, whether it can still be turned back on, and what to do if it cannot."
 ---
 

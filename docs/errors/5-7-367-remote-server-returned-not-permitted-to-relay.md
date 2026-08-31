@@ -1,5 +1,5 @@
 ---
-title: "5.7.367 Remote server returned not permitted to"
+title: "5.7.367 Remote server returned not permitted"
 description: "What 5.7.367 Remote server returned not permitted to relay means, whether it can still be turned back on, and what to do if it cannot."
 ---
 

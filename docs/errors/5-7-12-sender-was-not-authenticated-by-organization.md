@@ -1,5 +1,5 @@
 ---
-title: "5.7.12 Sender was not authenticated by"
+title: "5.7.12 Sender was not authenticated"
 description: "What 5.7.12 Sender was not authenticated by organization means, whether it can still be turned back on, and what to do if it cannot."
 ---
 
