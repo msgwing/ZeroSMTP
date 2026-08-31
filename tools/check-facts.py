@@ -39,6 +39,15 @@ OBSZAR = [
     (KORZEN / "docs" / "devices", "*.md"),
     (KORZEN / "tools", "*.py"),
     (KORZEN, "README.md"),
+    # Added 2026-08-31. The package READMEs are shipped to npm and rendered on
+    # the npm page, and zerosmtp-mcp's is what somebody browsing a directory of
+    # MCP servers reads before deciding in seconds whether to add it. They state
+    # the daily cap and the sender address like every other page here, but they
+    # sat outside this check - so the one surface an AI assistant reads on our
+    # behalf was the one surface allowed to contradict the rest.
+    (KORZEN / "packages" / "zerosmtp-mcp", "README.md"),
+    (KORZEN / "packages" / "zerosmtp-check", "README.md"),
+    (KORZEN / "packages" / "zerosmtp-vscode", "README.md"),
 ]
 
 # Ten plik z definicji zawiera kazdy sprzeczny zwrot, i tools/check-facts.py

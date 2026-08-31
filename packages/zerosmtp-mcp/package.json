@@ -1,8 +1,8 @@
 {
   "name": "zerosmtp-mcp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "mcpName": "io.github.msgwing/zerosmtp",
-  "description": "MCP server for the Microsoft 365 SMTP AUTH shutdown: identify an error string, check whether a device has OAuth firmware, and test whether port 587 is reachable from this machine.",
+  "description": "A free SMTP relay that still takes a username and password, for devices that cannot do OAuth 2.0 - as an MCP server. Your assistant gets the connection settings with both limits attached, plus SMTP error lookup, per-vendor OAuth firmware status, and a real port 587 test from this machine.",
   "keywords": [
     "mcp",
     "model-context-protocol",

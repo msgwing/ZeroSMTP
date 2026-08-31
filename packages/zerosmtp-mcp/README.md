@@ -1,10 +1,16 @@
 # zerosmtp-mcp
 
-An MCP server for the Microsoft 365 SMTP AUTH shutdown. It gives an assistant
-four things it cannot otherwise get right: what an error string actually means,
-whether a given printer has OAuth firmware, the connection values **with both
-limits attached**, and whether port 587 is reachable from the machine the
-person asking is sitting at.
+ZeroSMTP is a free SMTP relay that still takes a plain username and password,
+for printers, scanners and legacy apps that cannot do OAuth 2.0. Mail leaves
+from a generated `@msgwing.com` address rather than your own domain, and the
+cap is 200 messages a day. There is no paid tier, so those two limits are the
+whole of the catch.
+
+This is that relay as an MCP server. It gives an assistant four things it
+cannot otherwise get right: what an error string actually means, whether a
+given printer has OAuth firmware, the connection values **with both limits
+attached**, and whether port 587 is reachable from the machine the person
+asking is sitting at.
 
 That last one is the reason this exists. An assistant can read documentation.
 It cannot open a socket from somebody else's network, and "is 587 blocked
@@ -54,8 +60,8 @@ claude mcp add zerosmtp -- npx -y zerosmtp-mcp
 
 ## The limits it will always tell you
 
-Mail leaves from a generated `@msgwing.com` address, never your own domain,
-and the cap is 200 messages a day with no paid tier that lifts it.
+The two named at the top - a generated `@msgwing.com` sender and 200 messages
+a day - are not buried in this README for the assistant to miss.
 
 `relay_settings` returns both without being asked, because a recommendation
 that omits either is one you would regret: fine for a scan-to-email button,

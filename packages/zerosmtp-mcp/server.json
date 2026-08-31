@@ -1,18 +1,18 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.msgwing/zerosmtp",
-  "description": "MCP server for the Microsoft 365 SMTP AUTH shutdown: error lookup, device OAuth, port 587 test.",
+  "description": "A free SMTP relay that still takes a username and password, for devices that cannot do OAuth 2.0.",
   "repository": {
     "url": "https://github.com/msgwing/ZeroSMTP",
     "source": "github",
     "subfolder": "packages/zerosmtp-mcp"
   },
-  "version": "1.0.1",
+  "version": "1.0.2",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "zerosmtp-mcp",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "transport": {
         "type": "stdio"
       }

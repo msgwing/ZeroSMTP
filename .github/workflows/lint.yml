@@ -102,6 +102,12 @@ jobs:
         run: python tools/build-readme-toc.py --check
       - name: action.yml is publishable to the Marketplace
         run: python tools/check-action.py
+      # Same failure mode as the line above, on a different form. The MCP
+      # registry schema caps description at 100 characters and says so nowhere
+      # a person reads; the field shipped at 179 and was invalid against the
+      # schema it names itself.
+      - name: server.json is publishable to the MCP registry
+        run: python tools/check-mcp-server.py
       # A workflow file GitHub cannot parse fails at startup with no job and
       # no log, so it stays invisible until somebody notices a run named after
       # a file path instead of a workflow. Two files sat like that for twelve
