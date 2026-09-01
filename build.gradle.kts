@@ -12,7 +12,7 @@ plugins {
     // ranka i alert, ktory nigdy sam nie znika.
     //
     // Wroc do stabilnej, gdy 2.4.20 wyjdzie.
-    kotlin("jvm") version "2.4.20-RC"
+    kotlin("jvm") version "2.4.20-RC2"
     application
 }
 
