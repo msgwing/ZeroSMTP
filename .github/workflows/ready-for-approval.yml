@@ -409,6 +409,212 @@ jobs:
               core.notice('Utworzono ' + issue.data.html_url);
             }
 
+  # Kontrybutor, ktoremu SCALILISMY prace i nie powiedzielismy ani slowa.
+  #
+  # DLACZEGO OSOBNE ZADANIE, SKORO JEST `czeka-czlowiek` POWYZEJ: tamto pyta
+  # GitHuba o `state: 'open'`. Scalony pull request jest ZAMKNIETY, wiec
+  # przyjeta i nieodnotowana praca byla dla niego niewidzialna z definicji -
+  # nie przez blad w nim. Ta sama slepota dotyczy `zalegle-zewnetrzne`, bo
+  # startuje z tej samej listy.
+  #
+  # Zmierzone 2026-09-01 na wszystkich 14 scalonych wnioskach od ludzi z
+  # zewnatrz: PIEC nie ma ani jednego naszego slowa. #238 i #245 czekaly
+  # dziewiec dni. Zaden przeglad ich nie znalazl, bo zaden nie patrzyl na
+  # rzeczy zamkniete - a to jest jedyne miejsce, gdzie konczy sie przyjeta
+  # praca.
+  #
+  # CZEGO TO ZADANIE CELOWO NIE ROBI:
+  #
+  #   - nie pisze podziekowan. Automatyczne "dziekujemy" jest gorsze niz
+  #     cisza, bo mowi czlowiekowi wprost, ze po drugiej stronie nie bylo
+  #     nikogo. Bramka pokazuje, komu jestesmy winni slowo; slowo pisze
+  #     czlowiek albo agent, imiennie i o tym, co ta osoba faktycznie zrobila.
+  #   - nie zaczepia nikogo, kto ucichl. Uspienie jest w tabeli kontekstu i
+  #     nigdy nie zaklada tego zgloszenia samo. Prog jest nieskalibrowany
+  #     (n=2 odstepy od jednej osoby), a analiza forkujacych z 2026-08-27 juz
+  #     raz pokazala, ze przy takiej probie profilowanie ludzi nie ma pokrycia.
+  #   - nie przypisuje wlasciciela. To jest praca firmy, nie jego.
+  #
+  # Logika siedzi w `tools/contributor-care.js`, testowana na prawdziwych
+  # danych tych 14 wnioskow w `tools/contributor-care.test.js`, i importuje
+  # regule "kto napisal ostatni" z `tools/unanswered-external.js` zamiast
+  # trzymac jej druga kopie.
+  opieka-nad-kontrybutorami:
+    if: github.event_name != 'issues'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            const { ocenWklad, ocenOpieke, PROGI } = await import(
+              `${process.env.GITHUB_WORKSPACE}/tools/contributor-care.js`);
+
+            const owner = context.repo.owner, repo = context.repo.repo;
+            const ACK = 'Ten komentarz zostal dodany automatycznie';
+            const TYTUL = 'Kontrybutorzy bez odpowiedzi';
+            const ZALEGLE = 'stan:zalegle';
+            const NL = String.fromCharCode(10);
+            const TICK = String.fromCharCode(96);
+            const teraz = Date.now();
+
+            // Wnioski scalone, nie nasze, nie bota. Zapytanie sprawdzone
+            // 2026-09-01 wobec niezaleznego `gh pr list --state merged`:
+            // oba daja te same 14 numerow.
+            const znalezione = (await github.rest.search.issuesAndPullRequests({
+              q: `repo:${owner}/${repo} is:pr is:merged -author:${owner} -author:app/dependabot`,
+              per_page: 100,
+            })).data.items;
+
+            if (!znalezione.length) {
+              // DOCTRINE §9: cisza i awaria wygladaja tak samo. Zero
+              // scalonych wkladow od ludzi z zewnatrz jest mozliwe tylko w
+              // repozytorium, ktore nigdy zadnego nie mialo - a to nie jest
+              // to repozytorium. Glosno, zamiast "nic nie znaleziono".
+              core.setFailed(
+                'Zapytanie nie zwrocilo ANI JEDNEGO scalonego wniosku z zewnatrz. ' +
+                'To repozytorium ma ich 14, wiec to jest awaria zapytania, ' +
+                'nie pusta kolejka.');
+              return;
+            }
+
+            const wklady = [];
+            for (const it of znalezione) {
+              const kom = (await github.rest.issues.listComments({
+                owner, repo, issue_number: it.number, per_page: 100,
+              })).data;
+              const rec = (await github.rest.pulls.listReviews({
+                owner, repo, pull_number: it.number, per_page: 100,
+              })).data;
+
+              wklady.push(ocenWklad(
+                {
+                  number: it.number,
+                  title: it.title,
+                  user: it.user,
+                  created_at: it.created_at,
+                  merged_at: it.pull_request.merged_at,
+                  pull_request: it.pull_request,
+                },
+                kom, rec, owner, ACK, teraz));
+            }
+
+            const o = ocenOpieke(wklady, teraz, PROGI);
+            core.info(`wkladow: ${wklady.length}, dlug: ${o.dlug}, ` +
+              `bez slowa: ${o.bezPotwierdzenia.length}, ` +
+              `ostatnie slowo ich: ${o.ostatnieSlowoIch.length}, ` +
+              `retencja: ${o.retencja.powracajacych}/${o.retencja.kontrybutorow}`);
+
+            const istniejace = (await github.rest.issues.listForRepo({
+              owner, repo, state: 'open', labels: ZALEGLE, per_page: 100,
+            })).data.filter((i) => !i.pull_request && i.title === TYTUL);
+
+            // Zamyka sie samo. To jest jedyny sposob, w jaki mozna zobaczyc,
+            // ze kolejka jest pusta - tak samo jak w `zalegle-zewnetrzne`.
+            if (!o.dlug) {
+              for (const i of istniejace) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: i.number,
+                  body: 'Kazdy scalony wklad z zewnatrz ma nasza odpowiedz. Zamykam.',
+                });
+                await github.rest.issues.update({
+                  owner, repo, issue_number: i.number, state: 'closed',
+                });
+              }
+              core.info('Zero dlugu wobec kontrybutorow.');
+              return;
+            }
+
+            const esc = (t) => (t || '').replace(/\|/g, '-').slice(0, 46);
+            const wiersz = (w) => '| ' + w.dniOdScalenia + ' dni | #' + w.numer +
+              ' | @' + w.autor + ' | ' + TICK + esc(w.tytul) + TICK + ' |';
+
+            const body = [];
+            body.push('**' + o.dlug + ' scalony(ch) wklad(ow) od ludzi z zewnatrz czeka na slowo od nas.**');
+            body.push('');
+            body.push('Ta lista patrzy na wnioski **scalone**, czyli zamkniete. `czeka-czlowiek`');
+            body.push('i `zalegle-zewnetrzne` pytaja o `state: open`, wiec przyjeta i nieodnotowana');
+            body.push('praca byla dla nich niewidzialna z definicji.');
+            body.push('');
+
+            if (o.bezPotwierdzenia.length) {
+              body.push('### Ani jednego naszego slowa');
+              body.push('');
+              body.push('Praca przyjeta, watek bez komentarza i bez recenzji z trescia od nas.');
+              body.push('');
+              body.push('| Od scalenia | Wniosek | Kto | Tytul |');
+              body.push('|---|---|---|---|');
+              for (const w of o.bezPotwierdzenia) body.push(wiersz(w));
+              body.push('');
+            }
+
+            if (o.ostatnieSlowoIch.length) {
+              body.push('### Rozmowa byla, ostatnie zdanie zostalo ich');
+              body.push('');
+              body.push('| Od scalenia | Wniosek | Kto | Tytul |');
+              body.push('|---|---|---|---|');
+              for (const w of o.ostatnieSlowoIch) body.push(wiersz(w));
+              body.push('');
+            }
+
+            body.push('### Co z tym zrobic');
+            body.push('');
+            body.push('Napisz w kazdym z tych watkow **imiennie i konkretnie** - co ta zmiana');
+            body.push('dodala i co to zmienia. "Dzieki" jest szumem; "to pierwszy potwierdzony');
+            body.push('raport dla tej galezi firmware, jest juz na liscie zgodnosci" mowi');
+            body.push('czlowiekowi, co kupilo jego piec minut.');
+            body.push('');
+            body.push('**Ta bramka celowo nie pisze tych slow sama.** Automatyczne podziekowanie');
+            body.push('jest gorsze niz cisza - mowi wprost, ze po drugiej stronie nie bylo nikogo.');
+            body.push('');
+            body.push('---');
+            body.push('');
+            body.push('### Kontekst - te liczby NIE zakladaja tego zgloszenia');
+            body.push('');
+            body.push('**Retencja: ' + o.retencja.powracajacych + ' z ' +
+              o.retencja.kontrybutorow + ' kontrybutorow zlozylo wiecej niz jeden wklad.**');
+            body.push('To jest liczba zliczona, nie prognoza - nie mowi, dlaczego ktos nie wrocil.');
+            body.push('');
+
+            if (o.usypiajacy.length) {
+              body.push('**Ucichli (>= ' + PROGI.uspienieDni + ' dni od ICH ostatniej czynnosci, nie od naszego scalenia):**');
+              body.push('');
+              for (const p of o.usypiajacy) {
+                body.push('- @' + p.login + ' - ' + p.dni + ' dni, wkladow: ' + p.wkladow);
+              }
+              body.push('');
+              body.push('**Prog ' + PROGI.uspienieDni + ' dni jest nieskalibrowany i nie udajemy inaczej.**');
+              body.push('Jedyne dane, na ktorych da sie go oprzec, to dwa odstepy miedzy wkladami');
+              body.push('jednej osoby (3 i 4 dni). Czy zaczepienie kogos, kto ucichl, pomaga czy');
+              body.push('szkodzi - **tego nie da sie tutaj zmierzyc** i nikt tego nie zmierzyl.');
+              body.push('Ta lista jest informacja dla czlowieka, nie poleceniem kontaktu.');
+              body.push('');
+            }
+
+            body.push('_To zgloszenie zamknie sie samo, gdy kazdy scalony wklad dostanie odpowiedz._');
+
+            const tresc = body.join(NL);
+
+            if (istniejace.length) {
+              await github.rest.issues.update({
+                owner, repo, issue_number: istniejace[0].number, body: tresc,
+              });
+              core.notice('Zaktualizowano #' + istniejace[0].number + ' - dlug: ' + o.dlug);
+            } else {
+              const zgl = await github.rest.issues.create({
+                owner, repo, title: TYTUL, body: tresc,
+                // Jedna etykieta stanu, zgodnie z regula "kazde otwarte
+                // zgloszenie nosi dokladnie jedna". Zalegle jest wlasciwe:
+                // nikt tego nie robi i nikt nie czeka na wlasciciela.
+                labels: [ZALEGLE],
+              });
+              core.notice('Utworzono ' + zgl.data.html_url);
+            }
+
   waiting:
     if: github.event_name != 'issues'
     runs-on: ubuntu-latest

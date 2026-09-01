@@ -455,6 +455,24 @@ jobs:
       - name: "Etat nie spojrzal: bramka i test na szesciu PR-ach z 2026-09-01"
         run: node --test tools/seat-obligations.test.js
 
+  # Dlug wobec kontrybutorow, ktorych prace SCALILISMY - logika z
+  # `tools/contributor-care.js`. Osobno od `unanswered-external` powyzej, bo
+  # tamten modul patrzy na watki otwarte, a scalony wniosek jest zamkniety;
+  # test niesie prawdziwe dane wszystkich 14 wnioskow od ludzi z zewnatrz
+  # i przewraca sie, gdy ktos odwroci ktorekolwiek z dwoch porownan
+  # decydujacych o tym, czy cokolwiek jest dlugiem.
+  contributor-care:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: "Scalony wklad bez odpowiedzi: bramka i testy na 14 prawdziwych wnioskach"
+        run: node --test tools/contributor-care.test.js
+
   zerosmtp-mcp:
     needs: changes
     if: needs.changes.outputs.code == 'true'
