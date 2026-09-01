@@ -159,7 +159,17 @@ jobs:
   # po npm, bo rejestr waliduje, ze wersja z server.json istnieje w npm.
   mcp-registry:
     needs: publish
-    if: ${{ inputs.package == 'zerosmtp-mcp' && inputs.dry_run == false }}
+    # `always()` z jawnym warunkiem, a nie `success()`. Powod zmierzony
+    # 2026-09-01, dziesiec minut po wdrozeniu pierwszej wersji tego zadania:
+    # `publish` slusznie odmawia, gdy wersja JUZ jest na npm - a to jest
+    # dokladnie stan, w ktorym publikacja do rejestru jest mozliwa i potrzebna.
+    # Sprzegniecie jej z `success()` sprawilo, ze rejestr byl nieosiagalny
+    # zawsze poza jednym przebiegiem w calym zyciu wersji.
+    #
+    # Bezpieczne, bo to zadanie NIE ufa `publish`: samo sprawdza, czy wersja
+    # z server.json jest na npm, i przerywa z wlasnym komunikatem, jesli nie.
+    # `cancelled()` nadal zatrzymuje wszystko.
+    if: ${{ !cancelled() && inputs.package == 'zerosmtp-mcp' && inputs.dry_run == false }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
