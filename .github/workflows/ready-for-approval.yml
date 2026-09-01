@@ -671,3 +671,205 @@ jobs:
                 'a wniosek do tej samej listy czekal otwarty od szesciu dni.',
               ].join('\n'),
             });
+
+  # ETAT, KTORY MIAL SPOJRZEC, I NIE SPOJRZAL.
+  #
+  # 2026-09-01, wlasciciel: "nie chce w firmie nigdy takich sytuacji, ze ktos
+  # na cos nie spojrzal!!!! gdzie jest HR????". Tego dnia szesc scalonych
+  # PR-ow - #390, #394, #396, #397, #399, #405 - zwrocilo `0` z
+  # `pulls/<n>/reviews`. Wsrod nich PR od czlowieka z zewnatrz uruchamiany na
+  # naszych runnerach, nowy job CI i dwie nowe bramki.
+  #
+  # Szerszy pomiar tego samego dnia: z ostatnich 60 PR-ow dokladnie JEDEN ma
+  # jakikolwiek obiekt recenzji (#331), i jest on od
+  # `github-advanced-security[bot]`. Zero recenzji od czlowieka, kiedykolwiek.
+  # Nie bylo wiec regresu - nadzoru nigdy nie bylo.
+  #
+  # DLACZEGO BRAMKA, A NIE REGULA: regula "change-board recenzuje kazda zmiane"
+  # juz istniala, w pierwszym zdaniu opisu tamtego etatu, i nie wystrzelila ani
+  # razu. Ten projekt ma na to zapisane doswiadczenie - buduj bramke, nie pisz
+  # reguly.
+  #
+  # CZEGO TA BRAMKA NIE ROBI: nie blokuje scalenia. `enforce_admins` jest
+  # wlaczone a wymaganych recenzji jest zero, wiec `--auto` jest celowo droga,
+  # ktora praca lada; wymuszenie recenzji zatrzymaloby projekt. Ta bramka
+  # WYKRYWA i MELDUJE - jedna, samozamykajaca sie pozycja, ten sam wzorzec co
+  # `zalegle-zewnetrzne` powyzej.
+  #
+  # Logika jest w `tools/seat-obligations.js`, przetestowana na prawdziwych
+  # danych tych szesciu PR-ow w `tools/seat-obligations.test.js` i sprawdzona
+  # celowym zepsuciem pieciu porownan. W YAML zostaje samo pobieranie danych.
+  etat-nie-spojrzal:
+    if: github.event_name != 'issues'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            const fs = require('fs');
+            const { raport, wymagaRecenzji, NIEOBSERWOWALNE, OBSADA_ETATOW,
+                    OBSADA_ODCZYT } = await import(
+              `${process.env.GITHUB_WORKSPACE}/tools/seat-obligations.js`);
+
+            const owner = context.repo.owner, repo = context.repo.repo;
+            const OKNO_DNI = 14;
+            // Prog wlaczenia bramki. Bez niego pierwszy przebieg zaklada
+            // kolejke na 99 pozycji - tyle scalonych PR-ow z ostatnich 14 dni
+            // nie ma zadnej recenzji - a scalonego PR-a nie da sie juz sensownie
+            // zrecenzowac, wiec taka kolejka NIGDY sie nie oprozni i nigdy sie
+            // nie zamknie. Zgloszenie, ktore zawsze jest otwarte, przestaje byc
+            // czytane. Historia melduje sie jako jedna liczba w tresci, praca
+            // jako wiersze.
+            const OD = '2026-09-02T00:00:00Z';
+            const TYTUL = 'Etat mial spojrzec i nie spojrzal';
+            const NL = String.fromCharCode(10);
+            const TICK = String.fromCharCode(96);
+
+            // Polityka nalezy do `change-board`, nie do tej bramki. Gdy jej
+            // nie ma, meldujemy wszystko - domysl w strone halasu, bo cisza
+            // jest trybem awarii, ktory to zbudowal.
+            let polityka = null;
+            const sciezka = `${process.env.GITHUB_WORKSPACE}/data/review-policy.json`;
+            if (fs.existsSync(sciezka)) {
+              try {
+                polityka = JSON.parse(fs.readFileSync(sciezka, 'utf8'));
+                core.info('Polityka recenzji wczytana od change-board.');
+              } catch (e) {
+                core.warning(`data/review-policy.json nie parsuje sie: ${e.message}`);
+              }
+            } else {
+              core.info('Brak data/review-policy.json - melduje kazdy scalony PR.');
+            }
+
+            const granica = new Date(Date.now() - OKNO_DNI * 86400000).toISOString();
+
+            const scalone = (await github.paginate(github.rest.pulls.list, {
+              owner, repo, state: 'closed', sort: 'updated', direction: 'desc',
+              per_page: 100,
+            })).filter((p) => p.merged_at && p.merged_at >= granica);
+
+            // Stan wyjsciowy: ile z okna wypada przed progiem wlaczenia.
+            const historyczne = scalone.filter((p) => p.merged_at < OD).length;
+            const biezace = scalone.filter((p) => p.merged_at >= OD);
+
+            const obowiazki = [];
+            for (const p of biezace) {
+              const pr = {
+                autor: (p.user || {}).login,
+                etykiety: (p.labels || []).map((l) => l.name),
+              };
+              if (!wymagaRecenzji(pr, polityka, owner)) continue;
+
+              const recenzje = (await github.rest.pulls.listReviews({
+                owner, repo, pull_number: p.number, per_page: 100,
+              })).data;
+
+              obowiazki.push({
+                seat: 'change-board',
+                przedmiot: `#${p.number}`,
+                trigger: 'PR scalony',
+                tytul: p.title || '',
+                autor: pr.autor,
+                wyzwolonyAt: p.merged_at,
+                // Termin to moment scalenia: spojrzenie ma sens PRZED nim.
+                terminAt: p.merged_at,
+                akty: recenzje.map((r) => ({
+                  login: (r.user || {}).login,
+                  typ: (r.user || {}).type,
+                  at: r.submitted_at,
+                })),
+                owner,
+              });
+            }
+
+            const { zwloki, spoznione, poEtacie } = raport(obowiazki, Date.now());
+
+            core.info(`sprawdzonych scalonych PR-ow: ${obowiazki.length}`);
+            for (const s of spoznione) {
+              core.notice(`${s.przedmiot}: spojrzano, ale dopiero po scaleniu`);
+            }
+
+            const dashboard = (await github.rest.issues.listForRepo({
+              owner, repo, state: 'open', per_page: 100,
+            })).data.filter((i) => i.title === TYTUL);
+
+            if (!zwloki.length) {
+              for (const i of dashboard) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: i.number,
+                  body: `Kazdy scalony PR z ostatnich ${OKNO_DNI} dni ma spojrzenie etatu. Zamykam.`,
+                });
+                await github.rest.issues.update({
+                  owner, repo, issue_number: i.number, state: 'closed',
+                });
+              }
+              core.info('Zaden etat nie przegapil swojego wyzwalacza.');
+              return;
+            }
+
+            const wiersze = zwloki.slice(0, 25).map((z) =>
+              `| ${z.przedmiot} | ${z.seat} | @${z.autor} | ${z.trigger} | ` +
+              TICK + (z.tytul || '').replace(/\|/g, '\\|').slice(0, 48) + TICK + ' |');
+
+            const podsumowanie = Object.entries(poEtacie)
+              .map(([s, n]) => `**${s}**: ${n}`).join(', ');
+
+            const body = [
+              `**${zwloki.length} przypadek(ow), gdzie wyzwalacz etatu zadzialal, a etat nie zostawil sladu.**`,
+              '',
+              `Wedlug etatu: ${podsumowanie}.`,
+              '',
+              'Ta lista nie jest zarzutem o jakosc pracy. Jest odpowiedzia na',
+              'pytanie, ktore 2026-09-01 musial zadac wlasciciel, bo zaden',
+              'przyrzad w tej firmie go nie zadawal: **czy etat, ktory MA',
+              'zdefiniowany wyzwalacz, faktycznie zadzialal, gdy ten wyzwalacz',
+              'wystrzelil.** Wlasnosc powierzchni byla mierzona; wykonanie nie.',
+              '',
+              '| Przedmiot | Etat | Autor | Wyzwalacz | Tytul |',
+              '|---|---|---|---|---|',
+              ...wiersze,
+              '',
+              '### Czego ta bramka NIE widzi',
+              '',
+              'Zapisane wprost, bo raport milczacy o wlasnym zasiegu klamie',
+              'przez pominiecie, a pomiaru niewykonanego nie wolno zapisac',
+              'jako zera.',
+              '',
+              `Stan wyjsciowy: **${historyczne}** PR-ow scalonych w tym oknie`,
+              `przed wlaczeniem bramki (${OD.slice(0, 10)}) nie ma zadnej recenzji.`,
+              'Nie sa wierszami wyzej, bo scalonego PR-a nie da sie juz',
+              'zrecenzowac - kolejka, ktorej nie da sie oproznic, przestaje byc',
+              'czytana. Ta liczba jest punktem odniesienia, nie zadaniem.',
+              '',
+              `Obsada liczy **${OBSADA_ETATOW} etatow** (odczyt ${OBSADA_ODCZYT}).`,
+              'Ta bramka karmi na razie **jedna** klase obowiazku - scalony PR',
+              'bez recenzji. Pozostale klasy sa w module zdefiniowane, ale',
+              '**niekarmione**, i cisza o nich nie znaczy "brak zwloki".',
+              '',
+              'Etaty, ktorych wyzwalacza API GitHuba w ogole nie pokazuje:',
+              '',
+              ...NIEOBSERWOWALNE.map((e) => `- ${TICK}${e.seat}${TICK} - ${e.powod}`),
+              '',
+              'Bramka nie blokuje scalenia i nie ma tego robic: wymaganych',
+              'recenzji jest zero celowo, a --auto jest droga, ktora praca',
+              'lada. Wykrywa i melduje.',
+              '',
+              '_To zgloszenie zamknie sie samo, gdy kolejka bedzie pusta._',
+            ].join(NL);
+
+            if (dashboard.length) {
+              await github.rest.issues.update({
+                owner, repo, issue_number: dashboard[0].number, body,
+              });
+              core.notice(`Zaktualizowano #${dashboard[0].number} - ${zwloki.length} w kolejce.`);
+            } else {
+              const issue = await github.rest.issues.create({
+                owner, repo, title: TYTUL, body, labels: ['raport'],
+              });
+              core.notice(`Utworzono ${issue.data.html_url}`);
+            }

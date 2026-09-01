@@ -402,6 +402,25 @@ jobs:
       - name: "Ostatni komentarz nie nasz: bramka i test na przypadku #265"
         run: node --test tools/unanswered-external.test.js
 
+  # Logika bramki "etat mial spojrzec i nie spojrzal" - uzywana przez job
+  # `etat-nie-spojrzal` w ready-for-approval.yml. Wydzielona i testowana tutaj
+  # z tego samego powodu co powyzsza: 2026-09-01 szesc scalonych PR-ow mialo
+  # zero recenzji i zauwazyl to wlasciciel, a nie zaden przyrzad. Bramka,
+  # ktorej nikt nie przetestowal na przypadku majacym ja wywolac, jest
+  # ozdoba - patrz tools/seat-obligations.test.js, ktory zawiera dane tych
+  # szesciu PR-ow.
+  seat-obligations:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: "Etat nie spojrzal: bramka i test na szesciu PR-ach z 2026-09-01"
+        run: node --test tools/seat-obligations.test.js
+
   zerosmtp-mcp:
     needs: changes
     if: needs.changes.outputs.code == 'true'
