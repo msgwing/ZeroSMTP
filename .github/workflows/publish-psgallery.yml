@@ -39,7 +39,7 @@ jobs:
       run:
         shell: pwsh
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       # Limit egzekwowany cudzym formularzem sprawdza sie u siebie - mechanika 4.
       # Gallery odrzuca skrypt bez poprawnego bloku PSScriptInfo, a komunikat

@@ -61,7 +61,7 @@ jobs:
       # tools/build-uptime-card.py is read from here; the publishing step
       # itself works in a temporary clone of the orphan `status` branch, which
       # does not contain it.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Check TCP + TLS connectivity
         id: check
