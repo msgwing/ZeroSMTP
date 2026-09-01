@@ -23,17 +23,31 @@ name: Publish a package to npm
 on:
   workflow_dispatch:
     inputs:
+      # No default that is a real package. A `choice` input always arrives
+      # pre-filled, so the field the dispatcher must think about was the one
+      # field they never had to touch - and twice, on 2026-08-30 and
+      # 2026-08-31, the run went out on `zerosmtp-check` and died on "already
+      # on npm" while the package that needed publishing sat at 1.0.1.
+      # The sentinel below cannot publish anything, so leaving the form alone
+      # now fails in four seconds with a sentence saying which field to set.
       package:
-        description: 'Which package under packages/ to publish'
+        description: 'Which package under packages/ to publish - you must change this'
         type: choice
         options:
+          - '-- wybierz pakiet / pick a package --'
           - zerosmtp-check
           - zerosmtp-mcp
-        default: zerosmtp-check
+        default: '-- wybierz pakiet / pick a package --'
+      # Was `true`. A default dry run means the ordinary, intended use of this
+      # workflow - publishing - requires unticking a box, and the first attempt
+      # on 2026-08-31 published nothing for exactly that reason. What actually
+      # protects a version is the republish guard below plus the fact that this
+      # workflow is manual only and needs NPM_TOKEN; neither depends on this
+      # box. Tick it when you want a dry run, which is the rarer case.
       dry_run:
-        description: 'Pack and validate without publishing'
+        description: 'Pack and validate without publishing (leave unticked to publish)'
         type: boolean
-        default: true
+        default: false
 
 permissions:
   contents: read
@@ -46,6 +60,19 @@ jobs:
       run:
         working-directory: packages/${{ inputs.package }}
     steps:
+      # Before the checkout, so a form left on its defaults costs four seconds
+      # and says why, instead of failing later on a message about the wrong
+      # package being already published.
+      - name: A package was actually chosen
+        if: ${{ startsWith(inputs.package, '--') }}
+        # The job's default working-directory is packages/<input>, which for
+        # the sentinel is not a directory and for anything else does not exist
+        # yet - this step runs before the checkout on purpose.
+        working-directory: ${{ github.workspace }}
+        run: |
+          echo "::error::Pole 'Which package under packages/ to publish' zostalo na wartosci domyslnej. Wybierz zerosmtp-check albo zerosmtp-mcp i uruchom ponownie."
+          exit 1
+
       - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v7
@@ -68,10 +95,14 @@ jobs:
       # Publishing something that does not work is worse than not publishing.
       # These are the same checks the lint workflow runs, repeated here so
       # that a manual dispatch cannot skip them.
+      # `< /dev/null` because zerosmtp-mcp/index.js is a stdio MCP server that
+      # reads stdin until EOF. It exits today only because Actions happens to
+      # give a `run` step a null stdin; that is the runner's property, not the
+      # step's, and the failure if it ever changes is a six-hour hang.
       - name: It runs
-        run: node index.js --help
+        run: node index.js --help < /dev/null
       - name: It reports a real result
-        run: node index.js --json || [ $? = 1 ]
+        run: node index.js --json < /dev/null || [ $? = 1 ]
 
       - name: Refuse to republish an existing version
         run: |
