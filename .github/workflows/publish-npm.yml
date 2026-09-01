@@ -135,3 +135,81 @@ jobs:
             echo "Published ${{ inputs.package }}@$v" >> "$GITHUB_STEP_SUMMARY"
             echo "https://www.npmjs.com/package/${{ inputs.package }}" >> "$GITHUB_STEP_SUMMARY"
           fi
+
+  # Publikacja do kanonicznego rejestru serwerow MCP.
+  #
+  # Dlaczego to nie jest kolejny katalog: `modelcontextprotocol/servers`
+  # (89 990 gwiazdek) WYCOFAL wlasna liste serwerow i w CONTRIBUTING.md
+  # odsyla tutaj, odmawiajac przyjmowania nowych. To jest polka, na ktora
+  # tamte gwiazdki kieruja ruch.
+  #
+  # Zmierzone 2026-09-01: `?search=smtp` w tym rejestrze zwraca `count: 0`.
+  # Ani jednego serwera SMTP. Brak progu gwiazdek, brak wymogu FLOSS.
+  #
+  # Dlaczego BEZ udzialu wlasciciela, wbrew temu, co przez pol dnia stalo
+  # w zgloszeniach #398 i #409: rejestr NIE wymaga device flow. Jego wlasne
+  # zrodlo, `cmd/publisher/auth/github-oidc.go`, mowi wprost
+  # "Login is not needed for OIDC since tokens are provided by GitHub
+  # Actions" i czyta ACTIONS_ID_TOKEN_REQUEST_TOKEN. Potrzebne jest tylko
+  # `id-token: write`, ktore ten workflow ma juz dla provenance npm.
+  # Instrukcja kazaca wlascicielowi sciagnac binarke i wpisac kod byla
+  # nieprzeczytana dokumentacja po naszej stronie, nie ograniczenie platformy.
+  #
+  # Osobne zadanie, nie krok w `publish`: publikacja do rejestru MUSI nastapic
+  # po npm, bo rejestr waliduje, ze wersja z server.json istnieje w npm.
+  mcp-registry:
+    needs: publish
+    if: ${{ inputs.package == 'zerosmtp-mcp' && inputs.dry_run == false }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    defaults:
+      run:
+        working-directory: packages/zerosmtp-mcp
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Pobierz mcp-publisher
+        run: |
+          set -euo pipefail
+          curl -fsSL -o publisher.tar.gz             "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz"
+          tar xf publisher.tar.gz mcp-publisher
+          chmod +x mcp-publisher
+          ./mcp-publisher --version || true
+
+      # Wersja w server.json musi juz byc na npm, inaczej rejestr odmowi.
+      # Sprawdzamy to sami, zeby komunikat mowil o przyczynie, a nie o skutku.
+      - name: Wersja z server.json jest na npm
+        run: |
+          set -euo pipefail
+          v=$(node -p "require('./server.json').version")
+          n=$(node -p "require('./server.json').packages[0].identifier")
+          if ! npm view "$n@$v" version >/dev/null 2>&1; then
+            echo "::error::server.json wskazuje $n@$v, a tej wersji nie ma na npm."
+            exit 1
+          fi
+          echo "$n@$v jest na npm."
+
+      - name: Zaloguj przez OIDC
+        run: ./mcp-publisher login github-oidc
+
+      - name: Opublikuj
+        run: ./mcp-publisher publish
+
+      # Mechanika 8: komunikat "Successfully published" nie jest dowodem.
+      # Dowodem jest odczyt z rejestru.
+      - name: Rejestr nas widzi
+        run: |
+          set -euo pipefail
+          for i in 1 2 3 4 5; do
+            n=$(curl -fsS "https://registry.modelcontextprotocol.io/v0/servers?search=zerosmtp" | node -p "JSON.parse(require('fs').readFileSync(0)).metadata.count")
+            echo "proba $i: count=$n"
+            if [ "$n" -ge 1 ]; then
+              echo "Rejestr zwraca $n wpis(ow) dla zerosmtp." >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::Publikacja zakonczyla sie bez bledu, ale rejestr nadal zwraca 0."
+          exit 1
