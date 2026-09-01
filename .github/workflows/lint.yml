@@ -420,6 +420,49 @@ jobs:
       # rather than here: a runner with 587 blocked would turn a working tool
       # into a red build, which is the wrong direction for a false alarm.
 
+  # Glama gates listing on `awesome-mcp-servers` (93,592 stars) behind a
+  # Dockerfile plus a passing introspection check - their bot said exactly that
+  # on our own pull request #13311 on 2026-08-31. `docker/mcp-registry` refuses
+  # us for the same missing file. Both venues take somebody's word for nothing,
+  # and neither should we: this builds the image and speaks MCP to it.
+  #
+  # The assertion is deliberately the protocol handshake rather than "the
+  # container started". A container that starts and answers nothing passes the
+  # first and fails the listing check - the failure that would otherwise be
+  # discovered by a stranger's bot rejecting us a second time.
+  mcp-container:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build the image
+        run: docker build -t zerosmtp-mcp:ci packages/zerosmtp-mcp
+
+      - name: It answers an MCP introspection request
+        run: |
+          set -euo pipefail
+          {
+            echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"ci","version":"0"}}}'
+          } | timeout 30 docker run -i --rm zerosmtp-mcp:ci > out.txt
+          cat out.txt
+          grep -q serverInfo out.txt
+          grep -q zerosmtp out.txt
+
+      - name: It lists all four tools
+        run: |
+          set -euo pipefail
+          {
+            echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"ci","version":"0"}}}'
+            echo '{"jsonrpc":"2.0","method":"notifications/initialized"}'
+            echo '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'
+          } | timeout 30 docker run -i --rm zerosmtp-mcp:ci > tools.txt
+          cat tools.txt
+          for tool in lookup_smtp_error check_device_oauth relay_settings check_relay_reachable; do
+            grep -q "$tool" tools.txt || { echo "::error::$tool missing from tools/list"; exit 1; }
+          done
+
   zerosmtp-check:
     needs: changes
     if: needs.changes.outputs.code == 'true'
