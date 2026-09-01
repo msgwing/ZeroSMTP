@@ -58,6 +58,40 @@ jobs:
             echo "code=false" >> "$GITHUB_OUTPUT"
           fi
 
+  # Six pull requests reached main on 2026-08-31 and 2026-09-01 with zero
+  # reviews between them - among them a fork PR from an outsider, a new CI
+  # job, and a version bump that leads to a permanent npm publish. Merges land
+  # on `--squash --auto`, so checks were the only gate, and no check asked
+  # whether anybody had decided anything.
+  #
+  # This does not require a review on every pull request; that would stall a
+  # repository that merges on checks by design, and most of what ships here is
+  # a page a later commit can correct. It refuses a named list instead - the
+  # changes whose cost, when they are wrong, is not paid by a later commit.
+  # Replayed against those six: it catches five, each by a different class,
+  # and lets #396 through, which is the one that was purely reversible.
+  #
+  # Same SHA pair the `changes` job uses, for the same reason: for a
+  # pull_request event github.sha is the merge commit, so fetch-depth 2 has
+  # both sides.
+  board-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: A change in a reviewed class carries a board verdict
+        env:
+          BAZA_SHA: ${{ github.event.pull_request.base.sha }}
+          GLOWA_SHA: ${{ github.sha }}
+          TRESC_PR: ${{ github.event.pull_request.body }}
+          Z_FORKA: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+        run: python tools/check-board-review.py
+
   device-table:
     runs-on: ubuntu-latest
     steps:
