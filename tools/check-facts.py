@@ -16,11 +16,13 @@ whether the project gets recommended.
 
 So the claims that appear on more than one page live in data/facts.json with
 the phrasings that contradict them, and this refuses a build where any page
-carries one.
+carries one. It also verifies that all device panel codes defined in the CLI
+generator are documented in docs/.
 
     python tools/check-facts.py
 """
 
+import importlib.util
 import json
 import pathlib
 import re
@@ -67,7 +69,51 @@ def sciezki():
             yield p
 
 
+def check_device_codes_documented() -> bool:
+    """Verify that every hardware device code defined in KODY_URZADZEN
+    (tools/build-cli-errors.py) appears in at least one documentation page under docs/.
+    This enforces the invariant stated in build-cli-errors.py:
+    'These come from docs/errors/ where they are already published; this is not a new claim.'
+    """
+    generator_path = KORZEN / "tools" / "build-cli-errors.py"
+    if not generator_path.exists():
+        return True
+
+    spec = importlib.util.spec_from_file_location("build_cli_errors", generator_path)
+    if not spec or not spec.loader:
+        return True
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    kody = getattr(mod, "KODY_URZADZEN", {})
+
+    docs_dir = KORZEN / "docs"
+    if not docs_dir.exists():
+        return True
+
+    tresci = [p.read_text(encoding="utf-8", errors="replace") for p in docs_dir.rglob("*.md")]
+    calosc = chr(10).join(tresci)
+
+    brakujace = []
+    for kod, info in kody.items():
+        wzorzec = re.compile(rf"(?<![A-Za-z0-9]){re.escape(kod)}(?![A-Za-z0-9])")
+        if not wzorzec.search(calosc):
+            brakujace.append((kod, info.get("vendor", "Unknown")))
+
+    if brakujace:
+        print("Device panel codes in tools/build-cli-errors.py not documented under docs/:")
+        for kod, vendor in brakujace:
+            print(f"  {kod} ({vendor})")
+        print()
+        print("Add a corresponding entry to data/devices.json and rebuild the table,")
+        print("or document the code in docs/ before publishing it to the CLI.")
+        return False
+
+    return True
+
+
 def main():
+    ok_kody = check_device_codes_documented()
+
     dane = json.loads(DANE.read_text(encoding="utf-8"))
     fakty = dane["facts"]
 
@@ -106,6 +152,9 @@ def main():
         print("Fix it in the generator, not the page, or the next build puts it")
         print("back. If the claim itself has changed, change data/facts.json and")
         print("say where the new wording was verified.")
+        return 1
+
+    if not ok_kody:
         return 1
 
     print(f"{len(fakty)} shared claims, no page contradicts one.")

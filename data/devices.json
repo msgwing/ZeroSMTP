@@ -255,6 +255,21 @@
       "notes": "Zabbix 7.4 introduced OAuth 2.0 authentication for SMTP, including automated OAuth configuration for Office365 and Gmail. Verify the Zabbix version and Office365 SmtpClientAuthentication configuration before assuming Microsoft 365 SMTP AUTH compatibility.",
       "contributor": "Mohitingale13",
       "contributor_pr": 289
+    },
+    {
+      "vendor": "Xerox",
+      "product": "MFPs reporting send error 027-779",
+      "status": "check-advisory",
+      "models": [
+        "WorkCentre 7328",
+        "WorkCentre 7335",
+        "WorkCentre 7345",
+        "WorkCentre 7346"
+      ],
+      "evidence": "https://www.support.xerox.com/en-us/article/KB0238716",
+      "notes": "027-779 is Xerox's device-side code for an SMTP authentication failure on WorkCentre 7328/7335/7345/7346 and related MFPs. No public per-model OAuth statement located; check with the vendor for a specific model.",
+      "contributor": "Mohitingale13",
+      "contributor_pr": 408
     }
   ]
 }

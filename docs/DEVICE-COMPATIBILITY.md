@@ -52,6 +52,7 @@ answer.
 | **[Ricoh](devices/ricoh-multifunction-printers.md)** multifunction printers | Check vendor advisory | — | [advisory](https://www.ricoh.com/info/2025/0526_1) |
 | **[Synology](devices/synology-nas-notification-email.md)** NAS notification email | Check vendor advisory | — | [advisory](https://kb.synology.com/en-us/DSM/help/DSM/AdminCenter/system_notification_email?version=7) |
 | **[Toshiba](devices/toshiba-printers-and-mfps.md)** printers and MFPs | Check vendor advisory | — | [advisory](https://www.toshibatec.com/information/20260113_01.html) |
+| **[Xerox](devices/xerox-mfps-reporting-send-error-027-779.md)** MFPs reporting send error 027-779 | Check vendor advisory | `WorkCentre 7328`, `WorkCentre 7335`, `WorkCentre 7345`, `WorkCentre 7346` | [advisory](https://www.support.xerox.com/en-us/article/KB0238716) |
 | **[Microsoft](devices/microsoft-teams-rooms.md)** Teams Rooms | OAuth available | — | [advisory](https://learn.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/deprecation-of-basic-authentication-exchange-online) |
 | **[Sophos](devices/sophos-sophos-firewall-email-alerts-and-reports.md)** Sophos Firewall (email alerts and reports) | OAuth available | `Sophos Firewall 22.0`, `Sophos Firewall 20.0` | [advisory](https://docs.sophos.com/nsg/sophos-firewall/22.0/Help/en-us/webhelp/onlinehelp/AdministratorHelp/Administration/HowToArticles/NotificationsConfigureMicrosoft365/) |
 
@@ -120,13 +121,16 @@ Synology DSM 7 supports Outlook as an email notification service with an interac
 **Toshiba — printers and MFPs**  
 Toshiba Tec publishes a model-by-model Exchange Online OAuth 2.0 compatibility table for its MFPs, including firmware release information, compatible models, pending firmware updates, and explicitly incompatible models. Verify the exact model and current firmware status against Toshiba's published advisory before assuming Microsoft 365 SMTP AUTH compatibility.
 
+**Xerox — MFPs reporting send error 027-779**  
+027-779 is Xerox's device-side code for an SMTP authentication failure on WorkCentre 7328/7335/7345/7346 and related MFPs. No public per-model OAuth statement located; check with the vendor for a specific model.
+
 **Microsoft — Teams Rooms**  
 Microsoft's own product. Enable modern auth on the resource account - no relay needed.
 
 **Sophos — Sophos Firewall (email alerts and reports)**  
 Sophos publishes an official guide 'Configure OAuth 2.0 on Microsoft 365' for Sophos Firewall 22.0: register the firewall as an app in Microsoft Entra, add delegated SMTP.Send + offline_access permissions, turn on Authenticated SMTP for the sending user, and configure notifications with client ID / secret / refresh token. Confirms Modern (OAuth 2.0) SMTP AUTH support; availability depends on the firewall version.
 
-*23 entries, last reviewed 2026-08-27.*
+*24 entries, last reviewed 2026-08-27.*
 
 <!-- END GENERATED TABLE -->
 
