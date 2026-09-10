@@ -10,7 +10,8 @@
     "office365",
     "exchange-online",
     "smtp-auth",
-    "5.7.139"
+    "5.7.139",
+    "basic-authentication"
   ],
   "bin": {
     "zerosmtp-mcp": "index.js"
