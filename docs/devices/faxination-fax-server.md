@@ -1,6 +1,6 @@
 ---
 title: "Faxination: fax server"
-description: "Faxination fax server and the Microsoft 365 SMTP AUTH shutdown: check vendor advisory, with a link to the vendor's own statement and what to do if firmware is not an option."
+description: "Faxination fax server and the Microsoft 365 SMTP AUTH shutdown: some models or versions, with a link to the vendor's own statement and what to do if firmware is not an option."
 ---
 
 <!-- BEGIN GENERATED PAGE -->
@@ -9,13 +9,13 @@ description: "Faxination fax server and the Microsoft 365 SMTP AUTH shutdown: ch
 
 # Faxination fax server: OAuth 2.0 and Microsoft 365 SMTP AUTH
 
-**Status: Check vendor advisory**
+**Status: Some models or versions**
 
-The vendor publishes a per-model list and revises it over time, so it is not copied here; a stale second copy of a moving list is exactly how somebody ends up acting on the wrong row. Check your exact model against the vendor's own page.
+OAuth exists for part of the range. The model or version number decides, which means the answer for your unit is not the answer for the product line — check yours against the vendor's statement before planning either way.
 
 ## What the vendor says
 
-Vendor published a timeline notice. Apply their update if one exists for the version in use; otherwise the outbound SMTP account has to be repointed.
+Fenestrae states that "Faxination 2024 supports Modern Authentication (OAuth 2.0) for Microsoft 365 and Exchange Online", so for this product the answer is a version number rather than a firmware wait; older installs still have to repoint the outbound SMTP account. Read the timeline on the same page with care - it still describes the superseded March-April 2026 schedule rather than the current one.
 
 [Read the vendor's statement in full](https://faxination.com/microsoft-timeline-for-basic-authentication-deprecation-in-exchange-online-smtp-auth/)  
 Everything on this page comes from that document. If it and this page disagree, the vendor is right and this page is out of date — [say so](https://github.com/msgwing/ZeroSMTP/issues/new?template=device_report.yml).
@@ -40,4 +40,4 @@ ZeroSMTP is the second option. It is free with no paid tier, accepts plain SMTP 
 - [The full compatibility list](../DEVICE-COMPATIBILITY.md) — every vendor, in one table
 - [Setup by printer brand](../PRINTERS.md) — where the SMTP fields actually live in each vendor's interface
 
-*Last reviewed 2026-08-27. Source: [`data/devices.json`](https://github.com/msgwing/ZeroSMTP/blob/main/data/devices.json).*
+*Last reviewed 2026-09-07. Source: [`data/devices.json`](https://github.com/msgwing/ZeroSMTP/blob/main/data/devices.json).*

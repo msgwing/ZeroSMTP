@@ -1,6 +1,6 @@
 ---
 title: "Laserfiche: Workflow email"
-description: "Laserfiche Workflow email and the Microsoft 365 SMTP AUTH shutdown: check vendor advisory, with a link to the vendor's own statement and what to do if firmware is not an option."
+description: "Laserfiche Workflow email and the Microsoft 365 SMTP AUTH shutdown: some models or versions, with a link to the vendor's own statement and what to do if firmware is not an option."
 ---
 
 <!-- BEGIN GENERATED PAGE -->
@@ -9,13 +9,13 @@ description: "Laserfiche Workflow email and the Microsoft 365 SMTP AUTH shutdown
 
 # Laserfiche Workflow email: OAuth 2.0 and Microsoft 365 SMTP AUTH
 
-**Status: Check vendor advisory**
+**Status: Some models or versions**
 
-The vendor publishes a per-model list and revises it over time, so it is not copied here; a stale second copy of a moving list is exactly how somebody ends up acting on the wrong row. Check your exact model against the vendor's own page.
+OAuth exists for part of the range. The model or version number decides, which means the answer for your unit is not the answer for the product line — check yours against the vendor's statement before planning either way.
 
 ## What the vendor says
 
-Workflow emails failing on Basic auth removal, reported in the vendor's own community.
+Laserfiche now answers this thread directly. The selected answer: "Customers must upgrade to the Laserfiche Workflow 12 2025H1 release or later to use OAuth 2.0 for SMTP through Exchange Online. There are no current plans to backport OAuth support for Exchange Online SMTP to earlier versions of Workflow." The approved answer, updated April 2026, adds that "version 12 Laserfiche products support Microsoft OAuth 2.0", and that for v10.4, v11 and v12 installs which cannot upgrade, Laserfiche has confirmed Microsoft's own alternatives instead - High Volume Email, Azure Communication Services Email, or on-premises Exchange in a hybrid configuration.
 
 [Read the vendor's statement in full](https://answers.laserfiche.com/questions/200557/Disabling-basic-authentication-causing-Workflow-emails-to-fail)  
 Everything on this page comes from that document. If it and this page disagree, the vendor is right and this page is out of date — [say so](https://github.com/msgwing/ZeroSMTP/issues/new?template=device_report.yml).
@@ -40,4 +40,4 @@ ZeroSMTP is the second option. It is free with no paid tier, accepts plain SMTP 
 - [The full compatibility list](../DEVICE-COMPATIBILITY.md) — every vendor, in one table
 - [Setup by printer brand](../PRINTERS.md) — where the SMTP fields actually live in each vendor's interface
 
-*Last reviewed 2026-08-27. Source: [`data/devices.json`](https://github.com/msgwing/ZeroSMTP/blob/main/data/devices.json).*
+*Last reviewed 2026-09-07. Source: [`data/devices.json`](https://github.com/msgwing/ZeroSMTP/blob/main/data/devices.json).*

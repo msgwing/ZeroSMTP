@@ -15,9 +15,9 @@ OAuth exists for part of the range. The model or version number decides, which m
 
 ## What the vendor says
 
-Sharp documents OAuth 2.0 authentication for Microsoft 365 and Exchange Online SMTP on multiple newer printer and MFP models, including BP-series devices. Sharp does not appear to publish a centralized compatibility list or universal firmware floor for the full printer/MFP range. Verify the exact model's SMTP settings or current manual before assuming OAuth 2.0 support.
+Sharp documents OAuth 2.0 for SMTP in the machine manual rather than in a compatibility advisory: under Network Settings the SMTP "Authentication Method" reads "Select OAuth 2.0 when using Microsoft365, Exchange Online, etc.", with Provider defaulting to Microsoft and a Get Token key on the device. The same option appears on the POP3 side for Internet Fax reception. Sharp does not appear to publish a centralized compatibility list or a universal firmware floor for the full printer/MFP range, so verify the exact model's current manual before assuming OAuth 2.0 support.
 
-[Read the vendor's statement in full](https://global.sharp/restricted/products/copier/downloads/manuals/bp70m65/us/contents_09-07_003.html)  
+[Read the vendor's statement in full](https://global.sharp/restricted/print/manuals/5/bp70m65/us/contents_09-07_018.html)  
 Everything on this page comes from that document. If it and this page disagree, the vendor is right and this page is out of date — [say so](https://github.com/msgwing/ZeroSMTP/issues/new?template=device_report.yml).
 
 ## What to do instead
@@ -42,4 +42,4 @@ ZeroSMTP is the second option. It is free with no paid tier, accepts plain SMTP 
 - [The full compatibility list](../DEVICE-COMPATIBILITY.md) — every vendor, in one table
 - [Setup by printer brand](../PRINTERS.md) — where the SMTP fields actually live in each vendor's interface
 
-*Last reviewed 2026-08-27. Source: [`data/devices.json`](https://github.com/msgwing/ZeroSMTP/blob/main/data/devices.json).*
+*Last reviewed 2026-09-07. Source: [`data/devices.json`](https://github.com/msgwing/ZeroSMTP/blob/main/data/devices.json).*

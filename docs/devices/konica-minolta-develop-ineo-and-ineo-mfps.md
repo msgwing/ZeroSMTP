@@ -15,7 +15,7 @@ The vendor has stated that no OAuth firmware is coming for these models. This is
 
 ## What the vendor says
 
-Marked "N/A" in the vendor's own OAuth column. The advisory points these owners at a different mail service rather than at an update. Other ineo product groups in the same advisory do have OAuth firmware - check the exact model. A third category exists that is neither: several Product Group 10 models are listed as "Under planning" with no release date, so their owners have no answer yet in either direction.
+Marked "N/A" in the vendor's own OAuth column, and the advisory states that "for devices marked as N/A under Release Schedule and devices not listed, no firmware update is planned". It points these owners at a different mail service rather than at an update. One suffix decides: ineo 165en and ineo 185en are listed as Released (V3.00) while ineo 165/165e and 185/185e are N/A. Other ineo product groups in the same advisory do have OAuth firmware - check the exact model. A third category exists that is neither: several Product Group 10 models are listed as "Under planning" with no release date, so their owners have no answer yet in either direction.
 
 [Read the vendor's statement in full](https://www.develop.eu/en/support/discontinuation-of-basic-authentication-for-smtp.html)  
 Everything on this page comes from that document. If it and this page disagree, the vendor is right and this page is out of date — [say so](https://github.com/msgwing/ZeroSMTP/issues/new?template=device_report.yml).
@@ -36,15 +36,22 @@ Everything on this page comes from that document. If it and this page disagree, 
 - `ineo+ 3100P`
 - `ineo+ 754e`
 - `ineo+ 654e`
+- `ineo 654e`
+- `ineo 226`
 - `ineo 246`
 - `ineo 236`
-- `ineo 226`
 - `ineo 216`
+- `ineo 7223`
+- `ineo 206`
 - `ineo 4700P`
 - `ineo 3301P`
 - `ineo 4000P`
-- `ineo 165 variants`
-- `ineo 185 variants`
+- `ineo 4020`
+- `ineo 3320`
+- `ineo 165`
+- `ineo 165e`
+- `ineo 185`
+- `ineo 185e`
 
 A model missing from this list is not automatically safe. Vendors publish headline lists; regional variants and OEM rebadges drift away from them.
 
@@ -68,4 +75,4 @@ ZeroSMTP is the second option. It is free with no paid tier, accepts plain SMTP 
 - [The full compatibility list](../DEVICE-COMPATIBILITY.md) — every vendor, in one table
 - [Setup by printer brand](../PRINTERS.md) — where the SMTP fields actually live in each vendor's interface
 
-*Last reviewed 2026-08-27. Source: [`data/devices.json`](https://github.com/msgwing/ZeroSMTP/blob/main/data/devices.json).*
+*Last reviewed 2026-09-07. Source: [`data/devices.json`](https://github.com/msgwing/ZeroSMTP/blob/main/data/devices.json).*

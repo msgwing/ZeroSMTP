@@ -21,13 +21,21 @@ service rather than at an update:
 
 - ineo 306, ineo 7228, ineo 266
 - ineo+ 266, ineo+ 256, ineo+ 226
+- ineo 4752, ineo 4052
 - ineo 4750, ineo 4050
+- ineo+ 3110, ineo+ 3100P
+- ineo+ 754e, ineo+ 654e, ineo 654e
+- ineo 226, ineo 246, ineo 236, ineo 216, ineo 7223, ineo 206
 - ineo 4700P, ineo 3301P, ineo 4000P
-- ineo 165 and ineo 185 variants
+- ineo 4020, ineo 3320
+- ineo 165, ineo 165e
+- ineo 185, ineo 185e
 
 Check your exact model against the advisory before concluding anything — the
 lists are long, similar model numbers land in different groups, and a digit
-decides whether an update exists for you.
+decides whether an update exists for you. A suffix decides too: **ineo 165en
+and ineo 185en are not on this list** — the vendor marks both as Released on
+firmware V3.00, while ineo 165/165e and ineo 185/185e stay "N/A".
 
 **What "N/A" means in practice.** The device will keep speaking SMTP with a
 username and password for as long as it runs. What stops working is the
@@ -43,9 +51,10 @@ Notifications as affected.
 
 OAuth firmware exists for the supported list — Device Code Flow broadly, and
 Client Credentials Flow only on ConnectKey models such as VersaLink
-B415/C415, B620/C620, B625/C625, AltaLink and PrimeLink. **Devices that are
-not on that list are the problem cases**, and Xerox does not promise them an
-update.
+B415/C415, B620/C620, B625/C625 and AltaLink. PrimeLink is on the Device Code
+Flow side only; Xerox's table reads "Not Available" in the Client Credential
+Flow column for every PrimeLink row. **Devices that are not on that list are
+the problem cases**, and Xerox does not promise them an update.
 
 ## Ricoh
 

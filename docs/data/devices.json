@@ -16,7 +16,7 @@
     "  check-advisory  vendor publishes a per-model list we do not reproduce",
     "  unsupported     the product has no OAuth capability for this purpose"
   ],
-  "updated": "2026-08-27",
+  "updated": "2026-09-07",
   "entries": [
     {
       "vendor": "Konica Minolta / DEVELOP",
@@ -37,18 +37,25 @@
         "ineo+ 3100P",
         "ineo+ 754e",
         "ineo+ 654e",
+        "ineo 654e",
+        "ineo 226",
         "ineo 246",
         "ineo 236",
-        "ineo 226",
         "ineo 216",
+        "ineo 7223",
+        "ineo 206",
         "ineo 4700P",
         "ineo 3301P",
         "ineo 4000P",
-        "ineo 165 variants",
-        "ineo 185 variants"
+        "ineo 4020",
+        "ineo 3320",
+        "ineo 165",
+        "ineo 165e",
+        "ineo 185",
+        "ineo 185e"
       ],
       "evidence": "https://www.develop.eu/en/support/discontinuation-of-basic-authentication-for-smtp.html",
-      "notes": "Marked \"N/A\" in the vendor's own OAuth column. The advisory points these owners at a different mail service rather than at an update. Other ineo product groups in the same advisory do have OAuth firmware - check the exact model. A third category exists that is neither: several Product Group 10 models are listed as \"Under planning\" with no release date, so their owners have no answer yet in either direction."
+      "notes": "Marked \"N/A\" in the vendor's own OAuth column, and the advisory states that \"for devices marked as N/A under Release Schedule and devices not listed, no firmware update is planned\". It points these owners at a different mail service rather than at an update. One suffix decides: ineo 165en and ineo 185en are listed as Released (V3.00) while ineo 165/165e and 185/185e are N/A. Other ineo product groups in the same advisory do have OAuth firmware - check the exact model. A third category exists that is neither: several Product Group 10 models are listed as \"Under planning\" with no release date, so their owners have no answer yet in either direction."
     },
     {
       "vendor": "Xerox",
@@ -61,11 +68,10 @@
         "VersaLink C620",
         "VersaLink B625",
         "VersaLink C625",
-        "AltaLink",
-        "PrimeLink"
+        "AltaLink"
       ],
       "evidence": "https://www.xerox.com/en-us/office/insights/exchange-online-authentication",
-      "notes": "Device Code Flow is supported broadly; Client Credentials Flow only on the ConnectKey models listed. Devices not on Xerox's supported-firmware list are the problem cases and are not promised an update. Affects Scan to Email, Internet Fax (Send), Fax Forward to Email and Auto Email Notifications."
+      "notes": "Device Code Flow is available now across the whole published range; Client Credentials Flow only on the ConnectKey models listed here. PrimeLink is not one of them - Xerox's table marks PrimeLink C9065/C9070, B9100/B9110/B9125/B9136 and C9265/C9275/C9281 as \"Not Available\" in the Client Credential Flow column. Devices not on Xerox's supported-firmware list are the problem cases and are not promised an update. Affects Scan to Email, Internet Fax (Send), Fax Forward to Email and Auto Email Notifications."
     },
     {
       "vendor": "Ricoh",
@@ -73,7 +79,7 @@
       "status": "check-advisory",
       "models": [],
       "evidence": "https://www.ricoh.com/info/2025/0526_1",
-      "notes": "Ricoh publishes affected products with per-product firmware status, revised on 2026-01-30 into two tables - products with released OAuth firmware, and products newly added - plus a third group the Ricoh Firmware Update Tool cannot update, where the local representative has to do it. Not reproduced here because the list is long and still moving; check the model against the advisory. Ricoh does not say any product is permanently excluded, but for devices still waiting its own recommendation is to stop relying on email from the device or to use a mail service other than Exchange Online."
+      "notes": "Ricoh publishes affected products with per-product firmware status, last updated 2026-02-06, in two tables - products with released OAuth firmware, and products added as of 2026-01-30 - plus a third group the Ricoh Firmware Update Tool cannot update, where the local representative has to do it. Not reproduced here because the list is long and still moving; check the model against the advisory. Firmware is not the end of it: because \"the TLS cipher suites supported by Microsoft 365 will be updated\", Ricoh warns that \"some Ricoh products - including models that already support OAuth 2.0 authentication - will no longer be able to send or receive emails via Exchange Online\". Ricoh does not say any product is permanently excluded, but for devices still waiting its own recommendation is to stop relying on email from the device or to use a mail service other than Exchange Online."
     },
     {
       "vendor": "Brother",
@@ -144,10 +150,10 @@
     {
       "vendor": "Laserfiche",
       "product": "Workflow email",
-      "status": "check-advisory",
+      "status": "partial",
       "models": [],
       "evidence": "https://answers.laserfiche.com/questions/200557/Disabling-basic-authentication-causing-Workflow-emails-to-fail",
-      "notes": "Workflow emails failing on Basic auth removal, reported in the vendor's own community."
+      "notes": "Laserfiche now answers this thread directly. The selected answer: \"Customers must upgrade to the Laserfiche Workflow 12 2025H1 release or later to use OAuth 2.0 for SMTP through Exchange Online. There are no current plans to backport OAuth support for Exchange Online SMTP to earlier versions of Workflow.\" The approved answer, updated April 2026, adds that \"version 12 Laserfiche products support Microsoft OAuth 2.0\", and that for v10.4, v11 and v12 installs which cannot upgrade, Laserfiche has confirmed Microsoft's own alternatives instead - High Volume Email, Azure Communication Services Email, or on-premises Exchange in a hybrid configuration."
     },
     {
       "vendor": "ManageEngine",
@@ -160,18 +166,18 @@
     {
       "vendor": "Cerberus",
       "product": "FTP Server",
-      "status": "check-advisory",
+      "status": "partial",
       "models": [],
       "evidence": "https://support.cerberusftp.com/hc/en-us/articles/24103821642643-Troubleshooting-SMTP-Setup-Error-on-Office365-com-Resolving-EHLO-Message-Failure-535-5-7-139-Authentication-Unsuccessful-Basic-Authentication-Disabled",
-      "notes": "Vendor support article covers the exact 535 5.7.139 failure."
+      "notes": "The vendor article on the exact 535 5.7.139 failure now answers it: \"Microsoft deprecated Basic Authentication as the default setting for O365 in October of 2023 and Cerberus now supports Microsoft OAuth2 for O365 SMTP Authentication.\" The current SMTP setup article documents an Authentication selector on the SMTP target with a Microsoft OAuth2 option taking tenant ID, application (client) ID and client secret from Entra ID, and describes Basic as the same functionality as the previous Use Authentication checkbox \"(prior to Cerberus 2025.3.0)\" - so the build decides. Older builds offer username and password only."
     },
     {
       "vendor": "Faxination",
       "product": "fax server",
-      "status": "check-advisory",
+      "status": "partial",
       "models": [],
       "evidence": "https://faxination.com/microsoft-timeline-for-basic-authentication-deprecation-in-exchange-online-smtp-auth/",
-      "notes": "Vendor published a timeline notice. Apply their update if one exists for the version in use; otherwise the outbound SMTP account has to be repointed."
+      "notes": "Fenestrae states that \"Faxination 2024 supports Modern Authentication (OAuth 2.0) for Microsoft 365 and Exchange Online\", so for this product the answer is a version number rather than a firmware wait; older installs still have to repoint the outbound SMTP account. Read the timeline on the same page with care - it still describes the superseded March-April 2026 schedule rather than the current one."
     },
     {
       "vendor": "Lexmark",
@@ -200,8 +206,8 @@
       "product": "printers and MFPs",
       "status": "partial",
       "models": [],
-      "evidence": "https://global.sharp/restricted/products/copier/downloads/manuals/bp70m65/us/contents_09-07_003.html",
-      "notes": "Sharp documents OAuth 2.0 authentication for Microsoft 365 and Exchange Online SMTP on multiple newer printer and MFP models, including BP-series devices. Sharp does not appear to publish a centralized compatibility list or universal firmware floor for the full printer/MFP range. Verify the exact model's SMTP settings or current manual before assuming OAuth 2.0 support.",
+      "evidence": "https://global.sharp/restricted/print/manuals/5/bp70m65/us/contents_09-07_018.html",
+      "notes": "Sharp documents OAuth 2.0 for SMTP in the machine manual rather than in a compatibility advisory: under Network Settings the SMTP \"Authentication Method\" reads \"Select OAuth 2.0 when using Microsoft365, Exchange Online, etc.\", with Provider defaulting to Microsoft and a Get Token key on the device. The same option appears on the POP3 side for Internet Fax reception. Sharp does not appear to publish a centralized compatibility list or a universal firmware floor for the full printer/MFP range, so verify the exact model's current manual before assuming OAuth 2.0 support.",
       "contributor": "Mohitingale13",
       "contributor_pr": 238
     },

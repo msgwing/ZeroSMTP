@@ -1,6 +1,6 @@
 ---
 title: "Cerberus: FTP Server"
-description: "Cerberus FTP Server and the Microsoft 365 SMTP AUTH shutdown: check vendor advisory, with a link to the vendor's own statement and what to do if firmware is not an option."
+description: "Cerberus FTP Server and the Microsoft 365 SMTP AUTH shutdown: some models or versions, with a link to the vendor's own statement and what to do if firmware is not an option."
 ---
 
 <!-- BEGIN GENERATED PAGE -->
@@ -9,13 +9,13 @@ description: "Cerberus FTP Server and the Microsoft 365 SMTP AUTH shutdown: chec
 
 # Cerberus FTP Server: OAuth 2.0 and Microsoft 365 SMTP AUTH
 
-**Status: Check vendor advisory**
+**Status: Some models or versions**
 
-The vendor publishes a per-model list and revises it over time, so it is not copied here; a stale second copy of a moving list is exactly how somebody ends up acting on the wrong row. Check your exact model against the vendor's own page.
+OAuth exists for part of the range. The model or version number decides, which means the answer for your unit is not the answer for the product line — check yours against the vendor's statement before planning either way.
 
 ## What the vendor says
 
-Vendor support article covers the exact 535 5.7.139 failure.
+The vendor article on the exact 535 5.7.139 failure now answers it: "Microsoft deprecated Basic Authentication as the default setting for O365 in October of 2023 and Cerberus now supports Microsoft OAuth2 for O365 SMTP Authentication." The current SMTP setup article documents an Authentication selector on the SMTP target with a Microsoft OAuth2 option taking tenant ID, application (client) ID and client secret from Entra ID, and describes Basic as the same functionality as the previous Use Authentication checkbox "(prior to Cerberus 2025.3.0)" - so the build decides. Older builds offer username and password only.
 
 [Read the vendor's statement in full](https://support.cerberusftp.com/hc/en-us/articles/24103821642643-Troubleshooting-SMTP-Setup-Error-on-Office365-com-Resolving-EHLO-Message-Failure-535-5-7-139-Authentication-Unsuccessful-Basic-Authentication-Disabled)  
 Everything on this page comes from that document. If it and this page disagree, the vendor is right and this page is out of date — [say so](https://github.com/msgwing/ZeroSMTP/issues/new?template=device_report.yml).
@@ -40,4 +40,4 @@ ZeroSMTP is the second option. It is free with no paid tier, accepts plain SMTP 
 - [The full compatibility list](../DEVICE-COMPATIBILITY.md) — every vendor, in one table
 - [Setup by printer brand](../PRINTERS.md) — where the SMTP fields actually live in each vendor's interface
 
-*Last reviewed 2026-08-27. Source: [`data/devices.json`](https://github.com/msgwing/ZeroSMTP/blob/main/data/devices.json).*
+*Last reviewed 2026-09-07. Source: [`data/devices.json`](https://github.com/msgwing/ZeroSMTP/blob/main/data/devices.json).*
