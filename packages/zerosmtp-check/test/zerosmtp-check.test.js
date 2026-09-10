@@ -109,6 +109,25 @@ describe('zerosmtp-check', () => {
       assert.equal(result.matched, false);
       assert.equal(result.matches.length, 0);
     });
+
+    test('#423: a foreign reply code sharing an enhanced code with the corpus is not matched', () => {
+      // 5.7.1 is Microsoft's 530 in the corpus. Our own relay's 553 shares the
+      // same enhanced code but is a different server's refusal - matching by
+      // 5.7.1 alone answered with Microsoft's 530 explanation, confidently and
+      // wrongly, for an error the corpus does not contain.
+      const result = explain('553 5.7.1 Sender address rejected');
+      assert.ok(result.startsWith('No match for that one.'));
+      assert.ok(!result.includes('530'));
+
+      const json = explainJson('553 5.7.1 Sender address rejected');
+      assert.equal(json.matched, false);
+      assert.equal(json.matches.length, 0);
+    });
+
+    test('#423: the real Microsoft 530 5.7.1 still matches', () => {
+      const result = explain('530 5.7.1 Delivery not authorized');
+      assert.ok(result.startsWith('530 5.7.1'));
+    });
   });
 
   describe('CLI integration', () => {

@@ -312,6 +312,21 @@ function enhancedCode(text) {
   return m ? m[1] : null;
 }
 
+/** The reply code (530, 553, ...) right before the enhanced code. Every entry
+ *  in the corpus is Microsoft's, so a reply code the corpus does not record
+ *  for this enhanced code means the pasted line came from somewhere else -
+ *  our own relay's 553 shares 5.7.1 with Microsoft's 530, and looks like a
+ *  match right up until this is checked. Refusing beats guessing: see #423. */
+function replyCode(text) {
+  const m = text.match(/\b([2-5]\d{2})\s+\d\.\d\.\d{1,3}\b/);
+  return m ? m[1] : null;
+}
+
+function contradictsCorpus(matches, text) {
+  const reply = replyCode(text);
+  return reply !== null && !matches.some(e => e.code.startsWith(reply + ' '));
+}
+
 /** Several entries share 5.7.139 and differ only in whether the block sits on
  *  the tenant or the mailbox. If the pasted text says which, use it. */
 function narrowByScope(matches, lower) {
@@ -389,7 +404,8 @@ export function explain(text) {
 
   const code = enhancedCode(text);
   if (code) {
-    const matches = narrowByScope(ERRORS.filter(e => e.enhanced === code), lower);
+    const byCode = ERRORS.filter(e => e.enhanced === code);
+    const matches = contradictsCorpus(byCode, text) ? [] : narrowByScope(byCode, lower);
     if (matches.length === 1) return explainMatch(matches[0]);
     if (matches.length > 1) {
       out.push(`${code} covers more than one case and the text you pasted does `
@@ -439,8 +455,9 @@ export function explain(text) {
 
 export function explainJson(text) {
   const code = enhancedCode(text);
-  const matches = code
-    ? narrowByScope(ERRORS.filter(e => e.enhanced === code), text.toLowerCase())
+  const byCode = code ? ERRORS.filter(e => e.enhanced === code) : [];
+  const matches = code && !contradictsCorpus(byCode, text)
+    ? narrowByScope(byCode, text.toLowerCase())
     : [];
   return {
     input: text,
