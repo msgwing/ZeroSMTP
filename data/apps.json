@@ -337,6 +337,52 @@
       "caveat": "465 is not a typo and 587 will not work here. Use SSL is not a STARTTLS toggle: the plugin passes SslOnConnect when it is ticked and no encryption whatsoever when it is not, and it offers no third option - so 587 either meets a client expecting implicit TLS or sends your password in the clear for the relay to refuse. Both mistakes are invisible from Jellyfin. Every send failure is caught and written as a single warning line to the server log, so the notification looks delivered and nothing arrives. Turn on debug logging for Jellyfin.Plugin.Webhook in logging.json before you trust an alert to reach you. Jellyfin's prose documentation never names an SMTP field, so the labels above are read off the configuration form the plugin itself ships, linked below - not quoted from a manual page that does not exist.",
       "source": "https://github.com/jellyfin/jellyfin-plugin-webhook/blob/master/Jellyfin.Plugin.Webhook/Configuration/Web/config.html",
       "source_title": "Webhook plugin: the SMTP destination form"
+    },
+    {
+      "slug": "wikijs",
+      "name": "Wiki.js",
+      "repo": "requarks/wiki",
+      "what": "a self-hosted wiki engine, usually run for a team, a community or one household",
+      "sends": [
+        "a welcome email with a login link, when an administrator creates a user account",
+        "an account-verification link, when self-registration is enabled and someone signs up",
+        "a password-reset link, when a user asks for one"
+      ],
+      "why_it_fits": "All three go to somebody the operator already invited or who is already using the wiki. A private instance run for a team or a community never sends enough of these to approach a daily cap sized for a mail server, not a wiki.",
+      "where": "Administration -> Mail, in the web interface. Wiki.js keeps the values in its own configuration store, not in a file. It has no documentation page naming the individual fields, so the names below are the property names Wiki.js itself uses - read from its GraphQL mail schema and mail-transport source, not off a rendered page.",
+      "fields": [
+        [
+          "senderEmail",
+          "your @msgwing.com login"
+        ],
+        [
+          "host",
+          "mx.msgwing.com"
+        ],
+        [
+          "port",
+          "587"
+        ],
+        [
+          "secure",
+          "off"
+        ],
+        [
+          "verifySSL",
+          "on"
+        ],
+        [
+          "user",
+          "your @msgwing.com login"
+        ],
+        [
+          "pass",
+          "your @msgwing.com password"
+        ]
+      ],
+      "caveat": "`secure` is passed straight through to Nodemailer's own `secure` option (see `server/core/mail.js`) - it is not a generic \"use encryption\" toggle. `secure: true` means implicit TLS, which is port 465, not the port configured above. Leave it off on port 587 so Wiki.js negotiates STARTTLS instead; the label reads backwards from what actually happens on the wire. `senderEmail` also has to be the generated `@msgwing.com` address, not the wiki's own domain - Wiki.js puts it straight into the `From:` header with no separate check.",
+      "source": "https://github.com/requarks/wiki/blob/8a979690a7240012a1f789d8a5f1ec9ee3f77621/server/core/mail.js",
+      "source_title": "Mail transport source (no docs page names these fields)"
     }
   ],
   "$not_covered_comment": "Kandydaci zmierzeni 2026-08-27 jako zerowe pokrycie. Generator odejmuje od tej listy wszystko, co ma juz wpis - inaczej strona wymienia jako brakujaca aplikacje, ktorej strona stoi akapit wyzej. Tak wlasnie bylo z Paperless-ngx.",
