@@ -15,7 +15,7 @@ OAuth exists for part of the range. The model or version number decides, which m
 
 ## What the vendor says
 
-Device Code Flow is supported broadly; Client Credentials Flow only on the ConnectKey models listed. Devices not on Xerox's supported-firmware list are the problem cases and are not promised an update. Affects Scan to Email, Internet Fax (Send), Fax Forward to Email and Auto Email Notifications.
+Device Code Flow is available now across the whole published range; Client Credentials Flow only on the ConnectKey models listed here. PrimeLink is not one of them - Xerox's table marks PrimeLink C9065/C9070, B9100/B9110/B9125/B9136 and C9265/C9275/C9281 as "Not Available" in the Client Credential Flow column. Devices not on Xerox's supported-firmware list are the problem cases and are not promised an update. Affects Scan to Email, Internet Fax (Send), Fax Forward to Email and Auto Email Notifications.
 
 [Read the vendor's statement in full](https://www.xerox.com/en-us/office/insights/exchange-online-authentication)  
 Everything on this page comes from that document. If it and this page disagree, the vendor is right and this page is out of date — [say so](https://github.com/msgwing/ZeroSMTP/issues/new?template=device_report.yml).
@@ -29,7 +29,6 @@ Everything on this page comes from that document. If it and this page disagree, 
 - `VersaLink B625`
 - `VersaLink C625`
 - `AltaLink`
-- `PrimeLink`
 
 A model missing from this list is not automatically safe. Vendors publish headline lists; regional variants and OEM rebadges drift away from them.
 
@@ -53,4 +52,4 @@ ZeroSMTP is the second option. It is free with no paid tier, accepts plain SMTP 
 - [The full compatibility list](../DEVICE-COMPATIBILITY.md) — every vendor, in one table
 - [Setup by printer brand](../PRINTERS.md) — where the SMTP fields actually live in each vendor's interface
 
-*Last reviewed 2026-08-27. Source: [`data/devices.json`](https://github.com/msgwing/ZeroSMTP/blob/main/data/devices.json).*
+*Last reviewed 2026-09-07. Source: [`data/devices.json`](https://github.com/msgwing/ZeroSMTP/blob/main/data/devices.json).*

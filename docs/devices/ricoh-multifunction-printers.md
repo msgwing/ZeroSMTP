@@ -15,7 +15,7 @@ The vendor publishes a per-model list and revises it over time, so it is not cop
 
 ## What the vendor says
 
-Ricoh publishes affected products with per-product firmware status, revised on 2026-01-30 into two tables - products with released OAuth firmware, and products newly added - plus a third group the Ricoh Firmware Update Tool cannot update, where the local representative has to do it. Not reproduced here because the list is long and still moving; check the model against the advisory. Ricoh does not say any product is permanently excluded, but for devices still waiting its own recommendation is to stop relying on email from the device or to use a mail service other than Exchange Online.
+Ricoh publishes affected products with per-product firmware status, last updated 2026-02-06, in two tables - products with released OAuth firmware, and products added as of 2026-01-30 - plus a third group the Ricoh Firmware Update Tool cannot update, where the local representative has to do it. Not reproduced here because the list is long and still moving; check the model against the advisory. Firmware is not the end of it: because "the TLS cipher suites supported by Microsoft 365 will be updated", Ricoh warns that "some Ricoh products - including models that already support OAuth 2.0 authentication - will no longer be able to send or receive emails via Exchange Online". Ricoh does not say any product is permanently excluded, but for devices still waiting its own recommendation is to stop relying on email from the device or to use a mail service other than Exchange Online.
 
 [Read the vendor's statement in full](https://www.ricoh.com/info/2025/0526_1)  
 Everything on this page comes from that document. If it and this page disagree, the vendor is right and this page is out of date — [say so](https://github.com/msgwing/ZeroSMTP/issues/new?template=device_report.yml).
@@ -40,4 +40,4 @@ ZeroSMTP is the second option. It is free with no paid tier, accepts plain SMTP 
 - [The full compatibility list](../DEVICE-COMPATIBILITY.md) — every vendor, in one table
 - [Setup by printer brand](../PRINTERS.md) — where the SMTP fields actually live in each vendor's interface
 
-*Last reviewed 2026-08-27. Source: [`data/devices.json`](https://github.com/msgwing/ZeroSMTP/blob/main/data/devices.json).*
+*Last reviewed 2026-09-07. Source: [`data/devices.json`](https://github.com/msgwing/ZeroSMTP/blob/main/data/devices.json).*
