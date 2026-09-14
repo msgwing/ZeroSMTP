@@ -64,6 +64,13 @@
         "o365-smtp-host": 25280,
         "outlook-smtp-host": 22656
       }
+    },
+    {
+      "date": "2026-09-14",
+      "counts": {
+        "o365-smtp-host": 25728,
+        "outlook-smtp-host": 22016
+      }
     }
   ]
 }
