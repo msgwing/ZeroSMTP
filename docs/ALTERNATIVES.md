@@ -76,16 +76,21 @@ that anything changed.
 
 There is a whole shelf of these, and for a long time this page named only
 one of them. That was not a judgement — it was the only one we had found.
-Measured on 2026-08-27, with stars and last commit read from GitHub the same
-day:
+First measured on 2026-08-27; re-measured on 2026-09-10, searching GitHub with
+competitors' own vocabulary ("microsoft graph smtp relay", "oauth2 smtp
+proxy", "exchange online smtp oauth") rather than ours, and reading each
+last-commit date off the repository's own commit list — not the `pushed_at`
+field alone, which one entry below shows can be misleading:
 
-| Project | Stars | Last commit | Licence | Shape |
+| Project | Stars | Last real commit | Licence | Shape |
 | --- | ---: | --- | --- | --- |
-| [`simonrob/email-oauth2-proxy`](https://github.com/simonrob/email-oauth2-proxy) | 1466 | 2026-07-03 | Apache-2.0 | IMAP/POP/**SMTP** proxy; the largest of these by a wide margin |
-| [`SMTP2Graph/SMTP2Graph`](https://github.com/SMTP2Graph/SMTP2Graph) | 91 | 2026-05-03 | GPL-3.0 | SMTP server that relays over the Microsoft Graph API |
-| [`JustinIven/smtp-oauth-relay`](https://github.com/JustinIven/smtp-oauth-relay) | 48 | **2026-08-24** | Apache-2.0 | small SMTP → Graph relay, the most recently active of the group |
-| [`ggpwnkthx/Microsoft-Graph-SMTP-Relay`](https://github.com/ggpwnkthx/Microsoft-Graph-SMTP-Relay) | 33 | 2026-07-02 | MIT | same idea, Python |
-| [`oldium/microsoft-smtp-oauth2-proxy`](https://github.com/oldium/microsoft-smtp-oauth2-proxy) | 9 | 2026-05-20 | — | SMTP-only, deliberately minimal |
+| [`simonrob/email-oauth2-proxy`](https://github.com/simonrob/email-oauth2-proxy) | 1470 | 2026-07-03 (69 days quiet) | Apache-2.0 | IMAP/POP/**SMTP** proxy; still the largest of these by a wide margin, no longer receiving commits |
+| [`rustmailer/rustmailer`](https://github.com/rustmailer/rustmailer) | 504 | **2026-09-07** | custom, source-visible ("all rights reserved", not OSI) | broader self-hosted email middleware for developers (IMAP/SMTP/Gmail API/Graph API), not printer-specific — shipped an OAuth2-client-credentials flow for Microsoft Graph on 2026-08-13; the most actively developed large project on this shelf today |
+| [`SMTP2Graph/SMTP2Graph`](https://github.com/SMTP2Graph/SMTP2Graph) | 92 | 2026-05-03 (130 days quiet) | GPL-3.0 | SMTP server that relays over the Microsoft Graph API; dead |
+| [`JustinIven/smtp-oauth-relay`](https://github.com/JustinIven/smtp-oauth-relay) | 49 | 2026-08-12 (29 days quiet) | Apache-2.0 | small SMTP → Graph relay — GitHub's `pushed_at` for this repo reads 2026-09-03, but that push was a dependabot branch and pull request, never merged; the last real commit to `main` is three weeks older |
+| [`ggpwnkthx/Microsoft-Graph-SMTP-Relay`](https://github.com/ggpwnkthx/Microsoft-Graph-SMTP-Relay) | 34 | 2026-07-02 (70 days quiet) | MIT | same idea, Python; dead |
+| [`oldium/microsoft-smtp-oauth2-proxy`](https://github.com/oldium/microsoft-smtp-oauth2-proxy) | 9 | 2026-05-20 (113 days quiet) | — | SMTP-only, deliberately minimal; dead |
+| [`debold/GraphMailer.NET`](https://github.com/debold/GraphMailer.NET) | 2 | **2026-09-02** | MIT | Windows SMTP relay for Microsoft 365 aimed squarely at "legacy apps, scanners, and devices" — the same audience as the case for ZeroSMTP below. Fewest stars on this shelf, but 21 real commits in the last 30 days, one author, genuine feature work (malware scanning, message rules, a fixed restart bug) — more active than everything above it except `rustmailer` |
 
 Two things worth saying plainly rather than leaving you to work out.
 
@@ -99,9 +104,15 @@ obviously better; they fail differently.
 
 **This page previously recommended the 9-star one.** Not out of preference —
 we had not measured the shelf. If you are choosing today and you want the
-option most other people have used and reported bugs against, that is
-`simonrob/email-oauth2-proxy`. If you want something still receiving commits
-this month, that is `JustinIven/smtp-oauth-relay`.
+option most other people have used and reported bugs against, that is still
+`simonrob/email-oauth2-proxy`, even though it has not taken a commit in over
+two months. If you want something under active development right now, the
+honest answer changed between the two measurements: on 2026-08-27 it looked
+like `JustinIven/smtp-oauth-relay`; re-checked today its apparent September
+activity turned out to be an unmerged dependabot branch, and the two projects
+actually taking commits this week are `rustmailer/rustmailer` (broader scope,
+custom licence) and `debold/GraphMailer.NET` (narrowest scope, MIT, and the
+closest match to ZeroSMTP's own audience of legacy printers and scanners).
 
 All of them are a better answer than we are for the case below.
 
