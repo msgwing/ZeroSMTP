@@ -43,7 +43,7 @@ ZeroSMTP is the second option. It is free with no paid tier, accepts plain SMTP 
 
 [Create a free account](https://msgwing.com) · [what to put in the device's SMTP fields](../PRINTERS.md) · [the code examples](../CODE-EXAMPLES.md)
 
-*Xerox entry contributed by [@Mohitingale13](https://github.com/Mohitingale13) in [#408](https://github.com/msgwing/ZeroSMTP/pull/408).*
+*Xerox entry contributed by [@Mohitingale13](https://github.com/Mohitingale13) in [#416](https://github.com/msgwing/ZeroSMTP/pull/416).*
 
 ## Related
 

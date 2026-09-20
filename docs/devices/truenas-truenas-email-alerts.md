@@ -34,6 +34,8 @@ ZeroSMTP is the second option. It is free with no paid tier, accepts plain SMTP 
 
 [Create a free account](https://msgwing.com) · [what to put in the device's SMTP fields](../PRINTERS.md) · [the code examples](../CODE-EXAMPLES.md)
 
+*TrueNAS entry contributed by [@Mohitingale13](https://github.com/Mohitingale13) in [#368](https://github.com/msgwing/ZeroSMTP/pull/368).*
+
 ## Related
 
 - [What the error message means](../ERROR-MESSAGES.md) — if the TrueNAS device is reporting a code rather than a sentence
