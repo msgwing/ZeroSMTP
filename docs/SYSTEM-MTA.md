@@ -244,8 +244,12 @@ notification email arrives.
 
 ## Automating rollout with Ansible
 
-Rolling this out to more than a handful of servers by hand doesn't scale —
-here's a minimal Ansible playbook for the Postfix satellite setup above:
+Rolling this out to more than a handful of servers by hand doesn't scale.
+[`msgwing.postfix_relay`](https://github.com/msgwing/ansible-role-postfix-relay)
+packages everything below as a proper role — install it and set
+`zerosmtp_username`/`zerosmtp_password`, nothing else. The inline playbook
+below is the same steps written out, for anyone who wants to see or adapt
+them without pulling in a role:
 
 ```yaml
 ---
