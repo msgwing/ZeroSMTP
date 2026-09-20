@@ -188,7 +188,7 @@ jobs:
       - name: Syntax-check bash scripts
         run: |
           set -e
-          for f in bash-curl-zerosmtp.sh bash-swaks-zerosmtp.sh check-connection.sh; do
+          for f in bash-curl-zerosmtp.sh bash-swaks-zerosmtp.sh check-connection.sh setup-postfix-relay.sh; do
             echo "Checking $f"
             bash -n "$f"
           done

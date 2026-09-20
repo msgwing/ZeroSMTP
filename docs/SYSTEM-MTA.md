@@ -25,6 +25,21 @@ Postfix is Debian's and most Ubuntu servers' default MTA, so this is almost
 always the right starting point if Postfix is already installed
 (`dpkg -l postfix`).
 
+### Fastest path: one script, username and password only
+
+[`setup-postfix-relay.sh`](https://github.com/msgwing/ZeroSMTP/blob/main/setup-postfix-relay.sh)
+installs Postfix, sets satellite mode, configures the relay, and applies the
+sender rewrite from the section below — all of it, in one run:
+
+```bash
+sudo ./setup-postfix-relay.sh
+```
+
+It asks for your ZeroSMTP username and password (or read them from
+`ZEROSMTP_USERNAME`/`ZEROSMTP_PASSWORD` for an unattended run) and does the
+rest. Safe to re-run. The steps below are what it automates, for anyone who
+wants to see or adjust them by hand instead.
+
 ```bash
 sudo apt install -y postfix mailutils libsasl2-modules
 ```
