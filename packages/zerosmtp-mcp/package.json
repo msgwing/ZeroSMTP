@@ -1,6 +1,6 @@
 {
   "name": "zerosmtp-mcp",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "mcpName": "io.github.msgwing/zerosmtp",
   "description": "A free SMTP relay that still takes a username and password, for devices that cannot do OAuth 2.0 - as an MCP server. Your assistant gets the connection settings with both limits attached, plus SMTP error lookup, per-vendor OAuth firmware status, and a real port 587 test from this machine.",
   "keywords": [
