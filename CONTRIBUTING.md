@@ -114,6 +114,13 @@ Then open a PR against `main`. [`lint.yml`](.github/workflows/lint.yml)
 syntax-checks every example on every PR — make sure it's green before
 requesting review.
 
+One check, `board-review`, will show red on any PR opened from a fork —
+which is how every external contribution arrives. **That is expected and
+is not something you need to fix.** It looks for two lines (`BOARD:` /
+`EVIDENCE:`) that a maintainer adds when merging; you do not need to add
+them yourself or chase the internal doc it links to, and it has no bearing
+on whether your change is wanted.
+
 ## Code style
 
 - Match the existing style of the file you're editing.
