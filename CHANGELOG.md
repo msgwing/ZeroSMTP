@@ -1,5 +1,82 @@
 # Changelog
 
+## [1.9.0] - 2026-09-20
+
+One rejection code moved through three fixes this cycle. A Raspberry Pi's
+cron mail was failing with `553 5.7.1 ... not owned by user` against a
+production relay - eight rejections to three successful sends from a single
+account - because `SYSTEM-MTA.md`'s Postfix satellite recipe never told
+anyone to rewrite the envelope sender, so system mail left as `pi@` or
+`root@` and the relay refused it. The same enhanced code turned out to make
+`zerosmtp-check --explain` return an unrelated Microsoft explanation instead
+of admitting it did not know the answer. Both are fixed, and the setup that
+caused the first one no longer needs documentation to get right - it needs
+one script. Separately, and worth saying plainly: for ten days every merge to
+`main` was validated by only 11 of this project's checks, not the roughly 18
+that actually gate quality, because the branch protection rule was never
+updated as new checks were added. Nothing that shipped in that window has
+turned out to be wrong, but it was luck, not the gate, and the rule now
+requires all 29.
+
+### Added
+- **`setup-postfix-relay.sh`.** One command turns a Debian or Ubuntu box into
+  a Postfix satellite relayed through ZeroSMTP - installs Postfix, points it
+  at `mx.msgwing.com`, and rewrites the envelope and From sender so system
+  mail doesn't bounce with "not owned by user". Needs only a ZeroSMTP
+  username and password; asks for nothing else and is safe to re-run.
+- **A companion Ansible role**, published separately at
+  [`msgwing/ansible-role-postfix-relay`](https://github.com/msgwing/ansible-role-postfix-relay),
+  for the same setup on a fleet instead of one box.
+- `docs/SYSTEM-MTA.md` now documents the "not owned by user" rejection and
+  the sender rewrite that prevents it - previously nowhere in the docs even
+  though it was the actual cause of a real outage.
+- A FAQ entry on appealing a suspension from an address other than the
+  registered one: the appeal is not processed, and the page explains why
+  without naming the blocklist provider or the threshold that triggered it,
+  so it teaches how to avoid the rule without teaching how to game it.
+- Wiki.js joins the self-hosted app coverage table, with its mail settings
+  read from source rather than from a docs page that never named them.
+- TrueNAS and Zabbix OAuth/SMTP-alert compatibility data, both
+  community-contributed (`@Mohitingale13`).
+- `zerosmtp-check --explain` now recognizes Xerox fault code `027-779`.
+- `zerosmtp-mcp` is now published to the canonical MCP Registry directly from
+  CI, and ships a Dockerfile - both Glama and Docker's own `mcp-registry`
+  gate listing on a server answering a container introspection request,
+  which `npx` alone does not satisfy.
+- An early, unpublished scaffold of a VS Code extension
+  (`packages/zerosmtp-vscode`) that flags a plain username/password
+  Microsoft 365 SMTP setting in a workspace and can explain a pasted error
+  inline. Not on the Marketplace yet and needs no action from anyone using
+  the relay today.
+
+### Fixed
+- **`zerosmtp-check --explain` matched on the enhanced status code alone**,
+  so a `553 5.7.1` from our own relay could return the explanation for an
+  unrelated `530 5.7.1` from Microsoft. It now refuses the match when the
+  reply code contradicts the one recorded for that enhanced code, and
+  answers "unknown" rather than a wrong answer.
+- **`main`'s required status checks covered 11 of roughly 18 real gates**,
+  none of the checks contributors actually rely on - `device-table`,
+  `board-review`, `zerosmtp-check`, `mcp-container` among them. All 29
+  current checks are required now.
+- `check-facts.py` refuses a build where the CLI explains a hardware panel
+  code that has no matching documentation page, closing the gap that let
+  `027-779` exist in the tool before this release without a citable source.
+
+### Changed
+- `zerosmtp-mcp` bumped to `1.0.3` to publish a `basic-authentication`
+  keyword that was already on `zerosmtp-check` but missing here, despite
+  targeting the same audience.
+- `docs/ALTERNATIVES.md` re-measured against GitHub directly instead of
+  memory: two previously-listed projects are still dead, one
+  (`JustinIven/smtp-oauth-relay`) turns out to have been credited with
+  commits that were an unmerged dependabot branch rather than real activity,
+  and two projects the prior scan missed are added -
+  `rustmailer/rustmailer` (504 stars, active, broader scope) and
+  `debold/GraphMailer.NET` (2 stars, but the most actively developed project
+  on the shelf and the closest match to this project's own audience of
+  legacy printers and scanners).
+
 ## [1.8.0] - 2026-08-29
 
 Competitive review, measured rather than recalled: the nearest comparable
