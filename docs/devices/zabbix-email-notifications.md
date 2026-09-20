@@ -34,7 +34,7 @@ ZeroSMTP is the second option. It is free with no paid tier, accepts plain SMTP 
 
 [Create a free account](https://msgwing.com) · [what to put in the device's SMTP fields](../PRINTERS.md) · [the code examples](../CODE-EXAMPLES.md)
 
-*Zabbix entry contributed by [@Mohitingale13](https://github.com/Mohitingale13) in [#289](https://github.com/msgwing/ZeroSMTP/pull/289).*
+*Zabbix entry contributed by [@Mohitingale13](https://github.com/Mohitingale13) in [#369](https://github.com/msgwing/ZeroSMTP/pull/369).*
 
 ## Related
 
