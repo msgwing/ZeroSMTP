@@ -42,9 +42,14 @@ jobs:
     outputs:
       code: ${{ steps.check.outputs.code }}
     steps:
+      # Full history, not fetch-depth 2. `base.sha` is the tip of `main` at
+      # PR-open time, not the immediate parent - once a branch picks up a
+      # third commit (a fixup push, a retrigger), depth 2 no longer reaches
+      # it and `git diff base head` fails with "bad revision" (exit 128).
+      # Found 2026-09-20 when PR #436 hit exactly that on its third push.
       - uses: actions/checkout@v7
         with:
-          fetch-depth: 2
+          fetch-depth: 0
       - id: check
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
@@ -71,16 +76,16 @@ jobs:
   # Replayed against those six: it catches five, each by a different class,
   # and lets #396 through, which is the one that was purely reversible.
   #
-  # Same SHA pair the `changes` job uses, for the same reason: for a
-  # pull_request event github.sha is the merge commit, so fetch-depth 2 has
-  # both sides.
+  # Same SHA pair the `changes` job uses, and the same fetch-depth fix
+  # (2026-09-20): a branch three or more commits ahead of its base sha makes
+  # depth 2 miss the base entirely and `git diff` fails with exit 128.
   board-review:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
-          fetch-depth: 2
+          fetch-depth: 0
       - uses: actions/setup-python@v7
         with:
           python-version: '3.13'
