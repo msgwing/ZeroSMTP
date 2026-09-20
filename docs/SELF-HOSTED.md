@@ -29,7 +29,7 @@ Each page names the exact settings, quotes where they came from, and states the 
 
 ## What is not here
 
-Portainer are in the same position and are not covered yet. They are missing because nobody has read their documentation carefully enough to name the settings without guessing, not because they do not fit.
+Portainer is in the same position and is not covered yet. It is missing because nobody has read their documentation carefully enough to name the settings without guessing, not because they do not fit.
 
 [Tell us which one you run](https://github.com/msgwing/ZeroSMTP/issues/new/choose) and it moves up the list.
 

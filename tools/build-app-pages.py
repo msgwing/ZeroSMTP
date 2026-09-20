@@ -157,6 +157,23 @@ def przecinki(nazwy):
     return ", ".join(nazwy[:-1]) + " and " + nazwy[-1]
 
 
+def zdanie_nieobjete(nieobjete):
+    """Zdanie o niepokrytych aplikacjach z czasownikiem odmienionym przez liczbe.
+
+    Dla jednego elementu potrzebne jest "is"/"It", nie "are"/"They" -
+    przecinki() sam zwraca pojedyncza nazwe, ale zdanie wokol niej
+    zakladalo mnoga liczbe.
+    """
+    nazwy = [n["name"] for n in nieobjete]
+    byc, zaimek = ("is", "It") if len(nazwy) == 1 else ("are", "They")
+    return (
+        f"{przecinki(nazwy)} {byc} in the same position and {byc} not "
+        f"covered yet. {zaimek} {byc} missing because nobody has read their "
+        "documentation carefully enough to name the settings without "
+        "guessing, not because they do not fit."
+    )
+
+
 def zbuduj_indeks(wpisy, aktualizacja, nieobjete=()):
     w = [
         "---",
@@ -198,11 +215,7 @@ def zbuduj_indeks(wpisy, aktualizacja, nieobjete=()):
         "",
         "## What is not here",
         "",
-        (przecinki([n["name"] for n in nieobjete]) +
-         " are in the same position and are not covered yet. They "
-         "are missing because nobody has read their documentation carefully "
-         "enough to name the settings without guessing, not because they do "
-         "not fit.") if nieobjete else
+        zdanie_nieobjete(nieobjete) if nieobjete else
         "Every application measured as a candidate now has a page. Tell us "
         "which one you run and it goes on the list.",
         "",
