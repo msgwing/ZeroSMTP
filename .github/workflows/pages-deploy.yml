@@ -1,11 +1,7 @@
 name: Deploy docs to GitHub Pages
 
-# Builds and deploys docs/ via GitHub Actions instead of Pages' classic
-# "deploy from a branch" build, which can only use plugins on GitHub's own
-# allowed list. jekyll-last-modified-at (for sitemap.xml's <lastmod>, from
-# real git history) isn't on it - this workflow is what unlocks it.
-# The repo's Pages source is set to "GitHub Actions" (not "Deploy from a
-# branch") for this to actually publish anything.
+# The site is now a single static notice (docs/index.html, docs/404.html), so
+# there is no Jekyll build any more - docs/ is uploaded as it is.
 
 on:
   push:
@@ -29,71 +25,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0 # full history - jekyll-last-modified-at needs real per-file git log, not a shallow clone
-
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-          bundler-cache: true
-          working-directory: docs
-
       - uses: actions/configure-pages@v6
-
-      - name: Build with Jekyll
-        working-directory: docs
-        run: bundle exec jekyll build --destination _site --config _config.yml,_config_actions.yml
-        env:
-          JEKYLL_ENV: production
-
-      # docs/security-txt.md sets `permalink: /.well-known/security.txt` and
-      # was verified twice as merged, and the address still 404s on the live
-      # site - the build log never mentions the file at all, while an
-      # ordinary page added the same week (PRIVACY.html) builds fine. Jekyll
-      # is silently dropping this one page rather than failing loudly, and
-      # guessing a third cause without seeing it happen is how the first two
-      # "fixes" shipped unverified.
-      #
-      # So the file stops depending on Jekyll's permalink handling for a
-      # dot-prefixed destination. The front matter is stripped here and the
-      # plain RFC 9116 body is written straight into the built site.
-      - name: Place .well-known/security.txt directly (bypasses Jekyll permalinks)
-        run: |
-          mkdir -p docs/_site/.well-known
-          awk 'BEGIN{n=0} /^---$/{n++; next} n>=2' docs/security-txt.md \
-            > docs/_site/.well-known/security.txt
-          test -s docs/_site/.well-known/security.txt
-          echo "Wrote $(wc -l < docs/_site/.well-known/security.txt) lines to _site/.well-known/security.txt"
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: '22'
-
-      # Removes the theme's unused selectors (jekyll-theme-primer ships a
-      # full GitHub-style stylesheet; this site only uses a fraction of it)
-      # by checking which ones actually appear in the built HTML. Runs
-      # after the Jekyll build so it sees the real, final markup - verified
-      # locally against every page (nav/footer links, tables, code blocks,
-      # images, dark-mode overrides, the printer-brand picker) before
-      # landing this step.
-      - name: Purge unused CSS
-        working-directory: docs
-        run: |
-          npx --yes purgecss --css _site/assets/css/style.css --content "_site/**/*.html" -o _site/assets/css/style.css
-          sed -i '/sourceMappingURL/d' _site/assets/css/style.css
-          rm -f _site/assets/css/style.css.map
-
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: docs/_site
-          # The real cause of the security.txt 404, found by re-reading a
-          # build log line that was there the whole time: this action's
-          # tar step excludes anything dot-prefixed by default
-          # (`--exclude=.[^/]*`), so docs/_site/.well-known/security.txt was
-          # stripped out here regardless of what Jekyll built or what the
-          # previous workflow step placed on disk. `.git` and `.github` are
-          # still excluded even with this on.
-          include-hidden-files: true
+          path: docs
 
   deploy:
     environment:

@@ -1,38 +1,49 @@
----
-layout: default
-title: Page not found
-permalink: /404.html
----
-
-<h1>Page not found</h1>
-
-<p>That page doesn't exist — but if you're here because of an SMTP error,
-one of these probably is what you're looking for:</p>
-
-<table>
-  <thead>
-    <tr><th>If you…</th><th>Go to</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Got an authentication error from <code>smtp.office365.com</code></td>
-        <td><a href="/EXCHANGE-ONLINE-SMTP-AUTH.html">Exchange Online SMTP AUTH migration</a></td></tr>
-    <tr><td>Need to know what else will break</td>
-        <td><a href="/AFFECTED-SYSTEMS.html">What breaks: affected systems</a></td></tr>
-    <tr><td>Have a printer or MFP to reconfigure</td>
-        <td><a href="/PRINTERS.html">Printer scan-to-email setup by brand</a></td></tr>
-    <tr><td>Manage Windows Server / IIS / Exchange</td>
-        <td><a href="/WINDOWS-SERVER.html">Windows Server guide</a></td></tr>
-    <tr><td>Manage Linux servers</td>
-        <td><a href="/LINUX.html">Linux</a> · <a href="/SYSTEM-MTA.html">system-wide relay</a></td></tr>
-    <tr><td>Have it failing or timing out</td>
-        <td><a href="/TROUBLESHOOTING.html">Troubleshooting</a></td></tr>
-    <tr><td>Just want the short answers</td>
-        <td><a href="/FAQ.html">FAQ</a></td></tr>
-  </tbody>
-</table>
-
-<p>Or start from the <a href="/">documentation homepage</a>.</p>
-
-<p>If you followed a link here that's actually broken, please
-<a href="https://github.com/msgwing/ZeroSMTP/issues/new/choose">open an issue</a> —
-it's a quick fix and helps the next person who hits it.</p>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZeroSMTP is being discontinued</title>
+<style>
+  :root { color-scheme: light dark; --bg: #ffffff; --fg: #1f2328; --muted: #59636e; --rule: #d1d9e0; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #0d1117; --fg: #e6edf3; --muted: #9198a1; --rule: #3d444d; } }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 42rem; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 1rem; }
+  h2 { font-size: 1.1rem; margin: 2rem 0 .5rem; }
+  li { margin: .5rem 0; }
+  hr { border: 0; border-top: 1px solid var(--rule); margin: 3rem 0; }
+  .note { color: var(--muted); font-size: .95rem; }
+</style>
+</head>
+<body>
+<main>
+<p class="note">This page no longer exists. / Ta strona już nie istnieje.</p>
+<section lang="en">
+<h1>ZeroSMTP is being discontinued</h1>
+<p>After careful consideration, we have decided to wind down ZeroSMTP at the end of 2026. Despite our efforts, the service has not found the audience that would justify keeping it running, and we would rather say so openly, and give everyone time to prepare, than let it fade away unannounced.</p>
+<h2>What this means for you</h2>
+<ul>
+<li><strong>Until 31 December 2026 nothing changes.</strong> Every account, login and SMTP connection stays active and keeps working as usual.</li>
+<li><strong>After 31 December 2026</strong> all accounts and SMTP access will be switched off.</li>
+<li><strong>Please move your SMTP settings to another SMTP service before that date.</strong> For printers, scanners, NAS units and applications this usually means changing four values on the device: server, port, username and password. If your device cannot use OAuth 2.0, choose a provider that still supports plain username-and-password authentication.</li>
+<li>We recommend not starting any new setups on ZeroSMTP.</li>
+</ul>
+<p>Thank you to everyone who used ZeroSMTP, reported problems and contributed to it. We are sorry for the inconvenience, and we wish you smooth sailing with whichever service you choose next.</p>
+</section>
+<hr>
+<section lang="pl">
+<h1>ZeroSMTP zostaje wyłączony</h1>
+<p>Po namyśle zdecydowaliśmy się zakończyć działanie usługi ZeroSMTP z końcem 2026 roku. Mimo naszych starań usługa nie znalazła grona odbiorców, które uzasadniałoby jej dalsze utrzymywanie. Wolimy powiedzieć to otwarcie i dać wszystkim czas na przygotowanie się, niż pozwolić, by usługa po cichu zniknęła.</p>
+<h2>Co to oznacza dla Ciebie</h2>
+<ul>
+<li><strong>Do 31 grudnia 2026 nic się nie zmienia.</strong> Wszystkie konta, loginy i połączenia SMTP pozostają aktywne i działają jak dotychczas.</li>
+<li><strong>Po 31 grudnia 2026</strong> wszystkie konta i dostęp SMTP zostaną wyłączone.</li>
+<li><strong>Prosimy o przeniesienie ustawień SMTP do innej usługi SMTP przed tym terminem.</strong> W drukarkach, skanerach, urządzeniach NAS i aplikacjach zwykle oznacza to zmianę czterech wartości: serwera, portu, loginu i hasła. Jeśli urządzenie nie obsługuje OAuth 2.0, wybierz dostawcę, który nadal obsługuje uwierzytelnianie loginem i hasłem.</li>
+<li>Nie zalecamy zakładania nowych konfiguracji w oparciu o ZeroSMTP.</li>
+</ul>
+<p>Dziękujemy wszystkim, którzy korzystali z ZeroSMTP, zgłaszali uwagi i współtworzyli projekt. Przepraszamy za niedogodności i życzymy powodzenia z kolejną usługą.</p>
+</section>
+</main>
+</body>
+</html>
